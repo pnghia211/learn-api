@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class DateHelper {
-    public static String convertDate(String dateValue){
+    public static String convertDate(String dateValue) {
         LocalDate date = LocalDate.parse(dateValue);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy", Locale.ENGLISH);
         return date.format(formatter);
@@ -19,9 +19,9 @@ public class DateHelper {
         return yearMonth.format(formatter);
     }
 
-    public static String convertFullDate(String heading) {
-        LocalDate date = LocalDate.parse(heading, DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH));
-        return date.toString(); // yyyy-MM-dd
+    public static String convertIsoToFullDate(String heading) {
+        LocalDate date = LocalDate.parse(heading, DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH));
+        return date.format(DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH));
     }
 
     public static List<String> buildDateRange(String startDate, String endDate) {
@@ -37,9 +37,9 @@ public class DateHelper {
     }
 
     public static String convertHeadingFormat(String heading) {
-        // Pattern: MMM d, YYYY (full date, e.g. "Jan 10, 2022")
-        if (heading.matches("[A-Z][a-z]{2} \\d{1,2}, \\d{4}")) {
-            return DateHelper.convertFullDate(heading);
+        // Pattern: YYYY-MM-DD (ISO date) -> convert to "MMM d, yyyy"
+        if (heading.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return DateHelper.convertIsoToFullDate(heading);
         }
 
         // Pattern: YYYY-MM (year-month)

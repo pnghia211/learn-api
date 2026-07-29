@@ -3,8 +3,6 @@ package actions;
 import component.constract.CalendarRootLocator;
 import component.main.CalendarComp;
 import helpers.CalendarAssertions;
-import helpers.DateHelper;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.time.LocalDate;
@@ -12,18 +10,16 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
-import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class CalendarActions {
     private final CalendarRootLocator rootLocator;
     private static final Pattern MONTH_PATTERN = Pattern.compile("^[A-Z][a-z]+ \\d{4}$"); // "February 2022"
     private static final Pattern YEAR_PATTERN = Pattern.compile("^\\d{4}$"); // "2022"
     private static final Pattern DECADE_PATTERN = Pattern.compile("^\\d{4}\\s-\\s\\d{4}$"); // "2020-2031"
-    private String calendarId;
     private CalendarComp parent;
 
     public CalendarActions(CalendarComp parent, CalendarRootLocator rootLocator) {
@@ -35,11 +31,11 @@ public class CalendarActions {
         return new CalendarAssertions(parent, rootLocator, this);
     }
 
-    private WebElement getDateCell(String dateValue) {
+    public WebElement getDateCell(String dateValue) {
         return parent.getDateCell(rootLocator, dateValue);
     }
 
-    private WebElement getHeadingEle() {
+    public WebElement getHeadingEle() {
         return parent.getHeadingEle(rootLocator);
     }
 

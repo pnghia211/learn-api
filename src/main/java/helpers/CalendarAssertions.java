@@ -3,7 +3,6 @@ package helpers;
 import actions.CalendarActions;
 import component.constract.CalendarRootLocator;
 import component.main.CalendarComp;
-import org.openqa.selenium.WebElement;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -21,16 +20,8 @@ public class CalendarAssertions {
         this.actions = actions;
     }
 
-    private WebElement getDateCell(String dateValue) {
-        return parent.getDateCell(rootLocator, dateValue);
-    }
-
-    private WebElement getHeadingEle() {
-        return parent.getHeadingEle(rootLocator);
-    }
-
     private boolean isDateSelected(String dateValue) {
-        String result = getDateCell(dateValue).getAttribute("data-selected");
+        String result = actions.getDateCell(dateValue).getAttribute("data-selected");
         return "true".equalsIgnoreCase(result);
     }
 
@@ -45,7 +36,7 @@ public class CalendarAssertions {
     }
 
     public CalendarAssertions dateIsDisabled(String dateValue) {
-        String result = getDateCell(dateValue).getAttribute("aria-disabled");
+        String result = actions.getDateCell(dateValue).getAttribute("aria-disabled");
         assertEquals("true", result);
         return this;
     }
@@ -57,7 +48,7 @@ public class CalendarAssertions {
 
     public CalendarAssertions heading(String heading) {
         String result = DateHelper.convertHeadingFormat(heading);
-        String actual = getHeadingEle().getText();
+        String actual = actions.getHeadingEle().getText();
         assertEquals(result, actual);
         return this;
     }

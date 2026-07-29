@@ -15,7 +15,7 @@ public class DatePickerRootLocator implements CalendarRootLocator {
 
     @Override
     public WebElement locate() {
-        WebElement trigger = comp.getDatePickerTriggerBasedOnId(calendarLabel);
+        WebElement trigger = comp.getDatePickerBasedOnId(calendarLabel);
         if (!"true".equals(trigger.getAttribute("aria-expanded"))) {
             trigger.click();
         }

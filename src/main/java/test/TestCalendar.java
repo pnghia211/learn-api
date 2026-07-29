@@ -7,6 +7,7 @@ import component.main.LeftNavigatorComp;
 import component.main.TableComp;
 import data.CalendarTestData;
 import driver.DriverFactory;
+import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 import page.HomePage;
 
@@ -65,10 +66,16 @@ public class TestCalendar {
                 .verify().dateRangeSelected(startDate, endDate);
 
         calendarComp.forCalendar("usage")
-                .selectDateWithNavigation("2016-01-01");
+                .selectDateWithNavigation("2016-01-01")
+                .verify().heading("2016-01").dateIsSelected("2016-01-01");
 
         calendarComp.forDatePicker("as-a-date-picker")
-                .selectDateWithNavigation("2024-05-04");
+                .selectDateWithNavigation("2024-05-04")
+                .verify().heading("2024-05")
+                .and().verify().dateIsSelected("2024-05-04");
+
+        String datePickerText = calendarComp.getDatePickerBasedOnId("as-a-date-picker").getText();
+        Assert.assertEquals(datePickerText, "May 4, 2024");
 
 
         Thread.sleep(5000);

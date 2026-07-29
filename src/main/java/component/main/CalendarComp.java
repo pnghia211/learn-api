@@ -15,7 +15,7 @@ public class CalendarComp extends BaseComp {
     private String datePickerSel = ".//button[./*[contains(@class,'calendar')]]";
     private String dateSel = "[data-value='%s']";
     private By datePickerCalenderSel = By.cssSelector("[id^='reka'][dir='ltr']");
-    private By headingSel = By.cssSelector("[data-slot='heading']");
+    private By headingSel = By.cssSelector("[data-slot='label']");
     private By nextMonthSel = By.cssSelector("[aria-label='Next month']");
     private By previousMonthSel = By.cssSelector("[aria-label='Previous month']");
     private By nextYearSel = By.cssSelector("[aria-label='Next year']");
@@ -30,7 +30,7 @@ public class CalendarComp extends BaseComp {
         return getComponentBasedOnHeader(calendarLabel, calendarSel);
     }
 
-    public WebElement getDatePickerTriggerBasedOnId(String calendarLabel) {
+    public WebElement getDatePickerBasedOnId(String calendarLabel) {
         return getComponentBasedOnHeader(calendarLabel, datePickerSel);
     }
 
