@@ -1,7 +1,7 @@
 package helpers;
 
 import actions.CalendarActions;
-import component.constract.CalendarRootLocator;
+import component.constract.locator.CalendarRootLocator;
 import component.main.CalendarComp;
 
 import java.util.List;
@@ -49,6 +49,13 @@ public class CalendarAssertions {
     public CalendarAssertions heading(String heading) {
         String result = DateHelper.convertHeadingFormat(heading);
         String actual = actions.getHeadingEle().getText();
+        assertEquals(result, actual);
+        return this;
+    }
+
+    public CalendarAssertions datePickerHeading(String date) {
+        String result = DateHelper.convertHeadingFormat(date);
+        String actual = actions.getDatePickerHeadingEle(rootLocator.getCalendarLabel()).getText();
         assertEquals(result, actual);
         return this;
     }

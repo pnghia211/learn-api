@@ -37,6 +37,11 @@ public class DateHelper {
     }
 
     public static String convertHeadingFormat(String heading) {
+        // Pattern: MMM d, YYYY (full date, e.g. "May 4, 2024")
+        if (heading.matches("[A-Z][a-z]{2} \\d{1,2}, \\d{4}")) {
+            return DateHelper.convertFullDate(heading);
+        }
+
         // Pattern: YYYY-MM-DD (ISO date) -> convert to "MMM d, yyyy"
         if (heading.matches("\\d{4}-\\d{2}-\\d{2}")) {
             return DateHelper.convertIsoToFullDate(heading);
@@ -58,5 +63,21 @@ public class DateHelper {
         }
 
         throw new IllegalArgumentException("Invalid heading format: " + heading);
+    }
+
+    public static String convertFullDate(String heading) {
+        LocalDate date = LocalDate.parse(heading, DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH));
+        return date.toString(); // yyyy-MM-dd
+    }
+
+    public static YearMonth parseMonthYear(String text, Integer fallbackYear) {
+        text = text.trim();
+        if (text.matches(".*\\d{4}$")) {
+            return YearMonth.parse(text, DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH));
+        }
+        if (fallbackYear == null) {
+            throw new IllegalStateException("Cannot infer year for: " + text);
+        }
+        return YearMonth.parse(text + " " + fallbackYear, DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH));
     }
 }

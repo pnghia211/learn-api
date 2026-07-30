@@ -1,18 +1,17 @@
 package actions;
 
-import component.constract.CalendarRootLocator;
+import component.constract.locator.CalendarRootLocator;
 import component.main.CalendarComp;
 import helpers.CalendarAssertions;
 import org.openqa.selenium.WebElement;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
+import static helpers.DateHelper.parseMonthYear;
 import static org.junit.Assert.assertTrue;
 
 public class CalendarActions {
@@ -37,6 +36,10 @@ public class CalendarActions {
 
     public WebElement getHeadingEle() {
         return parent.getHeadingEle(rootLocator);
+    }
+
+    public WebElement getDatePickerHeadingEle(String datePickerHeader) {
+        return parent.getDatePickerBasedOnId(datePickerHeader);
     }
 
     private boolean isDateSelected(String dateValue) {
@@ -108,32 +111,34 @@ public class CalendarActions {
     }
 
     private void navigateToYear(LocalDate target) {
-        int currentYear = getCurrentYear();
         int targetYear = target.getYear();
-        boolean forward = targetYear > currentYear;
+
+        List<YearMonth> current = getCurrentYearMonths();
+        boolean forward = targetYear > current.get(current.size() - 1).getYear();
         WebElement navBtnEle = forward ? parent.getNextYearBtn(rootLocator) : parent.getPervYearBtn(rootLocator);
 
         clickUntil(
                 navBtnEle,
-                () -> getCurrentYear() == targetYear,
+                () -> getCurrentYearMonths().stream().anyMatch(ym -> ym.getYear() == targetYear),
                 "Failed to navigate to year: " + targetYear
         );
     }
 
     private void navigateToMonth(LocalDate targetMonth) {
-        YearMonth currentYearMonth = getCurrentYearMonth();
         YearMonth targetYearMonth = YearMonth.from(targetMonth);
-        boolean forward = targetYearMonth.isAfter(currentYearMonth);
+
+        List<YearMonth> current = getCurrentYearMonths();
+        boolean forward = targetYearMonth.isAfter(current.get(current.size() - 1));
         WebElement navBtnEle = forward ? parent.getNextMonthBtn(rootLocator) : parent.getPrevMonthBtn(rootLocator);
 
         clickUntil(
                 navBtnEle,
-                () -> getCurrentYearMonth().equals(targetYearMonth),
+                () -> getCurrentYearMonths().contains(targetYearMonth),
                 "Failed to navigate to month: " + targetYearMonth);
     }
 
     private void clickUntil(WebElement buttonEle, Supplier<Boolean> isTargetReached, String failMsg) {
-        int maxIterations = 200;
+        int maxIterations = 20;
         while (!isTargetReached.get() && maxIterations-- > 0) {
             buttonEle.click();
         }
@@ -145,9 +150,25 @@ public class CalendarActions {
         return Integer.parseInt(headingText.replaceAll("\\D", ""));
     }
 
-    private YearMonth getCurrentYearMonth() {
+    private List<YearMonth> getCurrentYearMonths() {
         String headingText = getHeadingEle().getText();
-        return YearMonth.parse(headingText, DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH));
+        System.out.println("Read: " + getHeadingEle().getText());
+        String[] parts = headingText.split("\\s*-\\s*");
+
+        if (parts.length == 1) {
+            return List.of(parseMonthYear(parts[0], null));
+        }
+
+        // dual calendar: right side always carries an explicit year
+        YearMonth right = parseMonthYear(parts[1], null);
+        YearMonth left = parseMonthYear(parts[0], right.getYear());
+
+        // left had no year of its own and wrapped backward (e.g. "Dec - Jan 2024" -> Dec 2023)
+        if (!parts[0].matches(".*\\d{4}$") && left.isAfter(right)) {
+            left = left.minusYears(1);
+        }
+
+        return List.of(left, right);
     }
 
     public enum CalendarView {

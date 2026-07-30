@@ -1,13 +1,18 @@
 package component.main;
 
 import actions.CalendarActions;
-import component.constract.CalendarRootLocator;
+import component.constract.locator.CalendarRootLocator;
+import component.constract.wait.WaitForCalendarReady;
 import component.locator.DatePickerRootLocator;
 import component.locator.StaticCalendarRootLocator;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.List;
 
 public class CalendarComp extends BaseComp {
@@ -15,7 +20,7 @@ public class CalendarComp extends BaseComp {
     private String datePickerSel = ".//button[./*[contains(@class,'calendar')]]";
     private String dateSel = "[data-value='%s']";
     private By datePickerCalenderSel = By.cssSelector("[id^='reka'][dir='ltr']");
-    private By headingSel = By.cssSelector("[data-slot='label']");
+    private By headingSel = By.cssSelector("[data-slot='header'] [data-slot='label']");
     private By nextMonthSel = By.cssSelector("[aria-label='Next month']");
     private By previousMonthSel = By.cssSelector("[aria-label='Previous month']");
     private By nextYearSel = By.cssSelector("[aria-label='Next year']");
@@ -26,6 +31,10 @@ public class CalendarComp extends BaseComp {
         super(driver);
     }
 
+    public Actions getAction() {
+        return this.actions;
+    }
+
     public WebElement getCalenderBasedOnId(String calendarLabel) {
         return getComponentBasedOnHeader(calendarLabel, calendarSel);
     }
@@ -34,8 +43,11 @@ public class CalendarComp extends BaseComp {
         return getComponentBasedOnHeader(calendarLabel, datePickerSel);
     }
 
-    public WebElement getOpenDatePickerCalendar() {
-        return driver.findElement(datePickerCalenderSel);
+    public WebElement waitForOpenDatePickerCalendarReady() {
+        return new WebDriverWait(driver, Duration.ofSeconds(5))
+                .pollingEvery(Duration.ofMillis(200))
+                .ignoring(StaleElementReferenceException.class)
+                .until(new WaitForCalendarReady(datePickerCalenderSel));
     }
 
     public WebElement getDateCell(CalendarRootLocator rootLocator, String dateValue) {

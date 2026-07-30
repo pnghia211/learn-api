@@ -1,12 +1,12 @@
 package component.locator;
 
-import component.constract.CalendarRootLocator;
+import component.constract.locator.CalendarRootLocator;
 import component.main.CalendarComp;
 import org.openqa.selenium.WebElement;
 
 public class DatePickerRootLocator implements CalendarRootLocator {
     private final CalendarComp comp;
-    private final String calendarLabel;
+    public final String calendarLabel;
 
     public DatePickerRootLocator(CalendarComp comp, String calendarLabel) {
         this.comp = comp;
@@ -15,10 +15,16 @@ public class DatePickerRootLocator implements CalendarRootLocator {
 
     @Override
     public WebElement locate() {
-        WebElement trigger = comp.getDatePickerBasedOnId(calendarLabel);
-        if (!"true".equals(trigger.getAttribute("aria-expanded"))) {
-            trigger.click();
+        WebElement datePickerEle = comp.getDatePickerBasedOnId(calendarLabel);
+        comp.getAction().moveToElement(datePickerEle).perform();
+        if (!"true".equals(datePickerEle.getAttribute("aria-expanded"))) {
+            datePickerEle.click();
         }
-        return comp.getOpenDatePickerCalendar();
+        return comp.waitForOpenDatePickerCalendarReady();
+    }
+
+    @Override
+    public String getCalendarLabel() {
+        return calendarLabel;
     }
 }
