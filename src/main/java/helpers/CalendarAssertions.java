@@ -3,6 +3,7 @@ package helpers;
 import actions.CalendarActions;
 import component.constract.locator.CalendarRootLocator;
 import component.main.CalendarComp;
+import org.openqa.selenium.WebElement;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -68,6 +69,16 @@ public class CalendarAssertions {
                 .toList();
 
         assertEquals(new TreeSet<>(expected), new TreeSet<>(actual));
+        return this;
+    }
+
+    public CalendarAssertions presetRangesDisplayed(List<String> expectedLabels) {
+        List<String> actualLabels = parent.dateRangePresets(rootLocator)
+                .stream()
+                .map(WebElement::getText)
+                .toList();
+
+        assertEquals(expectedLabels, actualLabels);
         return this;
     }
 

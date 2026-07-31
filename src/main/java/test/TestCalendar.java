@@ -23,13 +23,9 @@ public class TestCalendar {
         HomePage homePage = new HomePage(driver);
         HeaderComp headerComp = homePage.componentsSection();
         LeftNavigatorComp leftNavigatorComp = homePage.leftNavigatorComp();
-        TableComp tableComp = homePage.tableComp();
         CalendarComp calendarComp = homePage.calenderComp();
 
         headerComp.clickComponentsComp();
-//        leftNavigatorComp.clickDataTableComp("table");
-//        tableComp.getTableBasedOnHeader("with-infinite-scroll");
-//        tableComp.scrollTillCelDisplayed("with-infinite-scroll", "Brandon");
 
         leftNavigatorComp.clickDataTableComp("calendar");
         calendarComp.forCalendar("usage")
@@ -74,9 +70,21 @@ public class TestCalendar {
                 .and().verify().dateIsSelected("2024-05-04")
                 .datePickerHeading("2024-05-04");
 
+        String firstDateSelected = "2030-12-30";
+        String secondDateSelected = "2020-12-28";
+        List<String> expectedPresets= List.of(
+                "Last 7 days",
+                "Last 14 days",
+                "Last 30 days",
+                "Last 3 months",
+                "Last 6 months",
+                "Last year");
+
         calendarComp.forDatePicker("as-a-date-range-picker")
-                .selectDateWithNavigation("2026-12-30")
-                .selectDateWithNavigation("2025-01-28");
+                .selectDateWithNavigation(firstDateSelected)
+                .selectDateWithNavigation(secondDateSelected)
+                .verify().datePickerHeading(firstDateSelected + " - " + secondDateSelected)
+                .presetRangesDisplayed(expectedPresets);
 
         Thread.sleep(5000);
         driver.quit();

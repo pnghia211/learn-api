@@ -37,6 +37,18 @@ public class DateHelper {
     }
 
     public static String convertHeadingFormat(String heading) {
+        // Pattern: YYYY-MM-DD - YYYY-MM-DD (ISO date range) -> convert to "MMM d, yyyy - MMM d, yyyy", always earliest-first
+        if (heading.matches("\\d{4}-\\d{2}-\\d{2} - \\d{4}-\\d{2}-\\d{2}")) {
+            String[] parts = heading.split(" - ");
+            LocalDate first = LocalDate.parse(parts[0]);
+            LocalDate second = LocalDate.parse(parts[1]);
+
+            LocalDate start = first.isBefore(second) ? first : second;
+            LocalDate end = first.isBefore(second) ? second : first;
+
+            return DateHelper.convertIsoToFullDate(start.toString()) + " - " + DateHelper.convertIsoToFullDate(end.toString());
+        }
+
         // Pattern: MMM d, YYYY (full date, e.g. "May 4, 2024")
         if (heading.matches("[A-Z][a-z]{2} \\d{1,2}, \\d{4}")) {
             return DateHelper.convertFullDate(heading);

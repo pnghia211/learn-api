@@ -26,6 +26,7 @@ public class CalendarComp extends BaseComp {
     private By nextYearSel = By.cssSelector("[aria-label='Next year']");
     private By previousYearSel = By.cssSelector("[aria-label='Previous year']");
     private By selectedDateSel = By.cssSelector("[data-selected='true']");
+    private By dateRangePresets = By.xpath("//div[@data-slot='root']/preceding-sibling::div/button");
 
     public CalendarComp(WebDriver driver) {
         super(driver);
@@ -48,6 +49,10 @@ public class CalendarComp extends BaseComp {
                 .pollingEvery(Duration.ofMillis(200))
                 .ignoring(StaleElementReferenceException.class)
                 .until(new WaitForCalendarReady(datePickerCalenderSel));
+    }
+
+    public List<WebElement> dateRangePresets(CalendarRootLocator rootLocator){
+        return rootLocator.locate().findElements(dateRangePresets);
     }
 
     public WebElement getDateCell(CalendarRootLocator rootLocator, String dateValue) {

@@ -112,8 +112,10 @@ public class CalendarActions {
 
     private void navigateToYear(LocalDate target) {
         int targetYear = target.getYear();
-
         List<YearMonth> current = getCurrentYearMonths();
+
+        if (current.stream().anyMatch(ym -> ym.getYear() == targetYear)) return;
+
         boolean forward = targetYear > current.get(current.size() - 1).getYear();
         WebElement navBtnEle = forward ? parent.getNextYearBtn(rootLocator) : parent.getPervYearBtn(rootLocator);
 
@@ -126,8 +128,9 @@ public class CalendarActions {
 
     private void navigateToMonth(LocalDate targetMonth) {
         YearMonth targetYearMonth = YearMonth.from(targetMonth);
-
         List<YearMonth> current = getCurrentYearMonths();
+        if (current.contains(targetYearMonth)) return;
+
         boolean forward = targetYearMonth.isAfter(current.get(current.size() - 1));
         WebElement navBtnEle = forward ? parent.getNextMonthBtn(rootLocator) : parent.getPrevMonthBtn(rootLocator);
 
@@ -139,20 +142,14 @@ public class CalendarActions {
 
     private void clickUntil(WebElement buttonEle, Supplier<Boolean> isTargetReached, String failMsg) {
         int maxIterations = 20;
-        while (!isTargetReached.get() && maxIterations-- > 0) {
+        while (!isTargetReached.get()) {
+            if (maxIterations-- <= 0) throw new IllegalStateException(failMsg);
             buttonEle.click();
         }
-        if (!isTargetReached.get()) throw new IllegalStateException(failMsg);
-    }
-
-    private int getCurrentYear() {
-        String headingText = getHeadingEle().getText();
-        return Integer.parseInt(headingText.replaceAll("\\D", ""));
     }
 
     private List<YearMonth> getCurrentYearMonths() {
         String headingText = getHeadingEle().getText();
-        System.out.println("Read: " + getHeadingEle().getText());
         String[] parts = headingText.split("\\s*-\\s*");
 
         if (parts.length == 1) {
