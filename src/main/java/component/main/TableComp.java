@@ -1,62 +1,61 @@
 package component.main;
 
+import actions.TableActions;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import java.util.List;
 
 public class TableComp extends BaseComp {
-    private String cellValueStr = ".//td[text()='%s']/..";
-    private String tableSel = ".//*[contains(@class,'overflow-auto')]";
+    private DropdownComp columnsDropdown;
+    private String tableSel = ".//*[@data-slot='root'][./table]";
     private By rowSel = By.cssSelector("tbody tr");
+    private String rowsByCellTxt = ".//td[text()='%s']/..";
+    private String cellsByColumnIndex = ".//tr/td[%s]";
+    private By headersSel = By.cssSelector("thead tr th");
 
     public TableComp(WebDriver driver) {
         super(driver);
     }
 
-    public WebElement getTableBasedOnHeader(String header) {
-        WebElement tableEle = getComponentBasedOnHeader(header, tableSel);
-        actions.moveToElement(tableEle).perform();
-        return tableEle;
+    public DropdownComp dropdownComp() {
+        if (columnsDropdown == null) {
+            columnsDropdown = new DropdownComp(driver, tableSel);
+        }
+        return columnsDropdown;
     }
 
-    public boolean scrollTillCelDisplayed(String tableHeader, String cell) {
-        WebElement tableEle = getComponentBasedOnHeader(tableHeader, tableSel);
-        int attempts = 0;
-        int maxAttempts = 20;
+    public Actions actions() {
+        return this.actions;
+    }
 
-        while (attempts < maxAttempts) {
-            List<WebElement> matches = tableEle.findElements(By.xpath(String.format(cellValueStr, cell)));
-            if (!matches.isEmpty() && matches.get(0).isDisplayed()) {
-                actions.scrollToElement(matches.get(0)).perform();
-                System.out.println("Element is display!!!");
-                return true;
-            }
+    public WebDriver driver() {
+        return this.driver;
+    }
 
-            List<WebElement> rows = tableEle.findElements(rowSel);
-            if (rows.isEmpty()) return false;
+    public WebElement getTableBasedOnHeader(String tableLabel) {
+        return getComponentBasedOnHeader(tableLabel, tableSel);
+    }
 
-            WebElement lastRow = rows.get(rows.size() - 1);
-            int beforeCount = rows.size();
+    public List<WebElement> rowsByCellText(String tableLabel, String cell) {
+        return getTableBasedOnHeader(tableLabel).findElements(By.xpath(String.format(rowsByCellTxt, cell)));
+    }
 
-            actions.scrollToElement(lastRow).perform();
+    public List<WebElement> tableRows(String tableLabel) {
+        return getTableBasedOnHeader(tableLabel).findElements(rowSel);
+    }
 
-            try {
-                wait.until(d -> tableEle.findElements(rowSel).size() > rows.size());
-            } catch (TimeoutException e) {
-                System.out.println("Cannot find element in time frame");
-                return false;
-            }
+    public List<WebElement> headerColumns(String tableLabel) {
+        return getTableBasedOnHeader(tableLabel).findElements(headersSel);
+    }
 
-            int afterCount = tableEle.findElements(rowSel).size();
-            if (afterCount == beforeCount) {
-                return false;
-            }
+    public List<WebElement> cellsByColumnIndex(String tableLabel, int headerIndex) {
+        return getTableBasedOnHeader(tableLabel).findElements(By.xpath(String.format(cellsByColumnIndex, headerIndex)));
+    }
 
-            attempts++;
-        }
-        return false;
+    public TableActions forTable(String tableLabel) {
+        return new TableActions(this, tableLabel);
     }
 }

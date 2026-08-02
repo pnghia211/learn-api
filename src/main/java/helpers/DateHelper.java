@@ -1,6 +1,7 @@
 package helpers;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -22,6 +23,11 @@ public class DateHelper {
     public static String convertIsoToFullDate(String heading) {
         LocalDate date = LocalDate.parse(heading, DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH));
         return date.format(DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH));
+    }
+
+    public static String convertIsoToMonthDayTime(String isoDate) {
+        LocalDateTime dateTime = LocalDateTime.parse(isoDate);
+        return dateTime.format(DateTimeFormatter.ofPattern("MMM d, HH:mm", Locale.ENGLISH));
     }
 
     public static List<String> buildDateRange(String startDate, String endDate) {

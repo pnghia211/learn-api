@@ -2,8 +2,9 @@ package actions;
 
 import component.constract.locator.CalendarRootLocator;
 import component.main.CalendarComp;
-import helpers.CalendarAssertions;
+import assertions.CalendarAssertions;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
 import static helpers.DateHelper.parseMonthYear;
 import static org.junit.Assert.assertTrue;
 
-public class CalendarActions {
+public class CalendarActions{
     private final CalendarRootLocator rootLocator;
     private static final Pattern MONTH_PATTERN = Pattern.compile("^[A-Z][a-z]+ \\d{4}$"); // "February 2022"
     private static final Pattern YEAR_PATTERN = Pattern.compile("^\\d{4}$"); // "2022"

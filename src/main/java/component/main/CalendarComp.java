@@ -2,7 +2,7 @@ package component.main;
 
 import actions.CalendarActions;
 import component.constract.locator.CalendarRootLocator;
-import component.constract.wait.WaitForCalendarReady;
+import Utils.WaitForCalendarReady;
 import component.locator.DatePickerRootLocator;
 import component.locator.StaticCalendarRootLocator;
 import org.openqa.selenium.By;

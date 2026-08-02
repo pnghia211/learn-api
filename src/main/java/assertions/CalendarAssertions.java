@@ -1,8 +1,9 @@
-package helpers;
+package assertions;
 
 import actions.CalendarActions;
 import component.constract.locator.CalendarRootLocator;
 import component.main.CalendarComp;
+import helpers.DateHelper;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
