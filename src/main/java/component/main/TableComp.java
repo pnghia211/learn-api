@@ -9,10 +9,11 @@ import org.openqa.selenium.interactions.Actions;
 import java.util.List;
 
 public class TableComp extends BaseComp {
-    private DropdownComp columnsDropdown;
-    private String tableSel = ".//*[@data-slot='root'][./table]";
+    private HeaderDropdownComp columnsDropdown;
+    private RowDropdownComp rowDropdown;
+    protected String tableSel = ".//*[@data-slot='root'][./table]";
     private By rowSel = By.cssSelector("tbody tr");
-    private String rowsByCellTxt = ".//td[text()='%s']/..";
+    private String rowByCellValue = ".//td[text()='%s']/..";
     private String cellsByColumnIndex = ".//tr/td[%s]";
     private By headersSel = By.cssSelector("thead tr th");
 
@@ -20,11 +21,18 @@ public class TableComp extends BaseComp {
         super(driver);
     }
 
-    public DropdownComp dropdownComp() {
+    public HeaderDropdownComp headerDropdownComp() {
         if (columnsDropdown == null) {
-            columnsDropdown = new DropdownComp(driver, tableSel);
+            columnsDropdown = new HeaderDropdownComp(driver, tableSel);
         }
         return columnsDropdown;
+    }
+
+    public RowDropdownComp rowDropdownComp() {
+        if (rowDropdown == null) {
+            rowDropdown = new RowDropdownComp(driver, tableSel);
+        }
+        return rowDropdown;
     }
 
     public Actions actions() {
@@ -35,24 +43,24 @@ public class TableComp extends BaseComp {
         return this.driver;
     }
 
-    public WebElement getTableBasedOnHeader(String tableLabel) {
+    public WebElement tableByTableLabel(String tableLabel) {
         return getComponentBasedOnHeader(tableLabel, tableSel);
     }
 
-    public List<WebElement> rowsByCellText(String tableLabel, String cell) {
-        return getTableBasedOnHeader(tableLabel).findElements(By.xpath(String.format(rowsByCellTxt, cell)));
+    public List<WebElement> rowByCellText(String tableLabel, String cell) {
+        return tableByTableLabel(tableLabel).findElements(By.xpath(String.format(rowByCellValue, cell)));
     }
 
     public List<WebElement> tableRows(String tableLabel) {
-        return getTableBasedOnHeader(tableLabel).findElements(rowSel);
+        return tableByTableLabel(tableLabel).findElements(rowSel);
     }
 
     public List<WebElement> headerColumns(String tableLabel) {
-        return getTableBasedOnHeader(tableLabel).findElements(headersSel);
+        return tableByTableLabel(tableLabel).findElements(headersSel);
     }
 
     public List<WebElement> cellsByColumnIndex(String tableLabel, int headerIndex) {
-        return getTableBasedOnHeader(tableLabel).findElements(By.xpath(String.format(cellsByColumnIndex, headerIndex)));
+        return tableByTableLabel(tableLabel).findElements(By.xpath(String.format(cellsByColumnIndex, headerIndex)));
     }
 
     public TableActions forTable(String tableLabel) {

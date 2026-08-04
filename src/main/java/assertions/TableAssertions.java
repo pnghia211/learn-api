@@ -1,12 +1,12 @@
 package assertions;
 
 import actions.TableActions;
+import actions.TableActions.HeaderColumnOption;
 import component.main.TableComp;
+import model.TableRecord;
 
 import java.util.ArrayList;
 import java.util.List;
-import actions.TableActions.*;
-import model.TableRecord;
 
 import static org.junit.Assert.*;
 
@@ -24,19 +24,19 @@ public class TableAssertions {
         return this;
     }
 
-    public TableAssertions headerColumnNotDisplayed(ColumnOption option) {
+    public TableAssertions headerColumnNotDisplayed(HeaderColumnOption option) {
         List<String> actual = new ArrayList<>(actions.getHeadersMap().keySet());
         assertFalse(actual.contains(option.headerLabel()));
         return this;
     }
 
-    public TableAssertions cellsByColumnHeader(ColumnOption option, List<String> expected) {
+    public TableAssertions cellsByColumnHeader(HeaderColumnOption option, List<String> expected) {
         List<String> actual = new ArrayList<>(actions.getCellsByColumn(option.headerLabel()));
         assertEquals(expected, actual);
         return this;
     }
 
-    public TableAssertions columnCellsNotDisplayed(ColumnOption column) {
+    public TableAssertions columnCellsNotDisplayed(HeaderColumnOption column) {
         List<String> cells = actions.getCellsByColumn(column.headerLabel());
         assertTrue("Expected no cells for hidden column: " + column.headerLabel(), cells.isEmpty());
         return this;
@@ -45,6 +45,11 @@ public class TableAssertions {
     public TableAssertions rowsDisplayed(List<TableRecord> expected) {
         List<TableRecord> actual = actions.rowsToRecords();
         assertEquals(expected, actual);
+        return this;
+    }
+
+    public TableAssertions copyNotificationPopupDisplayed() {
+        assertTrue(actions.getCopyNotificationPopup().isDisplayed());
         return this;
     }
 

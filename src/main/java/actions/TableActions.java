@@ -1,8 +1,8 @@
 package actions;
 
 import Utils.WaitForTableLoading;
-import component.main.TableComp;
 import assertions.TableAssertions;
+import component.main.TableComp;
 import helpers.TableRecordNormalizer;
 import model.TableRecord;
 import org.openqa.selenium.By;
@@ -25,7 +25,7 @@ public class TableActions {
     }
 
     private WebElement getTable() {
-        return parent.getTableBasedOnHeader(tableLabel);
+        return parent.tableByTableLabel(tableLabel);
     }
 
     public List<WebElement> getRows() {
@@ -33,11 +33,15 @@ public class TableActions {
     }
 
     public List<WebElement> getRowsByCellValue(String cell) {
-        return parent.rowsByCellText(tableLabel, cell);
+        return parent.rowByCellText(tableLabel, cell);
+    }
+
+    public WebElement getActionBtnByCellValue(String tableLabel, String cell) {
+        return parent.rowDropdownComp().actionBtnByCellText(tableLabel, cell);
     }
 
     public WebElement getDropdownBtn() {
-        return parent.dropdownComp().dropdownButton(tableLabel);
+        return parent.headerDropdownComp().headerDropdownButton(tableLabel);
     }
 
     public List<String> getCellsByColumn(String header) {
@@ -52,6 +56,20 @@ public class TableActions {
         }
 
         return cellsEle.stream().map(WebElement::getText).toList();
+    }
+
+    public TableActions clickActionButton(String cell) {
+        getActionBtnByCellValue(tableLabel, cell).click();
+        return this;
+    }
+
+    public TableActions selectCopyPaymentIdOpt(ActionOption option) {
+        parent.rowDropdownComp().menuItemByLabel(option.label()).click();
+        return this;
+    }
+
+    public WebElement getCopyNotificationPopup() {
+        return parent.rowDropdownComp().copyNotificationPopup();
     }
 
     public TableActions scrollTillCelDisplayed(String cell) {
@@ -101,16 +119,16 @@ public class TableActions {
         return this;
     }
 
-    public TableActions unselectDropdownOption(ColumnOption option) {
+    public TableActions unselectDropdownOption(HeaderColumnOption option) {
         selectDropdownButton();
-        WebElement optionEle = parent.dropdownComp().dropdownOptions(tableLabel, option.dropdownLabel());
+        WebElement optionEle = parent.headerDropdownComp().headerDropdownOptions(tableLabel, option.dropdownLabel());
         String state = optionEle.getAttribute("data-state");
 
         if (state.equalsIgnoreCase("checked")) {
             optionEle.click();
             new WebDriverWait(parent.driver(), Duration.ofSeconds(5))
                     .until(d -> !"checked".equalsIgnoreCase(
-                            parent.dropdownComp().dropdownOptions(tableLabel, option.dropdownLabel()).getAttribute("data-state")));
+                            parent.headerDropdownComp().headerDropdownOptions(tableLabel, option.dropdownLabel()).getAttribute("data-state")));
         }
         unselectDropdownButton();
         return this;
@@ -139,16 +157,16 @@ public class TableActions {
     public TableRecord rowToRecord(WebElement row, Map<String, Integer> headersMap) {
         List<WebElement> cells = row.findElements(By.cssSelector("td"));
 
-        String id = getCellTextOrNull(cells, headersMap, ColumnOption.ID);
-        String date = getCellTextOrNull(cells, headersMap, ColumnOption.DATE);
-        String status = getCellTextOrNull(cells, headersMap, ColumnOption.STATUS);
-        String email = getCellTextOrNull(cells, headersMap, ColumnOption.EMAIL);
-        String amount = getCellTextOrNull(cells, headersMap, ColumnOption.AMOUNT);
+        String id = getCellTextOrNull(cells, headersMap, HeaderColumnOption.ID);
+        String date = getCellTextOrNull(cells, headersMap, HeaderColumnOption.DATE);
+        String status = getCellTextOrNull(cells, headersMap, HeaderColumnOption.STATUS);
+        String email = getCellTextOrNull(cells, headersMap, HeaderColumnOption.EMAIL);
+        String amount = getCellTextOrNull(cells, headersMap, HeaderColumnOption.AMOUNT);
 
         return new TableRecord(id, date, status, email, amount);
     }
 
-    private String getCellTextOrNull(List<WebElement> cells, Map<String, Integer> headersMap, ColumnOption column) {
+    private String getCellTextOrNull(List<WebElement> cells, Map<String, Integer> headersMap, HeaderColumnOption column) {
         Integer index = headersMap.get(column.headerLabel);
         if (index == null) {
             return null;
@@ -156,7 +174,7 @@ public class TableActions {
         return cells.get(index - 1).getText();
     }
 
-    public enum ColumnOption {
+    public enum HeaderColumnOption {
         ID("Id", "#"),
         DATE("Date", "Date"),
         STATUS("Status", "Status"),
@@ -166,7 +184,7 @@ public class TableActions {
         private final String dropdownLabel;
         private final String headerLabel;
 
-        ColumnOption(String dropdownLabel, String headerLabel) {
+        HeaderColumnOption(String dropdownLabel, String headerLabel) {
             this.dropdownLabel = dropdownLabel;
             this.headerLabel = headerLabel;
         }
@@ -179,8 +197,8 @@ public class TableActions {
             return headerLabel;
         }
 
-        public static ColumnOption fromString(String input) {
-            for (ColumnOption option : values()) {
+        public static HeaderColumnOption fromString(String input) {
+            for (HeaderColumnOption option : values()) {
                 if (option.dropdownLabel.equalsIgnoreCase(input)
                         || option.headerLabel.equalsIgnoreCase(input)
                         || option.name().equalsIgnoreCase(input)) {
@@ -188,6 +206,19 @@ public class TableActions {
                 }
             }
             throw new IllegalArgumentException("Unknown column option: " + input);
+        }
+    }
+
+    public enum ActionOption {
+        COPY_PAYMENT("Copy payment ID");
+        private final String label;
+
+        ActionOption(String label) {
+            this.label = label;
+        }
+
+        public String label() {
+            return label;
         }
     }
 

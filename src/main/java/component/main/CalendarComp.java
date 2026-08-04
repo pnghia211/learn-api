@@ -1,8 +1,8 @@
 package component.main;
 
+import Utils.WaitForCalendarReady;
 import actions.CalendarActions;
 import component.constract.locator.CalendarRootLocator;
-import Utils.WaitForCalendarReady;
 import component.locator.DatePickerRootLocator;
 import component.locator.StaticCalendarRootLocator;
 import org.openqa.selenium.By;
@@ -32,7 +32,7 @@ public class CalendarComp extends BaseComp {
         super(driver);
     }
 
-    public Actions getAction() {
+    public Actions action() {
         return this.actions;
     }
 
@@ -40,7 +40,7 @@ public class CalendarComp extends BaseComp {
         return getComponentBasedOnHeader(calendarLabel, calendarSel);
     }
 
-    public WebElement getDatePickerBasedOnId(String calendarLabel) {
+    public WebElement datePickerBasedOnId(String calendarLabel) {
         return getComponentBasedOnHeader(calendarLabel, datePickerSel);
     }
 
@@ -55,32 +55,32 @@ public class CalendarComp extends BaseComp {
         return rootLocator.locate().findElements(dateRangePresets);
     }
 
-    public WebElement getDateCell(CalendarRootLocator rootLocator, String dateValue) {
+    public WebElement dateCell(CalendarRootLocator rootLocator, String dateValue) {
         return rootLocator.locate()
                 .findElement(By.cssSelector(String.format(dateSel, dateValue)));
     }
 
-    public WebElement getHeadingEle(CalendarRootLocator rootLocator) {
+    public WebElement headingEle(CalendarRootLocator rootLocator) {
         return rootLocator.locate().findElement(headingSel);
     }
 
-    public WebElement getNextMonthBtn(CalendarRootLocator rootLocator) {
+    public WebElement nextMonthBtn(CalendarRootLocator rootLocator) {
         return rootLocator.locate().findElement(nextMonthSel);
     }
 
-    public WebElement getPrevMonthBtn(CalendarRootLocator rootLocator) {
+    public WebElement prevMonthBtn(CalendarRootLocator rootLocator) {
         return rootLocator.locate().findElement(previousMonthSel);
     }
 
-    public WebElement getNextYearBtn(CalendarRootLocator rootLocator) {
+    public WebElement nextYearBtn(CalendarRootLocator rootLocator) {
         return rootLocator.locate().findElement(nextYearSel);
     }
 
-    public WebElement getPervYearBtn(CalendarRootLocator rootLocator) {
+    public WebElement pervYearBtn(CalendarRootLocator rootLocator) {
         return rootLocator.locate().findElement(previousYearSel);
     }
 
-    public List<WebElement> getSelectedDate(CalendarRootLocator rootLocator) {
+    public List<WebElement> selectedDate(CalendarRootLocator rootLocator) {
         return rootLocator.locate().findElements(selectedDateSel);
     }
 

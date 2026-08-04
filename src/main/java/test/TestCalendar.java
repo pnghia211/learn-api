@@ -4,7 +4,6 @@ import actions.CalendarActions.CalendarView;
 import component.main.CalendarComp;
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
-import component.main.TableComp;
 import data.CalendarTestData;
 import driver.DriverFactory;
 import org.openqa.selenium.WebDriver;

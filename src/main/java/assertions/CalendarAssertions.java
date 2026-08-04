@@ -64,7 +64,7 @@ public class CalendarAssertions {
 
     public CalendarAssertions dateRangeSelected(String startDate, String endDate) {
         List<String> expected = DateHelper.buildDateRange(startDate, endDate);
-        List<String> actual = parent.getSelectedDate(rootLocator)
+        List<String> actual = parent.selectedDate(rootLocator)
                 .stream()
                 .map(el -> el.getAttribute("data-value"))
                 .toList();

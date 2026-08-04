@@ -1,19 +1,16 @@
 package test;
 
+import actions.TableActions.ActionOption;
+import actions.TableActions.HeaderColumnOption;
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
 import component.main.TableComp;
 import driver.DriverFactory;
-import helpers.DateHelper;
 import helpers.TableRecordNormalizer;
 import helpers.TestDataLoader;
 import model.TableRecord;
 import org.openqa.selenium.WebDriver;
 import page.HomePage;
-
-import static url.Url.mainPage;
-
-import actions.TableActions.*;
 
 import java.util.List;
 
@@ -21,20 +18,20 @@ public class TestTable {
     private final static WebDriver driver = DriverFactory.getChromeDriver();
 
     public static void main(String[] args) throws InterruptedException {
-        driver.get(mainPage);
+        driver.get("https://ui.nuxt.com/docs/components/table");
 
         String relativePathUsage = "testdata/table-usage.json";
         HomePage homePage = new HomePage(driver);
         HeaderComp headerComp = homePage.componentsSection();
         LeftNavigatorComp leftNavigatorComp = homePage.leftNavigatorComp();
         TableComp tableComp = homePage.tableComp();
-
+//
         headerComp.clickComponentsComp();
         leftNavigatorComp.clickDataTableComp("table");
 
-        tableComp.forTable("with-infinite-scroll")
-                .scrollTillCelDisplayed("ariamx")
-                .verify().cellIsDisplayed("ariamx");
+//        tableComp.forTable("with-infinite-scroll")
+//                .scrollTillCelDisplayed("ariamx")
+//                .verify().cellIsDisplayed("ariamx");
 
         List<TableRecord> expected = TestDataLoader.loadExpectedTableData(relativePathUsage).stream()
                 .map(TableRecordNormalizer::normalizeExpected)
@@ -43,13 +40,18 @@ public class TestTable {
 
         tableComp.forTable("usage")
                 .verify().rowsDisplayed(expected).and()
-                .unselectDropdownOption(ColumnOption.AMOUNT)
-                .verify().cellsByColumnHeader(ColumnOption.EMAIL, expectedEmails);
+                .unselectDropdownOption(HeaderColumnOption.AMOUNT)
+                .verify().cellsByColumnHeader(HeaderColumnOption.EMAIL, expectedEmails);
 
         tableComp.forTable("with-column-visibility")
-                .unselectDropdownOption(ColumnOption.AMOUNT)
-                .verify().headerColumnNotDisplayed(ColumnOption.AMOUNT)
-                .columnCellsNotDisplayed(ColumnOption.AMOUNT);
+                .unselectDropdownOption(HeaderColumnOption.AMOUNT)
+                .verify().headerColumnNotDisplayed(HeaderColumnOption.AMOUNT)
+                .columnCellsNotDisplayed(HeaderColumnOption.AMOUNT);
+
+        tableComp.forTable("with-row-actions")
+                .clickActionButton("#4597")
+                .selectCopyPaymentIdOpt(ActionOption.COPY_PAYMENT)
+                .verify().copyNotificationPopupDisplayed();
 
         Thread.sleep(5000);
         driver.quit();

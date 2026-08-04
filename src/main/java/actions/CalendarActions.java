@@ -1,10 +1,9 @@
 package actions;
 
+import assertions.CalendarAssertions;
 import component.constract.locator.CalendarRootLocator;
 import component.main.CalendarComp;
-import assertions.CalendarAssertions;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -32,15 +31,15 @@ public class CalendarActions{
     }
 
     public WebElement getDateCell(String dateValue) {
-        return parent.getDateCell(rootLocator, dateValue);
+        return parent.dateCell(rootLocator, dateValue);
     }
 
     public WebElement getHeadingEle() {
-        return parent.getHeadingEle(rootLocator);
+        return parent.headingEle(rootLocator);
     }
 
     public WebElement getDatePickerHeadingEle(String datePickerHeader) {
-        return parent.getDatePickerBasedOnId(datePickerHeader);
+        return parent.datePickerBasedOnId(datePickerHeader);
     }
 
     private boolean isDateSelected(String dateValue) {
@@ -49,20 +48,20 @@ public class CalendarActions{
     }
 
     public CalendarActions selectNextMonth() {
-        parent.getNextMonthBtn(rootLocator).click();
+        parent.nextMonthBtn(rootLocator).click();
         return this;
     }
 
     public CalendarActions selectNextYear() {
-        parent.getNextYearBtn(rootLocator).click();
+        parent.nextYearBtn(rootLocator).click();
         return this;
     }
 
     public CalendarActions selectViewGrid(CalendarView view) {
-        WebElement headingEle = parent.getHeadingEle(rootLocator);
+        WebElement headingEle = parent.headingEle(rootLocator);
         headingEle.click();
 
-        String headingText = parent.getHeadingEle(rootLocator).getText();
+        String headingText = parent.headingEle(rootLocator).getText();
 
         switch (view) {
             case MONTH:
@@ -118,7 +117,7 @@ public class CalendarActions{
         if (current.stream().anyMatch(ym -> ym.getYear() == targetYear)) return;
 
         boolean forward = targetYear > current.get(current.size() - 1).getYear();
-        WebElement navBtnEle = forward ? parent.getNextYearBtn(rootLocator) : parent.getPervYearBtn(rootLocator);
+        WebElement navBtnEle = forward ? parent.nextYearBtn(rootLocator) : parent.pervYearBtn(rootLocator);
 
         clickUntil(
                 navBtnEle,
@@ -133,7 +132,7 @@ public class CalendarActions{
         if (current.contains(targetYearMonth)) return;
 
         boolean forward = targetYearMonth.isAfter(current.get(current.size() - 1));
-        WebElement navBtnEle = forward ? parent.getNextMonthBtn(rootLocator) : parent.getPrevMonthBtn(rootLocator);
+        WebElement navBtnEle = forward ? parent.nextMonthBtn(rootLocator) : parent.prevMonthBtn(rootLocator);
 
         clickUntil(
                 navBtnEle,

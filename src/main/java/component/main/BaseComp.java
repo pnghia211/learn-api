@@ -12,12 +12,12 @@ public class BaseComp extends BasePage {
         super(driver);
     }
 
-    protected WebElement getRootComp(String header) {
-        return driver.findElement(By.xpath(String.format(rootComponentSel,header)));
+    protected WebElement getRootComp(String compLabel) {
+        return driver.findElement(By.xpath(String.format(rootComponentSel,compLabel)));
     }
 
-    protected WebElement getComponentBasedOnHeader(String header, String compSel) {
-        WebElement rootEle = getRootComp(header);
+    protected WebElement getComponentBasedOnHeader(String compLabel, String compSel) {
+        WebElement rootEle = getRootComp(compLabel);
         actions.moveToElement(rootEle).perform();
         return rootEle.findElement(By.xpath(compSel));
     }
