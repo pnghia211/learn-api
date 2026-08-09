@@ -2,21 +2,29 @@ package actions;
 
 import Utils.WaitForTableLoading;
 import assertions.TableAssertions;
-import component.main.TableComp;
-import helpers.TableRecordNormalizer;
-import model.TableRecord;
+import component.main.table.FooterComp;
+import component.main.table.HeaderDropdownComp;
+import component.main.table.RowDropdownComp;
+import component.main.table.TableComp;
+import helpers.JsExecutorHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class TableActions {
     private final TableComp parent;
+    private FooterComp footerComp;
+    private RowDropdownComp rowDropdownComp;
+    private HeaderDropdownComp headerDropdownComp;
     private final String tableLabel;
 
     public TableActions(TableComp parent, String tableLabel) {
@@ -25,23 +33,43 @@ public class TableActions {
     }
 
     private WebElement getTable() {
-        return parent.tableByTableLabel(tableLabel);
+        return parent.tableByLabel(tableLabel);
     }
 
     public List<WebElement> getRows() {
         return parent.tableRows(tableLabel);
     }
 
+    public FooterComp getFooterComp() {
+        if (footerComp == null) footerComp = parent.footerComp(tableLabel);
+        return footerComp;
+    }
+
+    public RowDropdownComp getDropDownComp() {
+        if (rowDropdownComp == null) rowDropdownComp = parent.rowDropdownComp(tableLabel);
+        return rowDropdownComp;
+    }
+
+    public HeaderDropdownComp getHeaderDropDownComp() {
+        if (headerDropdownComp == null) headerDropdownComp = parent.headerDropdownComp(tableLabel);
+        return headerDropdownComp;
+    }
+
+    public String getFooterTotalAmountTxt() {
+        int index = getHeadersMap().get(HeaderColumnOption.AMOUNT.headerLabel);
+        return getFooterComp().getFooterCellByIndex(index + 1).getText();
+    }
+
     public List<WebElement> getRowsByCellValue(String cell) {
-        return parent.rowByCellText(tableLabel, cell);
+        return parent.rowsByCellText(tableLabel, cell);
     }
 
     public WebElement getActionBtnByCellValue(String tableLabel, String cell) {
-        return parent.rowDropdownComp().actionBtnByCellText(tableLabel, cell);
+        return getDropDownComp().actionBtnByCellText(tableLabel, cell);
     }
 
     public WebElement getDropdownBtn() {
-        return parent.headerDropdownComp().headerDropdownButton(tableLabel);
+        return getHeaderDropDownComp().headerDropdownButton(tableLabel);
     }
 
     public List<String> getCellsByColumn(String header) {
@@ -50,7 +78,7 @@ public class TableActions {
             return List.of();
         }
 
-        List<WebElement> cellsEle = parent.cellsByColumnIndex(tableLabel, index);
+        List<WebElement> cellsEle = parent.cellsByColumnIndex(tableLabel, index + 1);
         if (cellsEle.isEmpty()) {
             throw new IllegalStateException("No cells found for column: " + header);
         }
@@ -58,18 +86,35 @@ public class TableActions {
         return cellsEle.stream().map(WebElement::getText).toList();
     }
 
+    public Integer getCellsTotalAmount() {
+        Integer index = getHeadersMap().get(HeaderColumnOption.AMOUNT.headerLabel());
+
+        List<WebElement> cellsEle = parent.cellsByColumnIndex(tableLabel, index + 1);
+
+        return cellsEle.stream().mapToInt(c -> {
+            String text = c.getText().replace("€", "").replace(",", "").trim();
+            return new BigDecimal(text).setScale(0, RoundingMode.HALF_UP).intValue();
+        }).sum();
+    }
+
+    public Integer getFooterTotalAmount() {
+        String result = getFooterTotalAmountTxt().replace("Total: €", "").replace(",", "");
+        return new BigDecimal(result).setScale(0, RoundingMode.HALF_UP).intValue();
+    }
+
     public TableActions clickActionButton(String cell) {
+        parent.actions().moveToElement(getActionBtnByCellValue(tableLabel, cell)).perform();
         getActionBtnByCellValue(tableLabel, cell).click();
         return this;
     }
 
     public TableActions selectCopyPaymentIdOpt(ActionOption option) {
-        parent.rowDropdownComp().menuItemByLabel(option.label()).click();
+        parent.rowDropdownComp(tableLabel).menuItemByLabel(option.label()).click();
         return this;
     }
 
     public WebElement getCopyNotificationPopup() {
-        return parent.rowDropdownComp().copyNotificationPopup();
+        return parent.rowDropdownComp(tableLabel).copyNotificationPopup();
     }
 
     public TableActions scrollTillCelDisplayed(String cell) {
@@ -119,17 +164,33 @@ public class TableActions {
         return this;
     }
 
-    public TableActions unselectDropdownOption(HeaderColumnOption option) {
-        selectDropdownButton();
-        WebElement optionEle = parent.headerDropdownComp().headerDropdownOptions(tableLabel, option.dropdownLabel());
-        String state = optionEle.getAttribute("data-state");
+    public enum DropdownOptionState {
+        SELECTED, UNSELECTED
+    }
 
-        if (state.equalsIgnoreCase("checked")) {
+    public TableActions selectDropdownOption(HeaderColumnOption option) {
+        return setDropdownOption(option, DropdownOptionState.SELECTED);
+    }
+
+    public TableActions unselectDropdownOption(HeaderColumnOption option) {
+        return setDropdownOption(option, DropdownOptionState.UNSELECTED);
+    }
+
+    private TableActions setDropdownOption(HeaderColumnOption option, DropdownOptionState desiredState) {
+        selectDropdownButton();
+
+        WebElement optionEle = parent.headerDropdownComp(tableLabel).headerDropdownOptions(tableLabel, option.dropdownLabel());
+        boolean isChecked = "checked".equalsIgnoreCase(optionEle.getAttribute("data-state"));
+        boolean shouldBeChecked = desiredState == DropdownOptionState.SELECTED;
+
+        if (isChecked != shouldBeChecked) {
             optionEle.click();
             new WebDriverWait(parent.driver(), Duration.ofSeconds(5))
-                    .until(d -> !"checked".equalsIgnoreCase(
-                            parent.headerDropdownComp().headerDropdownOptions(tableLabel, option.dropdownLabel()).getAttribute("data-state")));
+                    .until(d -> shouldBeChecked == "checked".equalsIgnoreCase(
+                            parent.headerDropdownComp(tableLabel).headerDropdownOptions(tableLabel, option.dropdownLabel())
+                                    .getAttribute("data-state")));
         }
+
         unselectDropdownButton();
         return this;
     }
@@ -141,37 +202,90 @@ public class TableActions {
         for (int i = 0; i < headers.size(); i++) {
             String text = headers.get(i).getText().trim();
             if (!text.isEmpty()) {
-                headersMap.put(text, i + 1);
+                headersMap.put(text, i);
             }
         }
-
         return headersMap;
     }
 
-    public List<TableRecord> rowsToRecords() {
-        Map<String, Integer> headersMap = getHeadersMap();
-        List<TableRecord> raws = getRows().stream().map(row -> rowToRecord(row, headersMap)).toList();
-        return raws.stream().map(TableRecordNormalizer::normalizeActual).toList();
+    public List<WebElement> getRowCheckboxesByCell(String cell) {
+        return parent.rowCheckboxesByCell(tableLabel, cell);
     }
 
-    public TableRecord rowToRecord(WebElement row, Map<String, Integer> headersMap) {
-        List<WebElement> cells = row.findElements(By.cssSelector("td"));
-
-        String id = getCellTextOrNull(cells, headersMap, HeaderColumnOption.ID);
-        String date = getCellTextOrNull(cells, headersMap, HeaderColumnOption.DATE);
-        String status = getCellTextOrNull(cells, headersMap, HeaderColumnOption.STATUS);
-        String email = getCellTextOrNull(cells, headersMap, HeaderColumnOption.EMAIL);
-        String amount = getCellTextOrNull(cells, headersMap, HeaderColumnOption.AMOUNT);
-
-        return new TableRecord(id, date, status, email, amount);
+    public List<WebElement> getCheckedRows() {
+        return parent.checkedRows(tableLabel);
     }
 
-    private String getCellTextOrNull(List<WebElement> cells, Map<String, Integer> headersMap, HeaderColumnOption column) {
-        Integer index = headersMap.get(column.headerLabel);
-        if (index == null) {
-            return null;
+    public int[] getSelectedRowsAndTotalCounts() {
+        String text = getFooterComp().getFooterSummary().getText();
+        List<Integer> numbers = Pattern.compile("\\d+").matcher(text)
+                .results()
+                .map(m -> Integer.parseInt(m.group()))
+                .toList();
+
+        if (numbers.size() < 2) {
+            throw new IllegalStateException("Cannot extract selected/total counts from text: " + text);
         }
-        return cells.get(index - 1).getText();
+        return new int[]{numbers.get(0), numbers.get(1)};
+    }
+
+    public WebElement getHeaderCheckbox() {
+        return parent.headerCheckbox(tableLabel);
+    }
+
+    public Map<String, String> rowToMap(WebElement row, Map<String, Integer> headersMap) {
+        List<WebElement> cells = row.findElements(By.cssSelector("td"));
+        Map<String, String> rowMap = new LinkedHashMap<>();
+
+        for (Map.Entry<String, Integer> entry : headersMap.entrySet()) {
+            String columnLabel = entry.getKey();
+            int index = entry.getValue();
+            rowMap.put(columnLabel, cells.get(index).getText());
+        }
+
+        return rowMap;
+    }
+
+    public List<Map<String, String>> getActualRowsEle() {
+        Map<String, Integer> headersMap = getHeadersMap();
+        List<WebElement> rows = getRows();
+
+        return rows.stream().map(r -> rowToMap(r, headersMap)).toList();
+    }
+
+    public Map<String, String> getActualRowEle(String cell) {
+        Map<String, Integer> headersMap = getHeadersMap();
+        List<WebElement> rows = getRowsByCellValue(cell);
+
+        return rows.stream().map(r -> rowToMap(r, headersMap)).toList().get(0);
+    }
+
+    public TableActions setAllSelectionHeaderToDefaultState() {
+        WebElement ele = parent.headerCheckbox(tableLabel);
+        new WebDriverWait(parent.driver(), Duration.ofSeconds(5))
+                .until(d -> {
+                    ele.click();
+                    return "unchecked".equalsIgnoreCase(ele.getAttribute("data-state"));
+                });
+        return this;
+    }
+
+    public TableActions selectCheckboxByCell(String cell) {
+        getRowCheckboxesByCell(cell).forEach(checkbox -> {
+            if ("checked".equals(checkbox.getDomAttribute("data-state"))) {
+                return;
+            }
+            JsExecutorHelper.scrollIntoViewCentered(parent.driver(), checkbox);
+            checkbox.click();
+        });
+        return this;
+    }
+
+    public TableActions selectCheckboxesByCells(List<String> cells) {
+        for (String cell : cells) {
+            selectCheckboxByCell(cell);
+        }
+        return this;
     }
 
     public enum HeaderColumnOption {
@@ -223,6 +337,6 @@ public class TableActions {
     }
 
     public TableAssertions verify() {
-        return new TableAssertions(parent, this);
+        return new TableAssertions(this);
     }
 }

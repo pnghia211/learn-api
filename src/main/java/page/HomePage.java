@@ -1,9 +1,9 @@
 package page;
 
-import component.main.CalendarComp;
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
-import component.main.TableComp;
+import component.main.calendar.CalendarComp;
+import component.main.table.TableComp;
 import org.openqa.selenium.WebDriver;
 
 public class HomePage extends BasePage {

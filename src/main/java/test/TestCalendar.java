@@ -1,9 +1,9 @@
 package test;
 
 import actions.CalendarActions.CalendarView;
-import component.main.CalendarComp;
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
+import component.main.calendar.CalendarComp;
 import data.CalendarTestData;
 import driver.DriverFactory;
 import org.openqa.selenium.WebDriver;

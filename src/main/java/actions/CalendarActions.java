@@ -1,8 +1,8 @@
 package actions;
 
 import assertions.CalendarAssertions;
-import component.constract.locator.CalendarRootLocator;
-import component.main.CalendarComp;
+import component.constract.CalendarRootLocator;
+import component.main.calendar.CalendarComp;
 import org.openqa.selenium.WebElement;
 
 import java.time.LocalDate;
@@ -39,7 +39,7 @@ public class CalendarActions{
     }
 
     public WebElement getDatePickerHeadingEle(String datePickerHeader) {
-        return parent.datePickerBasedOnId(datePickerHeader);
+        return parent.datePickByLabel(datePickerHeader);
     }
 
     private boolean isDateSelected(String dateValue) {

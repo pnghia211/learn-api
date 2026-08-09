@@ -2,26 +2,20 @@ package assertions;
 
 import actions.TableActions;
 import actions.TableActions.HeaderColumnOption;
-import component.main.TableComp;
+import helpers.TableRecordNormalizer;
 import model.TableRecord;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
 public class TableAssertions {
-    private final TableComp parent;
     private final TableActions actions;
 
-    public TableAssertions(TableComp parent, TableActions actions) {
-        this.parent = parent;
+    public TableAssertions(TableActions actions) {
         this.actions = actions;
-    }
-
-    public TableAssertions cellIsDisplayed(String cell) {
-        assertTrue("Element is not displayed!!!", actions.isCellDisplayed(cell));
-        return this;
     }
 
     public TableAssertions headerColumnNotDisplayed(HeaderColumnOption option) {
@@ -30,21 +24,37 @@ public class TableAssertions {
         return this;
     }
 
-    public TableAssertions cellsByColumnHeader(HeaderColumnOption option, List<String> expected) {
+    public TableAssertions cellsByColumnDisplayed(HeaderColumnOption option, List<String> expected) {
         List<String> actual = new ArrayList<>(actions.getCellsByColumn(option.headerLabel()));
         assertEquals(expected, actual);
         return this;
     }
 
-    public TableAssertions columnCellsNotDisplayed(HeaderColumnOption column) {
+    public TableAssertions cellsByColumnNotDisplayed(HeaderColumnOption column) {
         List<String> cells = actions.getCellsByColumn(column.headerLabel());
         assertTrue("Expected no cells for hidden column: " + column.headerLabel(), cells.isEmpty());
         return this;
     }
 
-    public TableAssertions rowsDisplayed(List<TableRecord> expected) {
-        List<TableRecord> actual = actions.rowsToRecords();
-        assertEquals(expected, actual);
+    public TableAssertions totalAmount() {
+        assertEquals(actions.getFooterTotalAmount(), actions.getCellsTotalAmount());
+        return this;
+    }
+
+    public TableAssertions rowsByTableDisplayed(List<TableRecord> expected) {
+        List<Map<String, String>> actual = actions.getActualRowsEle();
+        TableRecordNormalizer.verify(expected, actual);
+        return this;
+    }
+
+    public TableAssertions rowByCelDisplayed(TableRecord expected, String cell) {
+        Map<String, String> actual = actions.getActualRowEle(cell);
+        TableRecordNormalizer.matches(expected, actual);
+        return this;
+    }
+
+    public TableAssertions cellDisplayed(String cell) {
+        assertTrue("true", actions.isCellDisplayed(cell));
         return this;
     }
 
@@ -52,6 +62,45 @@ public class TableAssertions {
         assertTrue(actions.getCopyNotificationPopup().isDisplayed());
         return this;
     }
+
+    public TableAssertions checkboxIsSelected(String cell) {
+        List<String> states = actions.getRowCheckboxesByCell(cell)
+                .stream()
+                .map(e -> e.getAttribute("data-state")).toList();
+
+        boolean allSelected = states.stream()
+                .noneMatch("unchecked"::equals);
+
+        if (!allSelected) {
+            throw new AssertionError(
+                    "Expected all checkboxes to be checked/indeterminate for cell: " + cell + ", but got states: " + states);
+        }
+
+        return this;
+    }
+
+    public TableAssertions checkedRowsFooter() {
+        int checkedRows = actions.getCheckedRows().size();
+        int[] counts = actions.getSelectedRowsAndTotalCounts();
+
+        if (counts[0] > counts[1]) {
+            throw new AssertionError("Selected count exceeds total: " + counts[0] + " of " + counts[1]);
+        }
+        if (counts[0] != checkedRows) {
+            throw new AssertionError("Summary total (" + counts[1] + ") does not match rendered row count (" + checkedRows + ")");
+        }
+        return this;
+    }
+
+    public TableAssertions checkboxesAreSelected(List<String> cells) {
+        for (String cell : cells) {
+            checkboxIsSelected(cell);
+        }
+        assertFalse("unchecked".equalsIgnoreCase(actions.getHeaderCheckbox().getAttribute("data-state")));
+
+        return this;
+    }
+
 
     public TableActions and() {
         return actions;

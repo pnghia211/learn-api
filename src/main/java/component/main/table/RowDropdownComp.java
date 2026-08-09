@@ -1,0 +1,40 @@
+package component.main.table;
+
+import component.main.BaseComp;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import java.util.NoSuchElementException;
+
+public class RowDropdownComp extends BaseComp {
+    String tableLabel;
+    private By actionButtonSel = By.cssSelector("td button");
+    private By actionDropdownMenuSel = By.cssSelector("[id^='reka-dropdown-menu'][dir='ltr']");
+    private String menuItemCssXpath = "button[data-slot='item'][role='menuitem']";
+    private By copyNotificationPopupSel = By.cssSelector("[aria-label^='Notifications'] [data-slot=base]");
+
+    public RowDropdownComp(WebDriver driver, String tableLabel) {
+        super(driver);
+        this.tableLabel = tableLabel;
+    }
+
+    public WebElement actionBtnByCellText(String tableLabel, String cell){
+        return rowsByCellText(tableLabel, cell).get(0).findElement(actionButtonSel);
+    }
+
+    public WebElement rowDropdownMenu() {
+        return driver.findElement(actionDropdownMenuSel);
+    }
+
+    public WebElement menuItemByLabel(String label) {
+        return rowDropdownMenu().findElements(By.cssSelector(menuItemCssXpath)).stream()
+                .filter(btn -> btn.getText().trim().equalsIgnoreCase(label))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Menu item not found: " + label));
+    }
+
+    public WebElement copyNotificationPopup() {
+        return driver.findElement(copyNotificationPopupSel);
+    }
+}
