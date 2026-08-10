@@ -1,7 +1,7 @@
 package assertions;
 
 import actions.TableActions;
-import actions.TableActions.HeaderColumnOption;
+import data.HeaderColumnOption;
 import helpers.TableRecordNormalizer;
 import model.TableRecord;
 
@@ -19,7 +19,7 @@ public class TableAssertions {
     }
 
     public TableAssertions headerColumnNotDisplayed(HeaderColumnOption option) {
-        List<String> actual = new ArrayList<>(actions.getHeadersMap().keySet());
+        List<String> actual = new ArrayList<>(actions.headerActions().getHeadersMap().keySet());
         assertFalse(actual.contains(option.headerLabel()));
         return this;
     }
@@ -36,19 +36,19 @@ public class TableAssertions {
         return this;
     }
 
-    public TableAssertions totalAmount() {
-        assertEquals(actions.getFooterTotalAmount(), actions.getCellsTotalAmount());
+    public TableAssertions footerTotalAmount() {
+        assertEquals(actions.footerActions().getFooterTotalAmount(), actions.getCellsTotalAmount());
         return this;
     }
 
     public TableAssertions rowsByTableDisplayed(List<TableRecord> expected) {
-        List<Map<String, String>> actual = actions.getActualRowsEle();
+        List<Map<String, String>> actual = actions.getAllRowsData();
         TableRecordNormalizer.verify(expected, actual);
         return this;
     }
 
     public TableAssertions rowByCelDisplayed(TableRecord expected, String cell) {
-        Map<String, String> actual = actions.getActualRowEle(cell);
+        Map<String, String> actual = actions.getRowData(cell);
         TableRecordNormalizer.matches(expected, actual);
         return this;
     }
@@ -96,7 +96,7 @@ public class TableAssertions {
         for (String cell : cells) {
             checkboxIsSelected(cell);
         }
-        assertFalse("unchecked".equalsIgnoreCase(actions.getHeaderCheckbox().getAttribute("data-state")));
+        assertFalse("unchecked".equalsIgnoreCase(actions.headerActions().getHeaderCheckbox().getAttribute("data-state")));
 
         return this;
     }

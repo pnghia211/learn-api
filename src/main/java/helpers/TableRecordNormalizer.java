@@ -1,6 +1,6 @@
 package helpers;
 
-import actions.TableActions.HeaderColumnOption;
+import data.HeaderColumnOption;
 import model.TableRecord;
 
 import java.time.LocalDateTime;
@@ -35,7 +35,7 @@ public class TableRecordNormalizer {
     private static final Map<HeaderColumnOption, Function<TableRecord, String>> FIELD_EXTRACTORS = Map.of(
             HeaderColumnOption.ID, r -> "#" + r.id(),
             HeaderColumnOption.DATE, r -> convertIsoToDisplayFormat(r.date()),
-            HeaderColumnOption.STATUS, r -> capitalize(r.status()),
+            HeaderColumnOption.STATUS, TableRecord::status,
             HeaderColumnOption.EMAIL, TableRecord::email,
             HeaderColumnOption.AMOUNT, r ->  formatAsEuro(r.amount())
     );
@@ -120,13 +120,6 @@ public class TableRecordNormalizer {
     private static String convertIsoToDisplayFormat(String isoDate) {
         LocalDateTime dateTime = LocalDateTime.parse(isoDate, ISO_FORMATTER);
         return dateTime.format(DISPLAY_FORMATTER);
-    }
-
-    private static String capitalize(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        return text.substring(0, 1).toUpperCase(Locale.ENGLISH) + text.substring(1);
     }
 
     private static String formatAsEuro(String rawAmount) {

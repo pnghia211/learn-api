@@ -1,18 +1,18 @@
 package test;
 
 import actions.TableActions.ActionOption;
-import actions.TableActions.HeaderColumnOption;
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
 import component.main.table.TableComp;
+import data.HeaderColumnOption;
 import driver.DriverFactory;
-import helpers.TestDataLoader;
 import model.TableRecord;
 import org.openqa.selenium.WebDriver;
 import page.HomePage;
 
 import java.util.List;
 
+import static helpers.TestDataLoader.loadExpectedTableData;
 import static url.Url.mainPage;
 
 public class TestTable {
@@ -34,24 +34,24 @@ public class TestTable {
         tableComp.forTable("with-infinite-scroll")
                 .scrollTillCelDisplayed("ariamx")
                 .verify().cellDisplayed("ariamx");
-
-        List<TableRecord> usageExpectedRows = TestDataLoader.loadExpectedTableData(relativePathUsageTable);
-        List<TableRecord> visibilityColumnExpectedRows = TestDataLoader.loadExpectedTableData(relativePathColumnVisibility);
+//
+        List<TableRecord> usageExpectedRows = loadExpectedTableData(relativePathUsageTable);
+        List<TableRecord> visibilityColumnExpectedRows = loadExpectedTableData(relativePathColumnVisibility);
         List<String> expectedEmails = usageExpectedRows.stream().map(TableRecord::email).toList();
         TableRecord expectedRow = usageExpectedRows.stream().filter(r -> r.id().equalsIgnoreCase("4598")).toList().get(0);
 
         tableComp.forTable("usage")
-                .verify().cellDisplayed("mia.white@example.com").and()
-                .unselectDropdownOption(HeaderColumnOption.EMAIL)
-                .verify().cellsByColumnNotDisplayed(HeaderColumnOption.EMAIL)
-                .and().selectDropdownOption(HeaderColumnOption.EMAIL)
+                .verify().cellDisplayed("mia.white@example.com")
+                .and().headerActions().unselectDropdownOption(HeaderColumnOption.EMAIL)
+                .and().verify().cellsByColumnNotDisplayed(HeaderColumnOption.EMAIL)
+                .and().headerActions().selectDropdownOption(HeaderColumnOption.EMAIL).and()
                 .verify().cellsByColumnDisplayed(HeaderColumnOption.EMAIL, expectedEmails);
 
         tableComp.forTable("with-column-visibility")
-                .unselectDropdownOption(HeaderColumnOption.AMOUNT)
-                .verify().headerColumnNotDisplayed(HeaderColumnOption.AMOUNT)
+                .headerActions().unselectDropdownOption(HeaderColumnOption.AMOUNT)
+                .and().verify().headerColumnNotDisplayed(HeaderColumnOption.AMOUNT)
                 .cellsByColumnNotDisplayed(HeaderColumnOption.AMOUNT)
-                .and().selectDropdownOption(HeaderColumnOption.AMOUNT);
+                .and().headerActions().selectDropdownOption(HeaderColumnOption.AMOUNT);
 
         tableComp.forTable("with-row-actions")
                 .clickActionButton("#4597")
@@ -63,16 +63,18 @@ public class TestTable {
         tableComp.forTable("usage").verify().rowByCelDisplayed(expectedRow, "#4598");
 
         List<String> checkedRowsSelection = List.of("paid", "william.brown@example.com");
-        tableComp.forTable("with-row-selection")
+        tableComp.forTable("with-row-selection").headerActions()
                 .setAllSelectionHeaderToDefaultState()
-                .selectCheckboxesByCells(checkedRowsSelection)
+                .and().selectCheckboxesByCells(checkedRowsSelection)
                 .verify().checkboxesAreSelected(checkedRowsSelection)
                 .checkedRowsFooter();
 
         List<String> checkedRowsUsage = List.of("evelyn.green@example.com", "mia.white@example.com", "noah.clark@example.com");
         tableComp.forTable("usage").selectCheckboxesByCells(checkedRowsUsage).verify().checkedRowsFooter();
 
-        tableComp.forTable("with-column-footer").verify().totalAmount();
+        tableComp.forTable("with-column-footer").verify().footerTotalAmount();
+
+        tableComp.forTable("with-column-span").getAllRowsData();
 
         Thread.sleep(5000);
         driver.quit();

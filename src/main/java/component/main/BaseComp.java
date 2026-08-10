@@ -3,6 +3,7 @@ package component.main;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import page.BasePage;
 
 import java.util.List;
@@ -20,6 +21,14 @@ public class BaseComp extends BasePage {
 
     protected WebElement getRootComp(String compLabel) {
         return driver.findElement(By.xpath(String.format(rootComponentSel,compLabel)));
+    }
+
+    public WebDriver driver() {
+        return this.driver;
+    }
+
+    public Actions actions() {
+        return this.actions;
     }
 
     protected WebElement getComponentBasedOnHeader(String compLabel, By compSel) {
