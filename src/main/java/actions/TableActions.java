@@ -55,22 +55,22 @@ public class TableActions {
         return tableComp.rowDropdownComp(tableLabel).actionBtnByCellText(tableLabel, cell);
     }
 
-    public List<String> getCellsByColumn(String header) {
-        Integer index = headerActions().getHeadersMap().get(header);
+    public List<String> getCellsByColumn(HeaderColumnOption option) {
+        Integer index = headerActions().getHeadersMap().get(option.label());
         if (index == null) {
             return List.of();
         }
 
         List<WebElement> cellsEle = tableComp.cellsByColumnIndex(tableLabel, index + 1);
         if (cellsEle.isEmpty()) {
-            throw new IllegalStateException("No cells found for column: " + header);
+            throw new IllegalStateException("No cells found for column: " + option);
         }
 
         return cellsEle.stream().map(WebElement::getText).toList();
     }
 
     public Integer getCellsTotalAmount() {
-        Integer index = headerActions().getHeadersMap().get(HeaderColumnOption.AMOUNT.headerLabel());
+        Integer index = headerActions().getHeadersMap().get(HeaderColumnOption.AMOUNT.label());
 
         List<WebElement> cellsEle = tableComp.cellsByColumnIndex(tableLabel, index + 1);
 

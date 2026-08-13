@@ -22,7 +22,7 @@ public class FooterActions {
     }
 
     public String getFooterTotalAmountTxt() {
-        int index = tableActions.headerActions().getHeadersMap().get(HeaderColumnOption.AMOUNT.headerLabel());
+        int index = tableActions.headerActions().getHeadersMap().get(HeaderColumnOption.AMOUNT.label());
         return footerComp.getFooterCellByIndex(index + 1).getText();
     }
 

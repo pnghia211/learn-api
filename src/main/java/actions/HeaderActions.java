@@ -1,7 +1,7 @@
 package actions;
 
 import component.main.table.HeaderComp;
-import data.HeaderColumnOption;
+import data.DropdownOption;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -54,20 +54,20 @@ public class HeaderActions {
         SELECTED, UNSELECTED
     }
 
-    public HeaderActions selectDropdownOption(HeaderColumnOption option) {
+    public HeaderActions selectDropdownOption(DropdownOption option) {
         setDropdownOption(option, DropdownOptionState.SELECTED);
         return this;
     }
 
-    public HeaderActions unselectDropdownOption(HeaderColumnOption option) {
+    public HeaderActions unselectDropdownOption(DropdownOption option) {
         setDropdownOption(option, DropdownOptionState.UNSELECTED);
         return this;
     }
 
-    private HeaderActions setDropdownOption(HeaderColumnOption option, DropdownOptionState desiredState) {
+    private HeaderActions setDropdownOption(DropdownOption option, DropdownOptionState desiredState) {
         selectDropdownButton();
 
-        WebElement optionEle = comp.headerDropdownOptions(tableLabel, option.dropdownLabel());
+        WebElement optionEle = comp.headerDropdownOptions(tableLabel, option.label());
         boolean isChecked = "checked".equalsIgnoreCase(optionEle.getAttribute("data-state"));
         boolean shouldBeChecked = desiredState == DropdownOptionState.SELECTED;
 
@@ -75,7 +75,7 @@ public class HeaderActions {
             optionEle.click();
             new WebDriverWait(comp.driver(), Duration.ofSeconds(5))
                     .until(d -> shouldBeChecked == "checked".equalsIgnoreCase(
-                            comp.headerDropdownOptions(tableLabel, option.dropdownLabel())
+                            comp.headerDropdownOptions(tableLabel, option.label())
                                     .getAttribute("data-state")));
         }
 

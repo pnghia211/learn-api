@@ -4,6 +4,7 @@ import actions.TableActions.ActionOption;
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
 import component.main.table.TableComp;
+import data.DropdownOption;
 import data.HeaderColumnOption;
 import driver.DriverFactory;
 import model.TableRecord;
@@ -34,7 +35,7 @@ public class TestTable {
         tableComp.forTable("with-infinite-scroll")
                 .scrollTillCelDisplayed("ariamx")
                 .verify().cellDisplayed("ariamx");
-//
+
         List<TableRecord> usageExpectedRows = loadExpectedTableData(relativePathUsageTable);
         List<TableRecord> visibilityColumnExpectedRows = loadExpectedTableData(relativePathColumnVisibility);
         List<String> expectedEmails = usageExpectedRows.stream().map(TableRecord::email).toList();
@@ -42,16 +43,16 @@ public class TestTable {
 
         tableComp.forTable("usage")
                 .verify().cellDisplayed("mia.white@example.com")
-                .and().headerActions().unselectDropdownOption(HeaderColumnOption.EMAIL)
+                .and().headerActions().unselectDropdownOption(DropdownOption.EMAIL)
                 .and().verify().cellsByColumnNotDisplayed(HeaderColumnOption.EMAIL)
-                .and().headerActions().selectDropdownOption(HeaderColumnOption.EMAIL).and()
+                .and().headerActions().selectDropdownOption(DropdownOption.EMAIL).and()
                 .verify().cellsByColumnDisplayed(HeaderColumnOption.EMAIL, expectedEmails);
 
         tableComp.forTable("with-column-visibility")
-                .headerActions().unselectDropdownOption(HeaderColumnOption.AMOUNT)
+                .headerActions().unselectDropdownOption(DropdownOption.AMOUNT)
                 .and().verify().headerColumnNotDisplayed(HeaderColumnOption.AMOUNT)
                 .cellsByColumnNotDisplayed(HeaderColumnOption.AMOUNT)
-                .and().headerActions().selectDropdownOption(HeaderColumnOption.AMOUNT);
+                .and().headerActions().selectDropdownOption(DropdownOption.AMOUNT);
 
         tableComp.forTable("with-row-actions")
                 .clickActionButton("#4597")
@@ -74,7 +75,9 @@ public class TestTable {
 
         tableComp.forTable("with-column-footer").verify().footerTotalAmount();
 
-        tableComp.forTable("with-column-span").getAllRowsData();
+        List<String> names = List.of("Laptop", "Phone", "Tablet", "T-Shirt", "Jeans");
+        tableComp.forTable("with-column-span").verify().groupsAreContiguous(HeaderColumnOption.CATEGORY)
+                .columnValuesEqual(HeaderColumnOption.NAME, names);
 
         Thread.sleep(5000);
         driver.quit();

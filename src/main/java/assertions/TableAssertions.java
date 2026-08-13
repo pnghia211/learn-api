@@ -5,11 +5,11 @@ import data.HeaderColumnOption;
 import helpers.TableRecordNormalizer;
 import model.TableRecord;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TableAssertions {
     private final TableActions actions;
@@ -20,19 +20,19 @@ public class TableAssertions {
 
     public TableAssertions headerColumnNotDisplayed(HeaderColumnOption option) {
         List<String> actual = new ArrayList<>(actions.headerActions().getHeadersMap().keySet());
-        assertFalse(actual.contains(option.headerLabel()));
+        assertFalse(actual.contains(option.label()));
         return this;
     }
 
     public TableAssertions cellsByColumnDisplayed(HeaderColumnOption option, List<String> expected) {
-        List<String> actual = new ArrayList<>(actions.getCellsByColumn(option.headerLabel()));
+        List<String> actual = new ArrayList<>(actions.getCellsByColumn(option));
         assertEquals(expected, actual);
         return this;
     }
 
     public TableAssertions cellsByColumnNotDisplayed(HeaderColumnOption column) {
-        List<String> cells = actions.getCellsByColumn(column.headerLabel());
-        assertTrue("Expected no cells for hidden column: " + column.headerLabel(), cells.isEmpty());
+        List<String> cells = actions.getCellsByColumn(column);
+        assertTrue("Expected no cells for hidden column: " + column.label(), cells.isEmpty());
         return this;
     }
 
@@ -101,6 +101,31 @@ public class TableAssertions {
         return this;
     }
 
+    public TableAssertions groupsAreContiguous(HeaderColumnOption groupColumn) {
+        List<Map<String, String>> rows = actions.getAllRowsData();
+        String columnKey = groupColumn.label();
+
+        Set<String> seenGroups = new HashSet<>();
+        String currentGroup = null;
+
+        for (Map<String, String> row : rows) {
+            String group = row.get(columnKey);
+
+            if (!group.equals(currentGroup)) {
+                assertFalse(seenGroups.contains(group),
+                        "Category '" + group + "' appears in multiple separate blocks");
+                seenGroups.add(group);
+                currentGroup = group;
+            }
+        }
+        return this;
+    }
+
+    public TableAssertions columnValuesEqual(HeaderColumnOption column, List<String> expectedValues) {
+        List<String> actualValues = actions.getCellsByColumn(column);
+        assertEquals("Mismatch for column: " + column.label(), expectedValues, actualValues);
+        return this;
+    }
 
     public TableActions and() {
         return actions;

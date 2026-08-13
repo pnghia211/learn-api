@@ -1,25 +1,50 @@
 package data;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public enum HeaderColumnOption {
-    ID("Id", "#"),
-    DATE("Date", "Date"),
-    STATUS("Status", "Status"),
-    EMAIL("Email", "Email"),
-    AMOUNT("Amount", "Amount");
+    ID("Id", "#","ID"),
+    DATE("Date"),
+    STATUS("Status"),
+    EMAIL("Email"),
+    AMOUNT("Amount"),
+    CATEGORY("Category"),
+    NAME("Name"),
+    PRICE("Price"),
+    STOCK("Stock");
 
-    private final String dropdownLabel;
-    private final String headerLabel;
+    private final String label;
+    private final Set<String> headerAliases;
 
-    HeaderColumnOption(String dropdownLabel, String headerLabel) {
-        this.dropdownLabel = dropdownLabel;
-        this.headerLabel = headerLabel;
+    HeaderColumnOption(String label, String... extraAliases) {
+        this.label = label;
+        Set<String> allAliases = new HashSet<>(Arrays.asList(extraAliases));
+        allAliases.add(label);  // label itself is always a valid alias
+        this.headerAliases = Set.copyOf(allAliases);
     }
 
-    public String dropdownLabel() {
-        return dropdownLabel;
+    public String label() {
+        return label;
     }
 
-    public String headerLabel() {
-        return headerLabel;
+    public Set<String> getHeaderAliases() {
+        return headerAliases;
+    }
+
+    public boolean matchesHeader(String actual) {
+        return headerAliases.contains(actual);
+    }
+
+    public static HeaderColumnOption fromHeaderValue(String actualHeaderText) {
+        for (HeaderColumnOption option : values()) {
+            if (option.matchesHeader(actualHeaderText)) {
+                return option;
+            }
+        }
+        throw new IllegalArgumentException(
+                "Actual header text '" + actualHeaderText +
+                        "' has no known HeaderColumnOption mapping. Add an alias entry for it.");
     }
 }

@@ -49,7 +49,7 @@ public class TableRecordNormalizer {
         for (HeaderColumnOption column : HeaderColumnOption.values()) {
             Function<TableRecord, String> extractor = FIELD_EXTRACTORS.get(column);
             if (extractor != null) {
-                map.put(column.headerLabel(), extractor.apply(record));
+                map.put(column.label(), extractor.apply(record));
             }
         }
         return map;
@@ -71,13 +71,16 @@ public class TableRecordNormalizer {
             String column = entry.getKey();
             String actualValue = entry.getValue();
 
-            if (!expected.containsKey(column)) {
+            HeaderColumnOption option = HeaderColumnOption.fromHeaderValue(column);
+            String expectedKey = option.label();
+
+            if (!expected.containsKey(expectedKey)) {
                 throw new IllegalStateException(
                         "Actual data contains column '" + column + "' with no known expected mapping. " +
                                 "Add a ColumnOption + FIELD_EXTRACTORS entry for it.");
             }
 
-            String expectedValue = expected.get(column);
+            String expectedValue = expected.get(expectedKey);
             assertEquals("Mismatch for column: " + column, expectedValue, actualValue);
         }
     }
