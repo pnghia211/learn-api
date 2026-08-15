@@ -2,8 +2,11 @@ package actions;
 
 import component.main.table.HeaderComp;
 import data.DropdownOption;
+import data.HeaderColumnOption;
+import data.SortingOption;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -12,26 +15,24 @@ import java.util.List;
 import java.util.Map;
 
 public class HeaderActions {
-    private final HeaderComp comp;
+    private final HeaderComp headerComp;
     private final TableActions tableActions;
-    private final String tableLabel;
 
-    public HeaderActions(HeaderComp comp, String tableLabel, TableActions tableActions) {
-        this.comp = comp;
+    public HeaderActions(HeaderComp headerComp, TableActions tableActions) {
+        this.headerComp = headerComp;
         this.tableActions = tableActions;
-        this.tableLabel = tableLabel;
     }
 
     public WebElement getHeaderDropdownButton() {
-        return comp.headerDropdownButton(tableLabel);
+        return headerComp.headerDropdownButton();
     }
 
     public WebElement getHeaderCheckbox() {
-        return comp.headerCheckbox(tableLabel);
+        return headerComp.headerCheckbox();
     }
 
     public WebElement getDropdownBtn() {
-        return comp.headerDropdownButton(tableLabel);
+        return headerComp.headerDropdownButton();
     }
 
     private HeaderActions selectDropdownButton() {
@@ -45,7 +46,7 @@ public class HeaderActions {
     private HeaderActions unselectDropdownButton() {
         WebElement button = getDropdownBtn();
         if ("open".equalsIgnoreCase(button.getAttribute("data-state"))) {
-            comp.actions().sendKeys(Keys.ESCAPE).perform();
+            headerComp.actions().sendKeys(Keys.ESCAPE).perform();
         }
         return this;
     }
@@ -55,28 +56,27 @@ public class HeaderActions {
     }
 
     public HeaderActions selectDropdownOption(DropdownOption option) {
-        setDropdownOption(option, DropdownOptionState.SELECTED);
+        setBtnDropdownOption(option, DropdownOptionState.SELECTED);
         return this;
     }
 
     public HeaderActions unselectDropdownOption(DropdownOption option) {
-        setDropdownOption(option, DropdownOptionState.UNSELECTED);
+        setBtnDropdownOption(option, DropdownOptionState.UNSELECTED);
         return this;
     }
 
-    private HeaderActions setDropdownOption(DropdownOption option, DropdownOptionState desiredState) {
+    private HeaderActions setBtnDropdownOption(DropdownOption option, DropdownOptionState desiredState) {
         selectDropdownButton();
 
-        WebElement optionEle = comp.headerDropdownOptions(tableLabel, option.label());
+        WebElement optionEle = headerComp.btnDropdownOptions(option);
         boolean isChecked = "checked".equalsIgnoreCase(optionEle.getAttribute("data-state"));
         boolean shouldBeChecked = desiredState == DropdownOptionState.SELECTED;
 
         if (isChecked != shouldBeChecked) {
             optionEle.click();
-            new WebDriverWait(comp.driver(), Duration.ofSeconds(5))
+            new WebDriverWait(headerComp.driver(), Duration.ofSeconds(5))
                     .until(d -> shouldBeChecked == "checked".equalsIgnoreCase(
-                            comp.headerDropdownOptions(tableLabel, option.label())
-                                    .getAttribute("data-state")));
+                            headerComp.btnDropdownOptions(option).getAttribute("data-state")));
         }
 
         unselectDropdownButton();
@@ -84,7 +84,7 @@ public class HeaderActions {
     }
 
     public Map<String, Integer> getHeadersMap() {
-        List<WebElement> headers = comp.headerColumns(tableLabel);
+        List<WebElement> headers = headerComp.headerColumns();
         Map<String, Integer> headersMap = new LinkedHashMap<>();
 
         for (int i = 0; i < headers.size(); i++) {
@@ -97,12 +97,45 @@ public class HeaderActions {
     }
 
     public HeaderActions setAllSelectionHeaderToDefaultState() {
-        WebElement ele = comp.headerCheckbox(tableLabel);
-        new WebDriverWait(comp.driver(), Duration.ofSeconds(5))
+        WebElement ele = headerComp.headerCheckbox();
+        new WebDriverWait(headerComp.driver(), Duration.ofSeconds(5))
                 .until(d -> {
                     ele.click();
                     return "unchecked".equalsIgnoreCase(ele.getAttribute("data-state"));
                 });
+        return this;
+    }
+
+    public HeaderActions selectSortingHeader(HeaderColumnOption option) {
+        WebElement ele = headerComp.sortingHeader(option);
+        if (!"open".equalsIgnoreCase(ele.getAttribute("data-state"))) {
+            ele.click();
+        }
+        return this;
+    }
+
+    public HeaderActions unselectSortingHeader(HeaderColumnOption option) {
+        WebElement ele = headerComp.sortingHeader(option);
+        if ("open".equalsIgnoreCase(ele.getAttribute("data-state"))) {
+            headerComp.actions().sendKeys(Keys.ESCAPE).perform();
+        }
+        return this;
+    }
+
+    public HeaderActions setHeaderDropdownOption(HeaderColumnOption option, SortingOption sortingOption) {
+        selectSortingHeader(option);
+
+        WebElement optionEle = headerComp.headerDropdownOptions(sortingOption);
+        boolean isChecked = "checked".equalsIgnoreCase(optionEle.getAttribute("data-state"));
+
+        if (!isChecked) {
+            optionEle.click();
+            new WebDriverWait(headerComp.driver(), Duration.ofSeconds(5))
+                    .until(ExpectedConditions.invisibilityOf(optionEle));
+        } else {
+            unselectSortingHeader(option);
+        }
+
         return this;
     }
 

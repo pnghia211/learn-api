@@ -1,6 +1,6 @@
 package component.main.calendar;
 
-import Utils.WaitForCalendarReady;
+import utils.WaitForCalendarReady;
 import actions.CalendarActions;
 import component.constract.CalendarRootLocator;
 import component.constract.locator.DatePickerRootLocator;

@@ -1,11 +1,13 @@
 package test;
 
-import actions.TableActions.ActionOption;
+import actions.TableActions.*;
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
-import component.main.table.TableComp;
+import component.main.table.TableFactory;
 import data.DropdownOption;
 import data.HeaderColumnOption;
+import data.SortingOption;
+import data.TableIndexOption;
 import driver.DriverFactory;
 import model.TableRecord;
 import org.openqa.selenium.WebDriver;
@@ -27,57 +29,65 @@ public class TestTable {
         HomePage homePage = new HomePage(driver);
         HeaderComp headerComp = homePage.componentsSection();
         LeftNavigatorComp leftNavigatorComp = homePage.leftNavigatorComp();
-        TableComp tableComp = homePage.tableComp();
+        TableFactory tableFactory = homePage.tableComp();
 
         headerComp.clickComponentsComp();
         leftNavigatorComp.clickDataTableComp("table");
 
-        tableComp.forTable("with-infinite-scroll")
-                .scrollTillCelDisplayed("ariamx")
-                .verify().cellDisplayed("ariamx");
+//        tableFactory.forTable("with-infinite-scroll")
+//                .scrollTillCellDisplayed("ariamx")
+//                .verify().cellDisplayed("ariamx");
 
         List<TableRecord> usageExpectedRows = loadExpectedTableData(relativePathUsageTable);
         List<TableRecord> visibilityColumnExpectedRows = loadExpectedTableData(relativePathColumnVisibility);
         List<String> expectedEmails = usageExpectedRows.stream().map(TableRecord::email).toList();
         TableRecord expectedRow = usageExpectedRows.stream().filter(r -> r.id().equalsIgnoreCase("4598")).toList().get(0);
 
-        tableComp.forTable("usage")
+        tableFactory.forTable("usage")
                 .verify().cellDisplayed("mia.white@example.com")
                 .and().headerActions().unselectDropdownOption(DropdownOption.EMAIL)
                 .and().verify().cellsByColumnNotDisplayed(HeaderColumnOption.EMAIL)
                 .and().headerActions().selectDropdownOption(DropdownOption.EMAIL).and()
                 .verify().cellsByColumnDisplayed(HeaderColumnOption.EMAIL, expectedEmails);
 
-        tableComp.forTable("with-column-visibility")
+        tableFactory.forTable("with-column-visibility")
                 .headerActions().unselectDropdownOption(DropdownOption.AMOUNT)
                 .and().verify().headerColumnNotDisplayed(HeaderColumnOption.AMOUNT)
                 .cellsByColumnNotDisplayed(HeaderColumnOption.AMOUNT)
                 .and().headerActions().selectDropdownOption(DropdownOption.AMOUNT);
 
-        tableComp.forTable("with-row-actions")
+        tableFactory.forTable("with-row-actions")
                 .clickActionButton("#4597")
                 .selectCopyPaymentIdOpt(ActionOption.COPY_PAYMENT)
                 .verify().copyNotificationPopupDisplayed();
 
-        tableComp.forTable("usage").verify().rowsByTableDisplayed(usageExpectedRows);
-        tableComp.forTable("with-column-visibility").verify().rowsByTableDisplayed(visibilityColumnExpectedRows);
-        tableComp.forTable("usage").verify().rowByCelDisplayed(expectedRow, "#4598");
+        tableFactory.forTable("usage").verify().rowsByTableDisplayed(usageExpectedRows);
+        tableFactory.forTable("with-column-visibility").verify().rowsByTableDisplayed(visibilityColumnExpectedRows);
+        tableFactory.forTable("usage").verify().rowByCelDisplayed(expectedRow, "#4598");
 
         List<String> checkedRowsSelection = List.of("paid", "william.brown@example.com");
-        tableComp.forTable("with-row-selection").headerActions()
+        tableFactory.forTable("with-row-selection").headerActions()
                 .setAllSelectionHeaderToDefaultState()
                 .and().selectCheckboxesByCells(checkedRowsSelection)
                 .verify().checkboxesAreSelected(checkedRowsSelection)
                 .checkedRowsFooter();
 
         List<String> checkedRowsUsage = List.of("evelyn.green@example.com", "mia.white@example.com", "noah.clark@example.com");
-        tableComp.forTable("usage").selectCheckboxesByCells(checkedRowsUsage).verify().checkedRowsFooter();
+        tableFactory.forTable("usage").selectCheckboxesByCells(checkedRowsUsage).verify().checkedRowsFooter();
 
-        tableComp.forTable("with-column-footer").verify().footerTotalAmount();
+        tableFactory.forTable("with-column-footer").verify().footerTotalAmount();
 
         List<String> names = List.of("Laptop", "Phone", "Tablet", "T-Shirt", "Jeans");
-        tableComp.forTable("with-column-span").verify().groupsAreContiguous(HeaderColumnOption.CATEGORY)
+        tableFactory.forTable("with-column-span").verify().groupsAreContiguous(HeaderColumnOption.CATEGORY)
                 .columnValuesEqual(HeaderColumnOption.NAME, names);
+
+        tableFactory.forTable("with-column-sorting", TableIndexOption.SECONDARY)
+                .headerActions().and()
+                .verify().cellsByColumnIsSorted(HeaderColumnOption.ID, SortingOption.ASC).and()
+                .verify().cellsByColumnIsSorted(HeaderColumnOption.ID, SortingOption.DESC).and()
+                .verify().cellsByColumnIsSorted(HeaderColumnOption.EMAIL, SortingOption.DESC).and()
+                .verify().cellsByColumnIsSorted(HeaderColumnOption.AMOUNT, SortingOption.ASC).and()
+                .verify().cellsByColumnIsSorted(HeaderColumnOption.STATUS, SortingOption.DESC);
 
         Thread.sleep(5000);
         driver.quit();

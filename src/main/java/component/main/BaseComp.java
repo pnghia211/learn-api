@@ -1,5 +1,6 @@
 package component.main;
 
+import data.TableIndexOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,15 +13,10 @@ public class BaseComp extends BasePage {
     protected By tableSel = By.xpath(".//*[@data-slot='root'][./table]");
     private By calendarXpath = By.xpath(".//*[@data-slot='root']");
     private By datePickerXpath = By.xpath(".//button[./*[contains(@class,'calendar')]]");
-    protected String rootComponentSel = "//*[@id='%s']/following-sibling::*[@class='my-5'][1]";
-    private String rowByCellValueXpath = ".//td[normalize-space()='%s']/..";
+    protected String rootComponentSel = "//*[@id='%s']/following-sibling::*[@class='my-5'][%s]";
 
     public BaseComp(WebDriver driver) {
         super(driver);
-    }
-
-    protected WebElement getRootComp(String compLabel) {
-        return driver.findElement(By.xpath(String.format(rootComponentSel,compLabel)));
     }
 
     public WebDriver driver() {
@@ -31,14 +27,22 @@ public class BaseComp extends BasePage {
         return this.actions;
     }
 
-    protected WebElement getComponentBasedOnHeader(String compLabel, By compSel) {
-        WebElement rootEle = getRootComp(compLabel);
-        actions.scrollToElement(rootEle).perform();
-        return rootEle.findElement((compSel));
+    protected WebElement getRootComp(String compLabel, int index) {
+        return driver.findElement(By.xpath(String.format(rootComponentSel, compLabel, index)));
     }
 
-    public WebElement tableByLabel(String tableLabel) {
-        return getComponentBasedOnHeader(tableLabel, tableSel);
+    protected WebElement getRootComp(String compLabel) {
+        return getRootComp(compLabel, TableIndexOption.PRIMARY.label());
+    }
+
+    protected WebElement getComponentBasedOnHeader(String compLabel, By compSel, int index) {
+        WebElement rootEle = getRootComp(compLabel, index);
+        actions.scrollToElement(rootEle).perform();
+        return rootEle.findElement(compSel);
+    }
+
+    protected WebElement getComponentBasedOnHeader(String compLabel, By compSel) {
+        return getComponentBasedOnHeader(compLabel, compSel, TableIndexOption.PRIMARY.label());
     }
 
     public WebElement calendarByLabel(String calendarLabel) {
@@ -47,9 +51,5 @@ public class BaseComp extends BasePage {
 
     public WebElement datePickByLabel(String calendarLabel) {
         return getComponentBasedOnHeader(calendarLabel, datePickerXpath);
-    }
-
-    public List<WebElement> rowsByCellText(String tableLabel, String cell) {
-        return tableByLabel(tableLabel).findElements(By.xpath(String.format(rowByCellValueXpath, cell)));
     }
 }

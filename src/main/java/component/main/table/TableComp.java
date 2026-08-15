@@ -8,28 +8,28 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BaseTableComp extends BaseComp {
+public class TableComp extends BaseComp {
     protected String tableLabel;
     protected int tableIndex;
+    protected By tableSel = By.xpath(".//*[@data-slot='root'][./table]");
     private By rowSel = By.cssSelector("tbody tr");
     private By rowSelectionSel = By.cssSelector("tr td [aria-label='Select row']");
     private By checkedRowsSel = By.cssSelector("tr td [aria-label='Select row'][data-state='checked']");
-    protected By tableSel = By.xpath(".//*[@data-slot='root'][./table]");
     private String cellsByColumnIndexXpath = ".//tbody/tr/td[%s]";
     private String rowByCellValueXpath = ".//td[normalize-space()='%s']/..";
 
-    public BaseTableComp(WebDriver driver, String tableLabel, int tableIndex) {
+    public TableComp(WebDriver driver, String tableLabel, int tableIndex) {
         super(driver);
         this.tableLabel = tableLabel;
         this.tableIndex = tableIndex;
     }
 
-    public WebElement tableByLabel(String tableLabel) {
+    public WebElement tableByLabel(String tableLabel, int tableIndex) {
         return getComponentBasedOnHeader(tableLabel, tableSel, tableIndex);
     }
 
     public List<WebElement> rowsByCellText(String tableLabel, String cell) {
-        return tableByLabel(tableLabel).findElements(By.xpath(String.format(rowByCellValueXpath, cell)));
+        return tableByLabel(tableLabel, tableIndex).findElements(By.xpath(String.format(rowByCellValueXpath, cell)));
     }
 
     public HeaderComp headerDropdownComp(String tableLabel) {
@@ -45,11 +45,11 @@ public class BaseTableComp extends BaseComp {
     }
 
     public List<WebElement> tableRows(String tableLabel) {
-        return tableByLabel(tableLabel).findElements(rowSel);
+        return tableByLabel(tableLabel, tableIndex).findElements(rowSel);
     }
 
     public List<WebElement> cellsByColumnIndex(String tableLabel, int headerIndex) {
-        return tableByLabel(tableLabel).findElements(By.xpath(String.format(cellsByColumnIndexXpath, headerIndex)));
+        return tableByLabel(tableLabel, tableIndex).findElements(By.xpath(String.format(cellsByColumnIndexXpath, headerIndex)));
     }
 
     public List<WebElement> rowCheckboxesByCell(String tableSel, String cell) {
@@ -61,7 +61,7 @@ public class BaseTableComp extends BaseComp {
         return checkboxes;
     }
 
-    public List<WebElement> checkedRows(String tabelLabel) {
-        return tableByLabel(tabelLabel).findElements(checkedRowsSel);
+    public List<WebElement> checkedRows(String tableLabel) {
+        return tableByLabel(tableLabel, tableIndex).findElements(checkedRowsSel);
     }
 }

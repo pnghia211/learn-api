@@ -3,7 +3,7 @@ package page;
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
 import component.main.calendar.CalendarComp;
-import component.main.table.TableComp;
+import component.main.table.TableFactory;
 import org.openqa.selenium.WebDriver;
 
 public class HomePage extends BasePage {
@@ -19,8 +19,8 @@ public class HomePage extends BasePage {
         return new LeftNavigatorComp(driver);
     }
 
-    public TableComp tableComp(){
-        return new TableComp(driver);
+    public TableFactory tableComp(){
+        return new TableFactory(driver);
     }
 
     public CalendarComp calenderComp(){

@@ -5,7 +5,9 @@ public enum DropdownOption {
     DATE("Date"),
     STATUS("Status"),
     EMAIL("Email"),
-    AMOUNT("Amount");
+    AMOUNT("Amount"),
+    ASC("Asc"),
+    DESC("Desc");
 
     private final String label;
 

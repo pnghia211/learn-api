@@ -1,39 +1,63 @@
 package component.main.table;
 
-import component.main.BaseComp;
+import data.DropdownOption;
+import data.HeaderColumnOption;
+import data.SortingOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
-public class HeaderComp extends BaseComp {
+public class HeaderComp extends TableComp {
     String tableLabel;
     private By headersSel = By.cssSelector("thead tr th");
     private By allSelectionSel = By.cssSelector("tr th [aria-label='Select all']");
     private By toolbarXpath = By.xpath(".//*[@data-slot='root']/preceding-sibling::div");
-    private By dropdownButtonSel = By.cssSelector("[id^='reka-dropdown-menu']");
+    private By dropdownButtonSel = By.cssSelector("button[id^='reka-dropdown-menu']");
     private String dropdownOptionsXpath = "//*[contains(@id,'reka-dropdown') and @dir='ltr']//*[@data-slot='item' and normalize-space(.)='%s']";
+    private String sortingHeaderSel = ".//thead/tr/th/button[normalize-space()='%s']";
 
-    public HeaderComp(WebDriver driver, String tableLabel) {
-        super(driver);
+    public HeaderComp(WebDriver driver, String tableLabel, int tableIndex) {
+        super(driver, tableLabel, tableIndex);
         this.tableLabel = tableLabel;
     }
 
-    public WebElement headerDropdownButton(String tableLabel) {
+    public WebElement table() {
+        return tableByLabel(tableLabel, tableIndex);
+    }
+
+    public WebElement headerDropdownButton() {
         return getComponentBasedOnHeader(tableLabel, toolbarXpath).findElement(dropdownButtonSel);
     }
 
-    public WebElement headerDropdownOptions(String tableLabel, String option) {
-        return tableByLabel(tableLabel)
-                .findElement(By.xpath(String.format(dropdownOptionsXpath, option)));
+    public WebElement btnDropdownOptions(DropdownOption option) {
+        return table().findElement(By.xpath(String.format(dropdownOptionsXpath, option.label())));
     }
 
-    public WebElement headerCheckbox(String tableLabel) {
-        return tableByLabel(tableLabel).findElement(allSelectionSel);
+    public WebElement headerDropdownOptions(SortingOption option) {
+        return table().findElement(By.xpath(String.format(dropdownOptionsXpath, option.label())));
     }
 
-    public List<WebElement> headerColumns(String tableLabel) {
-        return tableByLabel(tableLabel).findElements(headersSel);
+    public WebElement sortingHeader(HeaderColumnOption option) {
+        List<WebElement> headers = table().findElements(headersSel);
+
+        String extracted = headers.stream()
+                .map(h -> h.getText().trim())
+                .filter(option::matchesHeader)
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException(
+                        "No header found matching " + option + " (aliases: " + option.getHeaderAliases() + ")"));
+
+        return table().findElement(By.xpath(String.format(sortingHeaderSel, extracted)));
+    }
+
+    public WebElement headerCheckbox() {
+        return table().findElement(allSelectionSel);
+    }
+
+    public List<WebElement> headerColumns() {
+        return table().findElements(headersSel);
     }
 }

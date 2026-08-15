@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public enum HeaderColumnOption {
-    ID("Id", "#","ID"),
+    ID("Id", "#", "ID", "Id"),
     DATE("Date"),
     STATUS("Status"),
     EMAIL("Email"),

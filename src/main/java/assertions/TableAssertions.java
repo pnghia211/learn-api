@@ -2,6 +2,7 @@ package assertions;
 
 import actions.TableActions;
 import data.HeaderColumnOption;
+import data.SortingOption;
 import helpers.TableRecordNormalizer;
 import model.TableRecord;
 
@@ -121,9 +122,23 @@ public class TableAssertions {
         return this;
     }
 
-    public TableAssertions columnValuesEqual(HeaderColumnOption column, List<String> expectedValues) {
-        List<String> actualValues = actions.getCellsByColumn(column);
-        assertEquals("Mismatch for column: " + column.label(), expectedValues, actualValues);
+    public TableAssertions columnValuesEqual(HeaderColumnOption option, List<String> expected) {
+        List<String> actual = actions.getCellsByColumn(option);
+        assertEquals("Mismatch for column: " + option.label(), expected, actual);
+        return this;
+    }
+
+    public TableAssertions cellsByColumnIsSorted(HeaderColumnOption option, SortingOption sortingOption) {
+        actions.headerActions().setHeaderDropdownOption(option, sortingOption);
+        List<String> actual = actions.getCellsByColumn(option);
+
+        Comparator<String> comparator = sortingOption == SortingOption.ASC
+                ? Comparator.naturalOrder() : Comparator.reverseOrder();
+
+        List<String> expected = new ArrayList<>(actual);
+        expected.sort(comparator);
+
+        assertEquals(expected, actual);
         return this;
     }
 

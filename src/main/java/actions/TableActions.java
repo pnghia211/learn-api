@@ -1,11 +1,13 @@
 package actions;
 
-import Utils.WaitForTableLoading;
+import utils.WaitForClassTransition;
 import assertions.TableAssertions;
 import component.main.table.TableComp;
+import component.main.table.HeaderComp;
 import data.HeaderColumnOption;
 import helpers.JsExecutorHelper;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -18,50 +20,62 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class TableActions {
-    private final TableComp tableComp;
+    private final WebDriver driver;
+    private final String tableLabel;
+    private final int tableIndex;
+    private final TableComp table;
+
     private HeaderActions headerActions;
     private FooterActions footerActions;
-    private final String tableLabel;
 
-    public TableActions(TableComp tableComp, String tableLabel) {
-        this.tableComp = tableComp;
+    public TableActions(WebDriver driver, String tableLabel, int tableIndex) {
+        this.driver = driver;
         this.tableLabel = tableLabel;
+        this.tableIndex = tableIndex;
+        this.table = new TableComp(driver, tableLabel, tableIndex);
     }
 
     private WebElement getTable() {
-        return tableComp.tableByLabel(tableLabel);
+        return table.tableByLabel(tableLabel, tableIndex);
     }
 
     public List<WebElement> getRows() {
-        return tableComp.tableRows(tableLabel);
+        return table.tableRows(tableLabel);
     }
 
     public FooterActions footerActions() {
-        if (footerActions == null) footerActions = new FooterActions(tableComp.footerComp(tableLabel), tableLabel, this);
+        if (footerActions == null) footerActions = new FooterActions(table.footerComp(tableLabel), tableLabel, this);
         return footerActions;
     }
 
     public HeaderActions headerActions() {
         if (headerActions == null)
-            headerActions = new HeaderActions(tableComp.headerDropdownComp(tableLabel), tableLabel, this);
+            headerActions = new HeaderActions(new HeaderComp(driver, tableLabel, tableIndex), this);
         return headerActions;
     }
 
     public List<WebElement> getRowsByCellValue(String cell) {
-        return tableComp.rowsByCellText(tableLabel, cell);
+        return table.rowsByCellText(tableLabel, cell);
     }
 
     public WebElement getActionBtnByCellValue(String tableLabel, String cell) {
-        return tableComp.rowDropdownComp(tableLabel).actionBtnByCellText(tableLabel, cell);
+        return table.rowDropdownComp(tableLabel).actionBtnByCellText(tableLabel, cell);
     }
 
     public List<String> getCellsByColumn(HeaderColumnOption option) {
-        Integer index = headerActions().getHeadersMap().get(option.label());
+        Map<String, Integer> headersMap = headerActions().getHeadersMap();
+
+        Integer index = headersMap.entrySet().stream()
+                .filter(entry -> option.matchesHeader(entry.getKey()))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+
         if (index == null) {
             return List.of();
         }
 
-        List<WebElement> cellsEle = tableComp.cellsByColumnIndex(tableLabel, index + 1);
+        List<WebElement> cellsEle = table.cellsByColumnIndex(tableLabel, index + 1);
         if (cellsEle.isEmpty()) {
             throw new IllegalStateException("No cells found for column: " + option);
         }
@@ -72,7 +86,7 @@ public class TableActions {
     public Integer getCellsTotalAmount() {
         Integer index = headerActions().getHeadersMap().get(HeaderColumnOption.AMOUNT.label());
 
-        List<WebElement> cellsEle = tableComp.cellsByColumnIndex(tableLabel, index + 1);
+        List<WebElement> cellsEle = table.cellsByColumnIndex(tableLabel, index + 1);
 
         return cellsEle.stream().mapToInt(c -> {
             String text = c.getText().replace("€", "").replace(",", "").trim();
@@ -81,36 +95,40 @@ public class TableActions {
     }
 
     public TableActions clickActionButton(String cell) {
-        tableComp.actions().moveToElement(getActionBtnByCellValue(tableLabel, cell)).perform();
+        table.actions().moveToElement(getActionBtnByCellValue(tableLabel, cell)).perform();
         getActionBtnByCellValue(tableLabel, cell).click();
         return this;
     }
 
     public TableActions selectCopyPaymentIdOpt(ActionOption option) {
-        tableComp.rowDropdownComp(tableLabel).menuItemByLabel(option.label()).click();
+        table.rowDropdownComp(tableLabel).menuItemByLabel(option.label()).click();
         return this;
     }
 
     public WebElement getCopyNotificationPopup() {
-        return tableComp.rowDropdownComp(tableLabel).copyNotificationPopup();
+        return table.rowDropdownComp(tableLabel).copyNotificationPopup();
     }
 
-    public TableActions scrollTillCelDisplayed(String cell) {
+    public TableActions scrollTillCellDisplayed(String cell) {
         int attempts = 0;
         int maxAttempts = 20;
 
         while (attempts < maxAttempts) {
-            if (isCellDisplayed(cell)) return this;
+            List<WebElement> matches = getRowsByCellValue(cell);
+            if (!matches.isEmpty()) {
+                table.actions().scrollToElement(matches.get(0)).perform();
+                return this;
+            }
 
             List<WebElement> rows = getRows();
 
             WebElement lastRow = rows.get(rows.size() - 1);
-            tableComp.actions().scrollToElement(lastRow).perform();
+            table.actions().scrollToElement(lastRow).perform();
 
             WebElement tableEle = getTable();
 
-            new WebDriverWait(tableComp.driver(), Duration.ofSeconds(5))
-                    .until(new WaitForTableLoading(tableEle));
+            new WebDriverWait(table.driver(), Duration.ofSeconds(5))
+                    .until(new WaitForClassTransition(tableEle));
 
             attempts++;
         }
@@ -120,18 +138,18 @@ public class TableActions {
     public boolean isCellDisplayed(String cell) {
         List<WebElement> matches = getRowsByCellValue(cell);
         if (!matches.isEmpty() && matches.get(0).isDisplayed()) {
-            tableComp.actions().scrollToElement(matches.get(0)).perform();
+            table.actions().scrollToElement(matches.get(0)).perform();
             return true;
         }
         return false;
     }
 
     public List<WebElement> getRowCheckboxesByCell(String cell) {
-        return tableComp.rowCheckboxesByCell(tableLabel, cell);
+        return table.rowCheckboxesByCell(tableLabel, cell);
     }
 
     public List<WebElement> getCheckedRows() {
-        return tableComp.checkedRows(tableLabel);
+        return table.checkedRows(tableLabel);
     }
 
     public int[] getSelectedRowsAndTotalCounts() {
@@ -182,7 +200,7 @@ public class TableActions {
             if ("checked".equals(checkbox.getDomAttribute("data-state"))) {
                 return;
             }
-            JsExecutorHelper.scrollIntoViewCentered(tableComp.driver(), checkbox);
+            JsExecutorHelper.scrollIntoViewCentered(table.driver(), checkbox);
             checkbox.click();
         });
         return this;

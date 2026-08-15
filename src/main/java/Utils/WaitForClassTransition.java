@@ -5,10 +5,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
-public class WaitForTableLoading implements ExpectedCondition<Boolean> {
+public class WaitForClassTransition implements ExpectedCondition<Boolean> {
     private final WebElement rootEle;
 
-    public WaitForTableLoading(WebElement rootEle) {
+    public WaitForClassTransition(WebElement rootEle) {
         this.rootEle = rootEle;
     }
 
