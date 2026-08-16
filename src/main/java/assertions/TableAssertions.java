@@ -142,6 +142,11 @@ public class TableAssertions {
         return this;
     }
 
+    public TableAssertions cellDisplayedInTree(String cell) {
+        assertTrue(actions.isCellDisplayedInTree(cell));
+        return this;
+    }
+
     public TableActions and() {
         return actions;
     }

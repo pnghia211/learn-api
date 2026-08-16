@@ -3,7 +3,6 @@ package actions;
 import utils.WaitForClassTransition;
 import assertions.TableAssertions;
 import component.main.table.TableComp;
-import component.main.table.HeaderComp;
 import data.HeaderColumnOption;
 import helpers.JsExecutorHelper;
 import org.openqa.selenium.By;
@@ -233,15 +232,12 @@ public class TableActions {
         return this;
     }
 
-    public TableActions verifyCellDisplayInTree(String cell) {
+    public boolean isCellDisplayedInTree(String cell) {
         int maxAttempts = 10;
         while (!isCellDisplayed(cell) && maxAttempts-- > 0) {
             clickExpandBtn();
         }
-        if (!isCellDisplayed(cell)) {
-            throw new NoSuchElementException("Cell '" + cell + "' not displayed after expanding tree");
-        }
-        return this;
+        return isCellDisplayed(cell);
     }
 
     public enum ActionOption {

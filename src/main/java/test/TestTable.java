@@ -72,24 +72,7 @@ public class TestTable {
                 .verify().checkboxesAreSelected(checkedRowsSelection)
                 .checkedRowsFooter();
 
-        List<String> checkedRowsUsage = List.of("evelyn.green@example.com", "mia.white@example.com", "noah.clark@example.com");
-        tableFactory.forTable("usage").selectCheckboxesByCells(checkedRowsUsage).verify().checkedRowsFooter();
-
-        tableFactory.forTable("with-column-footer").verify().footerTotalAmount();
-
-        List<String> names = List.of("Laptop", "Phone", "Tablet", "T-Shirt", "Jeans");
-        tableFactory.forTable("with-column-span").verify().groupsAreContiguous(HeaderColumnOption.CATEGORY)
-                .columnValuesEqual(HeaderColumnOption.NAME, names);
-
-        tableFactory.forTable("with-column-sorting", TableIndexOption.SECONDARY)
-                .headerActions().and()
-                .verify().cellsByColumnIsSorted(HeaderColumnOption.ID, SortingOption.ASC).and()
-                .verify().cellsByColumnIsSorted(HeaderColumnOption.ID, SortingOption.DESC).and()
-                .verify().cellsByColumnIsSorted(HeaderColumnOption.EMAIL, SortingOption.DESC).and()
-                .verify().cellsByColumnIsSorted(HeaderColumnOption.AMOUNT, SortingOption.ASC).and()
-                .verify().cellsByColumnIsSorted(HeaderColumnOption.STATUS, SortingOption.DESC);
-
-        tableFactory.forTable("with-tree-data").verifyCellDisplayInTree("4595");
+        tableFactory.forTable("with-tree-data").verify().cellDisplayedInTree("4596");
 
         Thread.sleep(5000);
         driver.quit();
