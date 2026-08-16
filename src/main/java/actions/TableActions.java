@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 public class TableActions {
@@ -36,30 +37,29 @@ public class TableActions {
     }
 
     private WebElement getTable() {
-        return table.tableByLabel(tableLabel, tableIndex);
+        return table.tableByLabel();
     }
 
     public List<WebElement> getRows() {
-        return table.tableRows(tableLabel);
+        return table.tableRows();
     }
 
     public FooterActions footerActions() {
-        if (footerActions == null) footerActions = new FooterActions(table.footerComp(tableLabel), tableLabel, this);
+        if (footerActions == null) footerActions = new FooterActions(table.footerComp(), this);
         return footerActions;
     }
 
     public HeaderActions headerActions() {
-        if (headerActions == null)
-            headerActions = new HeaderActions(new HeaderComp(driver, tableLabel, tableIndex), this);
+        if (headerActions == null) headerActions = new HeaderActions(table.headerComp(), this);
         return headerActions;
     }
 
     public List<WebElement> getRowsByCellValue(String cell) {
-        return table.rowsByCellText(tableLabel, cell);
+        return table.rowsByCellText(cell);
     }
 
-    public WebElement getActionBtnByCellValue(String tableLabel, String cell) {
-        return table.rowDropdownComp(tableLabel).actionBtnByCellText(tableLabel, cell);
+    public WebElement getActionBtnByCellValue(String cell) {
+        return table.rowDropdownComp().actionBtnByCellText(cell);
     }
 
     public List<String> getCellsByColumn(HeaderColumnOption option) {
@@ -75,7 +75,7 @@ public class TableActions {
             return List.of();
         }
 
-        List<WebElement> cellsEle = table.cellsByColumnIndex(tableLabel, index + 1);
+        List<WebElement> cellsEle = table.cellsByColumnIndex(index + 1);
         if (cellsEle.isEmpty()) {
             throw new IllegalStateException("No cells found for column: " + option);
         }
@@ -86,7 +86,7 @@ public class TableActions {
     public Integer getCellsTotalAmount() {
         Integer index = headerActions().getHeadersMap().get(HeaderColumnOption.AMOUNT.label());
 
-        List<WebElement> cellsEle = table.cellsByColumnIndex(tableLabel, index + 1);
+        List<WebElement> cellsEle = table.cellsByColumnIndex(index + 1);
 
         return cellsEle.stream().mapToInt(c -> {
             String text = c.getText().replace("€", "").replace(",", "").trim();
@@ -95,34 +95,37 @@ public class TableActions {
     }
 
     public TableActions clickActionButton(String cell) {
-        table.actions().moveToElement(getActionBtnByCellValue(tableLabel, cell)).perform();
-        getActionBtnByCellValue(tableLabel, cell).click();
+        table.actions().moveToElement(getActionBtnByCellValue(cell)).perform();
+        getActionBtnByCellValue(cell).click();
         return this;
     }
 
     public TableActions selectCopyPaymentIdOpt(ActionOption option) {
-        table.rowDropdownComp(tableLabel).menuItemByLabel(option.label()).click();
+        table.rowDropdownComp().menuItemByLabel(option.label()).click();
         return this;
     }
 
     public WebElement getCopyNotificationPopup() {
-        return table.rowDropdownComp(tableLabel).copyNotificationPopup();
+        return table.rowDropdownComp().copyNotificationPopup();
     }
 
     public TableActions scrollTillCellDisplayed(String cell) {
         int attempts = 0;
         int maxAttempts = 20;
+        int lastPosition = 0;
 
         while (attempts < maxAttempts) {
-            List<WebElement> matches = getRowsByCellValue(cell);
+            List<WebElement> matches = getTable().findElements
+                    (By.xpath(".//tbody/tr[position() > " + lastPosition + "]/td[normalize-space()='" + cell + "']"));
+
             if (!matches.isEmpty()) {
                 table.actions().scrollToElement(matches.get(0)).perform();
                 return this;
             }
 
-            List<WebElement> rows = getRows();
+            int currentRowCount = getRows().size();
 
-            WebElement lastRow = rows.get(rows.size() - 1);
+            WebElement lastRow = getTable().findElement(By.xpath(".//tbody/tr[position() = " + currentRowCount + "]"));
             table.actions().scrollToElement(lastRow).perform();
 
             WebElement tableEle = getTable();
@@ -130,6 +133,7 @@ public class TableActions {
             new WebDriverWait(table.driver(), Duration.ofSeconds(5))
                     .until(new WaitForClassTransition(tableEle));
 
+            lastPosition = currentRowCount;
             attempts++;
         }
         return this;
@@ -145,11 +149,11 @@ public class TableActions {
     }
 
     public List<WebElement> getRowCheckboxesByCell(String cell) {
-        return table.rowCheckboxesByCell(tableLabel, cell);
+        return table.rowCheckboxesByCell(cell);
     }
 
     public List<WebElement> getCheckedRows() {
-        return table.checkedRows(tableLabel);
+        return table.checkedRows();
     }
 
     public int[] getSelectedRowsAndTotalCounts() {
@@ -209,6 +213,33 @@ public class TableActions {
     public TableActions selectCheckboxesByCells(List<String> cells) {
         for (String cell : cells) {
             selectCheckboxByCell(cell);
+        }
+        return this;
+    }
+
+    public TableActions clickExpandBtnByCell(String... cells) {
+        for (String cell : cells) {
+            table.rowExpandedBtnByCell(cell).click();
+
+            new WebDriverWait(table.driver(), Duration.ofSeconds(5))
+                    .until(driver -> "true".equalsIgnoreCase(table.rowsByCellText(cell).get(0).getAttribute("data-expanded")));
+        }
+        return this;
+    }
+
+    public TableActions clickExpandBtn() {
+        table.expandButtons().stream()
+                .findFirst().ifPresent(WebElement::click);
+        return this;
+    }
+
+    public TableActions verifyCellDisplayInTree(String cell) {
+        int maxAttempts = 10;
+        while (!isCellDisplayed(cell) && maxAttempts-- > 0) {
+            clickExpandBtn();
+        }
+        if (!isCellDisplayed(cell)) {
+            throw new NoSuchElementException("Cell '" + cell + "' not displayed after expanding tree");
         }
         return this;
     }

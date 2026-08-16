@@ -7,12 +7,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class FooterActions {
-    private final String tableLabel;
     private final FooterComp footerComp;
     private final TableActions tableActions;
 
-    public FooterActions(FooterComp footerComp, String tableLabel, TableActions tableActions) {
-        this.tableLabel = tableLabel;
+    public FooterActions(FooterComp footerComp, TableActions tableActions) {
         this.footerComp = footerComp;
         this.tableActions = tableActions;
     }

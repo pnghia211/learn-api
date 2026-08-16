@@ -13,10 +13,10 @@ public class FooterComp extends TableComp {
     }
 
     public WebElement getFooterCellByIndex(int headerIndex) {
-        return tableByLabel(tableLabel, tableIndex).findElement(By.xpath(String.format(cellFooterByColumnIndexXpath, headerIndex)));
+        return tableByLabel().findElement(By.xpath(String.format(cellFooterByColumnIndexXpath, headerIndex)));
     }
 
     public WebElement getFooterSummary() {
-        return tableByLabel(tableLabel, tableIndex).findElement(cellFooterSummaryXpath);
+        return tableByLabel().findElement(cellFooterSummaryXpath);
     }
 }

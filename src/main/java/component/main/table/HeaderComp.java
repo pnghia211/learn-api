@@ -25,7 +25,7 @@ public class HeaderComp extends TableComp {
     }
 
     public WebElement table() {
-        return tableByLabel(tableLabel, tableIndex);
+        return tableByLabel();
     }
 
     public WebElement headerDropdownButton() {

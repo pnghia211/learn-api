@@ -34,9 +34,9 @@ public class TestTable {
         headerComp.clickComponentsComp();
         leftNavigatorComp.clickDataTableComp("table");
 
-//        tableFactory.forTable("with-infinite-scroll")
-//                .scrollTillCellDisplayed("ariamx")
-//                .verify().cellDisplayed("ariamx");
+        tableFactory.forTable("with-infinite-scroll")
+                .scrollTillCellDisplayed("ariamx")
+                .verify().cellDisplayed("ariamx");
 
         List<TableRecord> usageExpectedRows = loadExpectedTableData(relativePathUsageTable);
         List<TableRecord> visibilityColumnExpectedRows = loadExpectedTableData(relativePathColumnVisibility);
@@ -88,6 +88,8 @@ public class TestTable {
                 .verify().cellsByColumnIsSorted(HeaderColumnOption.EMAIL, SortingOption.DESC).and()
                 .verify().cellsByColumnIsSorted(HeaderColumnOption.AMOUNT, SortingOption.ASC).and()
                 .verify().cellsByColumnIsSorted(HeaderColumnOption.STATUS, SortingOption.DESC);
+
+        tableFactory.forTable("with-tree-data").verifyCellDisplayInTree("4595");
 
         Thread.sleep(5000);
         driver.quit();
