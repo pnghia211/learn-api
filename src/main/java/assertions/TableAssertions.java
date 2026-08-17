@@ -1,15 +1,18 @@
 package assertions;
 
+import actions.PaginationActions;
 import actions.TableActions;
 import data.HeaderColumnOption;
 import data.SortingOption;
 import helpers.TableRecordNormalizer;
 import model.TableRecord;
+import org.openqa.selenium.WebElement;
 
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TableAssertions {
@@ -17,6 +20,10 @@ public class TableAssertions {
 
     public TableAssertions(TableActions actions) {
         this.actions = actions;
+    }
+
+    private PaginationActions paginationActions() {
+        return actions.paginationActions();
     }
 
     public TableAssertions headerColumnNotDisplayed(HeaderColumnOption option) {
@@ -144,6 +151,46 @@ public class TableAssertions {
 
     public TableAssertions cellDisplayedInTree(String cell) {
         assertTrue(actions.isCellDisplayedInTree(cell));
+        return this;
+    }
+
+    public TableAssertions paginationDefaultState() {
+        assertAll(() -> assertFalse(actions.paginationActions().getFirstPageBtn().isEnabled()),
+                () -> assertFalse(actions.paginationActions().getPreviousPageBtn().isEnabled()),
+                () -> assertTrue(actions.paginationActions().getNextPageBtn().isEnabled()),
+                () -> assertTrue(actions.paginationActions().getLastPageBtn().isEnabled()),
+                () -> assertEquals("Page 1 should be selected", actions.paginationActions().getCurrentPageBtn().getText().trim(), "1"));
+        return this;
+    }
+
+    public TableAssertions rowsDisplayedEachPage(List<TableRecord> expectedData) {
+        int expectedTotal = expectedData.size();
+        int numberOfPages = paginationActions().getListPageBtn().size();
+        int expectedRows = expectedTotal/numberOfPages;
+        int remainder = expectedTotal % numberOfPages;
+
+        List<WebElement> buttons = actions.paginationActions().getListPageBtn();
+        for (int i = 0; i < buttons.size(); i++) {
+            buttons.get(i).click();
+            int expected = (i == buttons.size() - 1 && remainder != 0) ? remainder : expectedRows;
+
+            assertEquals(expected, actions.getRows().size());
+        }
+
+        return this;
+    }
+
+    public TableAssertions rowContentEachPage(List<TableRecord> expectedData) {
+        paginationActions().backToFirstPage();
+
+        int numberOfPages = paginationActions().getListPageBtn().size();
+        for (int page = 0; page < numberOfPages; page++) {
+            List<TableRecord> expectedSlice = paginationActions().sliceForPage(expectedData, page, numberOfPages);
+            paginationActions().getListPageBtn().get(page).click();
+            List<Map<String, String>> actual = actions.getAllRowsData();
+
+            TableRecordNormalizer.verify(expectedSlice, actual);
+        }
         return this;
     }
 

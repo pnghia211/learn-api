@@ -3,6 +3,7 @@ package component.main.table;
 import actions.TableActions;
 import component.main.BaseComp;
 import data.TableIndexOption;
+import data.TableLabel;
 import org.openqa.selenium.WebDriver;
 
 public class TableFactory extends BaseComp {
@@ -10,11 +11,11 @@ public class TableFactory extends BaseComp {
         super(driver);
     }
 
-    public TableActions forTable(String tableLabel) {
+    public TableActions forTable(TableLabel tableLabel) {
         return forTable(tableLabel, TableIndexOption.PRIMARY);
     }
 
-    public TableActions forTable(String tableLabel, TableIndexOption option) {
-        return new TableActions(driver, tableLabel, option.label());
+    public TableActions forTable(TableLabel tableLabel, TableIndexOption option) {
+        return new TableActions(driver, tableLabel.label(), option.label());
     }
 }

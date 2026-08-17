@@ -24,9 +24,9 @@ public class TableActions {
     private final String tableLabel;
     private final int tableIndex;
     private final TableComp table;
-
     private HeaderActions headerActions;
     private FooterActions footerActions;
+    private PaginationActions paginationActions;
 
     public TableActions(WebDriver driver, String tableLabel, int tableIndex) {
         this.driver = driver;
@@ -51,6 +51,11 @@ public class TableActions {
     public HeaderActions headerActions() {
         if (headerActions == null) headerActions = new HeaderActions(table.headerComp(), this);
         return headerActions;
+    }
+
+    public PaginationActions paginationActions() {
+        if (paginationActions == null) paginationActions = new PaginationActions(table.paginationComp(), this);
+        return paginationActions;
     }
 
     public List<WebElement> getRowsByCellValue(String cell) {

@@ -38,6 +38,10 @@ public class TableComp extends BaseComp {
         return new RowDropdownComp(driver, tableLabel, tableIndex);
     }
 
+    public PaginationComp paginationComp() {
+        return new PaginationComp(driver, tableLabel, tableIndex);
+    }
+
     public WebElement tableByLabel() {
         return getComponentBasedOnHeader(tableLabel, tableSel, tableIndex);
     }
