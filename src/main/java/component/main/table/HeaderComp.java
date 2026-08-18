@@ -12,7 +12,8 @@ import java.util.NoSuchElementException;
 
 public class HeaderComp extends TableComp {
     String tableLabel;
-    private By headersSel = By.cssSelector("thead tr th");
+    private By headerSel = By.cssSelector("thead");
+    private By headerCellsSel = By.cssSelector("thead tr th");
     private By allSelectionSel = By.cssSelector("tr th [aria-label='Select all']");
     private By toolbarXpath = By.xpath(".//*[@data-slot='root']/preceding-sibling::div");
     private By dropdownButtonSel = By.cssSelector("button[id^='reka-dropdown-menu']");
@@ -28,6 +29,10 @@ public class HeaderComp extends TableComp {
         return tableByLabel();
     }
 
+    public WebElement headerNav() {
+        return table().findElement(headerSel);
+    }
+
     public WebElement headerDropdownButton() {
         return getComponentBasedOnHeader(tableLabel, toolbarXpath).findElement(dropdownButtonSel);
     }
@@ -41,7 +46,7 @@ public class HeaderComp extends TableComp {
     }
 
     public WebElement sortingHeader(HeaderColumnOption option) {
-        List<WebElement> headers = table().findElements(headersSel);
+        List<WebElement> headers = table().findElements(headerCellsSel);
 
         String extracted = headers.stream()
                 .map(h -> h.getText().trim())
@@ -58,6 +63,6 @@ public class HeaderComp extends TableComp {
     }
 
     public List<WebElement> headerColumns() {
-        return table().findElements(headersSel);
+        return table().findElements(headerCellsSel);
     }
 }

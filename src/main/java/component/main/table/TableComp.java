@@ -13,13 +13,16 @@ public class TableComp extends BaseComp {
     protected String tableLabel;
     protected int tableIndex;
     protected By tableSel = By.xpath(".//*[@data-slot='root'][./table]");
-    private By rowSel = By.cssSelector("tbody tr");
+    private By rowSel = By.cssSelector("tbody > tr");
     private By rowSelectionSel = By.cssSelector("tr td [aria-label='Select row']");
     private By checkedRowsSel = By.cssSelector("tr td [aria-label='Select row'][data-state='checked']");
     private String cellsByColumnIndexXpath = ".//tbody/tr/td[%s]";
     private String rowByCellValueXpath = ".//tbody/tr/td[normalize-space()='%s']/..";
     private By expandBtnRowSel = By.cssSelector("button[class]:not([class*='invisible']) span[class*='i-lucide:plus']");
-
+    private By pinnedRows = By.cssSelector("tbody tr[data-pinned='top']");
+    private By unpinRowBtn = By.cssSelector("td button[aria-label='Unpin row']");
+    private By unpinRows = By.cssSelector("tbody tr:not([data-pinned='top'])");
+    private By pinRowBtn = By.cssSelector("td button[aria-label='Pin row to top']");
     public TableComp(WebDriver driver, String tableLabel, int tableIndex) {
         super(driver);
         this.tableLabel = tableLabel;
@@ -78,6 +81,22 @@ public class TableComp extends BaseComp {
             checkboxes.add(checkbox);
         });
         return checkboxes;
+    }
+
+    public List<WebElement> pinnedRows() {
+        return tableByLabel().findElements(pinnedRows);
+    }
+
+    public List<WebElement> unpinnedButtons() {
+        return tableByLabel().findElements(unpinRowBtn);
+    }
+
+    public WebElement pinBtnRowByCell(String cell) {
+        return rowsByCellText(cell).get(0).findElement(pinRowBtn);
+    }
+
+    public List<WebElement> unpinnedRows(){
+        return tableByLabel().findElements(unpinRows);
     }
 
     public List<WebElement> checkedRows() {

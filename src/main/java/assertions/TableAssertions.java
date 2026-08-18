@@ -62,7 +62,7 @@ public class TableAssertions {
     }
 
     public TableAssertions cellDisplayed(String cell) {
-        assertTrue("true", actions.isCellDisplayed(cell));
+        assertTrue(actions.isCellDisplayed(cell));
         return this;
     }
 
@@ -191,6 +191,27 @@ public class TableAssertions {
 
             TableRecordNormalizer.verify(expectedSlice, actual);
         }
+        return this;
+    }
+
+    public TableAssertions pinnedRowsOrder(List<String> expected) {
+        List<String> actual = actions.getPinnedRowsData().stream()
+                .map(r -> r.get(HeaderColumnOption.EMAIL.label())).toList();
+
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            String actualValue = actual.get(i);
+
+            assertEquals(expected.get(i), actualValue);
+        }
+
+        return this;
+    }
+
+    public TableAssertions unpinnedRowsByCells(String... expected) {
+        List<String> actual = actions.getUnpinnedRowsData().stream()
+                .map(r -> r.get(HeaderColumnOption.EMAIL.label())).toList();
+        assertTrue(new HashSet<>(actual).containsAll(List.of(expected)));
         return this;
     }
 

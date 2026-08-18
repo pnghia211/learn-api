@@ -1,5 +1,6 @@
 package actions;
 
+import data.RowActionOption;
 import utils.WaitForClassTransition;
 import assertions.TableAssertions;
 import component.main.table.TableComp;
@@ -16,7 +17,6 @@ import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 public class TableActions {
@@ -104,7 +104,7 @@ public class TableActions {
         return this;
     }
 
-    public TableActions selectCopyPaymentIdOpt(ActionOption option) {
+    public TableActions selectCopyPaymentIdOpt(RowActionOption option) {
         table.rowDropdownComp().menuItemByLabel(option.label()).click();
         return this;
     }
@@ -115,24 +115,22 @@ public class TableActions {
 
     public TableActions scrollTillCellDisplayed(String cell) {
         int attempts = 0;
-        int maxAttempts = 20;
+        int maxAttempts = 25;
         int lastPosition = 0;
 
         while (attempts < maxAttempts) {
-            List<WebElement> matches = getTable().findElements
-                    (By.xpath(".//tbody/tr[position() > " + lastPosition + "]/td[normalize-space()='" + cell + "']"));
+            WebElement tableEle = getTable();
+            WebElement match = findMatchInNewRows(getRows(), lastPosition, cell);
 
-            if (!matches.isEmpty()) {
-                table.actions().scrollToElement(matches.get(0)).perform();
+            if (match != null) {
+                table.actions().scrollToElement(match).perform();
                 return this;
             }
 
             int currentRowCount = getRows().size();
 
-            WebElement lastRow = getTable().findElement(By.xpath(".//tbody/tr[position() = " + currentRowCount + "]"));
+            WebElement lastRow = tableEle.findElement(By.cssSelector("tbody > tr:nth-of-type(" + currentRowCount + ")"));
             table.actions().scrollToElement(lastRow).perform();
-
-            WebElement tableEle = getTable();
 
             new WebDriverWait(table.driver(), Duration.ofSeconds(5))
                     .until(new WaitForClassTransition(tableEle));
@@ -141,6 +139,19 @@ public class TableActions {
             attempts++;
         }
         return this;
+    }
+
+    private WebElement findMatchInNewRows(List<WebElement> allRows, int lastPosition, String cell) {
+        for (int i = lastPosition; i < allRows.size(); i++) {
+            WebElement row = allRows.get(i);
+            List<WebElement> cells = row.findElements(By.cssSelector("td"));
+            for (WebElement cellEl : cells) {
+                if (cell.equals(cellEl.getText().trim())) {
+                    return row;
+                }
+            }
+        }
+        return null;
     }
 
     public boolean isCellDisplayed(String cell) {
@@ -245,17 +256,28 @@ public class TableActions {
         return isCellDisplayed(cell);
     }
 
-    public enum ActionOption {
-        COPY_PAYMENT("Copy payment ID");
-        private final String label;
+    public List<Map<String, String>> getPinnedRowsData() {
+        return toRowsData(table.pinnedRows());
+    }
 
-        ActionOption(String label) {
-            this.label = label;
-        }
+    public List<Map<String, String>> getUnpinnedRowsData() {
+        return toRowsData(table.unpinnedRows());
+    }
+    public TableActions unpinAllRows() {
+        table.unpinnedButtons().forEach(WebElement::click);
+        return this;
+    }
 
-        public String label() {
-            return label;
-        }
+    public TableActions pinRowByCell(String cell) {
+        table.pinBtnRowByCell(cell).click();
+        return this;
+    }
+
+    public TableActions pinRowsByCells(List<String> cells) {
+        cells.forEach(this::pinRowByCell);
+        List<WebElement> pinnedRows = table.pinnedRows();
+        table.actions().scrollToElement(pinnedRows.get(pinnedRows.size() - 1));
+        return this;
     }
 
     public TableAssertions verify() {

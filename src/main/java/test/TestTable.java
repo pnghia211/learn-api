@@ -12,7 +12,6 @@ import page.HomePage;
 import java.util.List;
 
 import static helpers.TestDataLoader.loadExpectedTableData;
-import actions.TableActions.*;
 import static url.Url.mainPage;
 
 public class TestTable {
@@ -56,7 +55,7 @@ public class TestTable {
 
         tableFactory.forTable(TableLabel.WITH_ROW_ACTIONS)
                 .clickActionButton("#4597")
-                .selectCopyPaymentIdOpt(ActionOption.COPY_PAYMENT)
+                .selectCopyPaymentIdOpt(RowActionOption.COPY_PAYMENT)
                 .verify().copyNotificationPopupDisplayed();
 
         tableFactory.forTable(TableLabel.USAGE).verify().rowsByTableDisplayed(usageExpectedRows);
@@ -94,6 +93,14 @@ public class TestTable {
         tableFactory.forTable(TableLabel.WITH_PAGINATION).verify().paginationDefaultState()
                 .rowsDisplayedEachPage(paginationList)
                 .rowContentEachPage(paginationList);
+
+        List<String> rowToPin = List.of("emma.davis@example.com", "benjamin.jackson@example.com", "ava.thomas@example.com");
+        tableFactory.forTable(TableLabel.WITH_ROW_PINNING).verify()
+                .pinnedRowsOrder(List.of("mia.white@example.com", "emma.davis@example.com"))
+                .and().unpinAllRows()
+                .pinRowsByCells(rowToPin)
+                .verify().pinnedRowsOrder(rowToPin).unpinnedRowsByCells("mia.white@example.com");
+
 
         Thread.sleep(5000);
         driver.quit();

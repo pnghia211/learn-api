@@ -10,7 +10,8 @@ public enum TableLabel {
     WITH_COLUMN_SPAN("with-column-span"),
     WITH_COLUMN_SORTING("with-column-sorting"),
     WITH_TREE_DATA("with-tree-data"),
-    WITH_PAGINATION("with-pagination");
+    WITH_PAGINATION("with-pagination"),
+    WITH_ROW_PINNING("with-row-pinning");
 
     private final String label;
 
