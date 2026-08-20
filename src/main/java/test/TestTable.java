@@ -103,6 +103,10 @@ public class TestTable {
                 .expandUntilCellDisplayed("4595")
                 .verify().cellDisplayed("4595");
 
+        tableFactory.forTable(TableLabel.WITH_GROUPED_ROWS)
+                .expandUntilCellDisplayed("emma.davis@example.com")
+                .verify().cellDisplayed("emma.davis@example.com");
+
         Thread.sleep(5000);
         driver.quit();
     }

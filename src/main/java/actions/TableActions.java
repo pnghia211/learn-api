@@ -309,7 +309,7 @@ public class TableActions {
         int anchorDepth = getRowDepth(anchorRow);
         List<WebElement> children = new ArrayList<>();
 
-        List<WebElement> siblings = anchorRow.findElements(By.xpath("following-sibling::tr[@data-expanded]"));
+        List<WebElement> siblings = anchorRow.findElements(By.xpath("following-sibling::tr[@data-expanded][.//button]"));
         for (WebElement sibling : siblings) {
             int siblingDepth = getRowDepth(sibling);
 
@@ -330,8 +330,8 @@ public class TableActions {
     }
 
     private int getRowDepth(WebElement row) {
-        String style = row.findElement(By.cssSelector("div[style*='rem']")).getAttribute("style");
-        Matcher matcher = Pattern.compile("padding-inline-start:\\s*(\\d+)rem").matcher(style);
+        String style = row.findElement(By.cssSelector("[style*='rem']")).getAttribute("style");
+        Matcher matcher = Pattern.compile("(\\d+)rem").matcher(style);
         if (matcher.find()) {
             return Integer.parseInt(matcher.group(1));
         }
