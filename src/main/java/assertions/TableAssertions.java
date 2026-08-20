@@ -10,8 +10,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -71,7 +70,7 @@ public class TableAssertions {
         return this;
     }
 
-    public TableAssertions checkboxIsSelected(String cell) {
+    public TableAssertions checkboxesAreSelected(String cell) {
         List<String> states = actions.getRowCheckboxesByCell(cell)
                 .stream()
                 .map(e -> e.getAttribute("data-state")).toList();
@@ -102,9 +101,9 @@ public class TableAssertions {
 
     public TableAssertions checkboxesAreSelected(List<String> cells) {
         for (String cell : cells) {
-            checkboxIsSelected(cell);
+            checkboxesAreSelected(cell);
         }
-        assertFalse("unchecked".equalsIgnoreCase(actions.headerActions().getHeaderCheckbox().getAttribute("data-state")));
+        assertNotEquals("unchecked", actions.headerActions().getHeaderCheckbox().getAttribute("data-state").toLowerCase());
 
         return this;
     }

@@ -16,9 +16,10 @@ public class TableComp extends BaseComp {
     private By rowSel = By.cssSelector("tbody > tr");
     private By rowSelectionSel = By.cssSelector("tr td [aria-label='Select row']");
     private By checkedRowsSel = By.cssSelector("tr td [aria-label='Select row'][data-state='checked']");
-    private String cellsByColumnIndexXpath = ".//tbody/tr/td[%s]";
-    private String rowByCellValueXpath = ".//tbody/tr/td[normalize-space()='%s']/..";
-    private By expandBtnRowSel = By.cssSelector("button[class]:not([class*='invisible']) span[class*='i-lucide:plus']");
+    private String cellsByColumnIndexXpath = "tbody tr td:nth-of-type(%s)";
+    private By cellSel = By.cssSelector("tbody > tr > td");
+    private By expandBtnRowSel = By.cssSelector("button[class]:not([class*='invisible']) span[class*='plus']");
+    private By expandableRow = By.cssSelector("tbody tr:has(button[class]:not([class*='invisible']))");
     private By pinnedRows = By.cssSelector("tbody tr[data-pinned='top']");
     private By unpinRowBtn = By.cssSelector("td button[aria-label='Unpin row']");
     private By unpinRows = By.cssSelector("tbody tr:not([data-pinned='top'])");
@@ -50,7 +51,16 @@ public class TableComp extends BaseComp {
     }
 
     public List<WebElement> rowsByCellText(String cell) {
-        return tableByLabel().findElements(By.xpath(String.format(rowByCellValueXpath, cell)));
+        List<WebElement> allTds = tableByLabel().findElements(cellSel);
+        List<WebElement> matchingRows = new ArrayList<>();
+
+        for (WebElement td : allTds) {
+            if (cell.equals(td.getDomProperty("textContent").trim())) {
+                WebElement row = td.findElement(By.xpath(".."));
+                matchingRows.add(row);
+            }
+        }
+        return matchingRows;
     }
 
     public WebElement rowExpandedBtnByCell(String cell) {
@@ -62,8 +72,12 @@ public class TableComp extends BaseComp {
         return rows.get(0).findElement(expandBtnRowSel);
     }
 
-    public List<WebElement> expandButtons() {
-        return tableByLabel().findElements(expandBtnRowSel);
+    public WebElement expandButton() {
+        return tableByLabel().findElement(expandBtnRowSel);
+    }
+
+    public List<WebElement> expandableRows() {
+        return tableByLabel().findElements(expandableRow);
     }
 
     public List<WebElement> tableRows() {
@@ -71,7 +85,7 @@ public class TableComp extends BaseComp {
     }
 
     public List<WebElement> cellsByColumnIndex(int headerIndex) {
-        return tableByLabel().findElements(By.xpath(String.format(cellsByColumnIndexXpath, headerIndex)));
+        return tableByLabel().findElements(By.cssSelector(String.format(cellsByColumnIndexXpath, headerIndex)));
     }
 
     public List<WebElement> rowCheckboxesByCell(String cell) {

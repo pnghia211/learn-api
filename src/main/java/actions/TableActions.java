@@ -14,9 +14,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TableActions {
@@ -120,14 +119,15 @@ public class TableActions {
 
         while (attempts < maxAttempts) {
             WebElement tableEle = getTable();
-            WebElement match = findMatchInNewRows(getRows(), lastPosition, cell);
+            List<WebElement> tableRows = getRows();
+            WebElement match = findMatchInNewRows(tableRows, lastPosition, cell);
 
             if (match != null) {
                 table.actions().scrollToElement(match).perform();
                 return this;
             }
 
-            int currentRowCount = getRows().size();
+            int currentRowCount = tableRows.size();
 
             WebElement lastRow = tableEle.findElement(By.cssSelector("tbody > tr:nth-of-type(" + currentRowCount + ")"));
             table.actions().scrollToElement(lastRow).perform();
@@ -232,19 +232,8 @@ public class TableActions {
         return this;
     }
 
-    public TableActions clickExpandBtnByCell(String... cells) {
-        for (String cell : cells) {
-            table.rowExpandedBtnByCell(cell).click();
-
-            new WebDriverWait(table.driver(), Duration.ofSeconds(5))
-                    .until(driver -> "true".equalsIgnoreCase(table.rowsByCellText(cell).get(0).getAttribute("data-expanded")));
-        }
-        return this;
-    }
-
     public TableActions clickExpandBtn() {
-        table.expandButtons().stream()
-                .findFirst().ifPresent(WebElement::click);
+        table.expandButton().click();
         return this;
     }
 
@@ -263,6 +252,7 @@ public class TableActions {
     public List<Map<String, String>> getUnpinnedRowsData() {
         return toRowsData(table.unpinnedRows());
     }
+
     public TableActions unpinAllRows() {
         table.unpinnedButtons().forEach(WebElement::click);
         return this;
@@ -278,6 +268,78 @@ public class TableActions {
         List<WebElement> pinnedRows = table.pinnedRows();
         table.actions().scrollToElement(pinnedRows.get(pinnedRows.size() - 1));
         return this;
+    }
+
+    public TableActions expandUntilCellDisplayed(String targetCell) {
+        if (isCellDisplayed(targetCell)) {
+            return this;
+        }
+
+        List<WebElement> topLevelRows = table.expandableRows();
+        boolean found = expandBranch(topLevelRows, targetCell);
+
+        if (!found) {
+            throw new NoSuchElementException(targetCell + " is not displayed!!!");
+        }
+
+        return this;
+    }
+
+    private boolean expandBranch(List<WebElement> candidateRows, String targetCell) {
+        for (WebElement row : candidateRows) {
+            clickExpandBtn();
+
+            if (isCellDisplayed(targetCell)) {
+                return true;
+            }
+
+            List<WebElement> children = getExpandableRows(row);
+
+            if (!children.isEmpty()) {
+                boolean foundDeeper = expandBranch(children, targetCell);
+                if (foundDeeper) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<WebElement> getExpandableRows(WebElement anchorRow) {
+        int anchorDepth = getRowDepth(anchorRow);
+        List<WebElement> children = new ArrayList<>();
+
+        List<WebElement> siblings = anchorRow.findElements(By.xpath("following-sibling::tr[@data-expanded]"));
+        for (WebElement sibling : siblings) {
+            int siblingDepth = getRowDepth(sibling);
+
+            if (siblingDepth <= anchorDepth) {
+                break;
+            }
+
+            if (siblingDepth > anchorDepth + 1) {
+                continue;
+            }
+
+            if (isExpandable(sibling)) {
+                children.add(sibling);
+            };
+        }
+
+        return children;
+    }
+
+    private int getRowDepth(WebElement row) {
+        String style = row.findElement(By.cssSelector("div[style*='rem']")).getAttribute("style");
+        Matcher matcher = Pattern.compile("padding-inline-start:\\s*(\\d+)rem").matcher(style);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        }
+        throw new IllegalStateException("Cannot determine row depth from style: " + style);
+    }
+
+    private boolean isExpandable(WebElement row) {
+        return row.findElement(By.cssSelector("button[class]:not([class*='invisible'])")).isEnabled();
     }
 
     public TableAssertions verify() {

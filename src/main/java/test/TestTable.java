@@ -86,8 +86,6 @@ public class TestTable {
                 .verify().cellsByColumnIsSorted(HeaderColumnOption.AMOUNT, SortingOption.ASC).and()
                 .verify().cellsByColumnIsSorted(HeaderColumnOption.STATUS, SortingOption.DESC);
 
-        tableFactory.forTable(TableLabel.WITH_TREE_DATA).verify().cellDisplayedInTree("4596");
-
         List<TableRecord> paginationList = loadExpectedTableData(relativePathPagination);
 
         tableFactory.forTable(TableLabel.WITH_PAGINATION).verify().paginationDefaultState()
@@ -101,6 +99,9 @@ public class TestTable {
                 .pinRowsByCells(rowToPin)
                 .verify().pinnedRowsOrder(rowToPin).unpinnedRowsByCells("mia.white@example.com");
 
+        tableFactory.forTable(TableLabel.WITH_TREE_DATA)
+                .expandUntilCellDisplayed("4595")
+                .verify().cellDisplayed("4595");
 
         Thread.sleep(5000);
         driver.quit();
