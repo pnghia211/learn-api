@@ -1,5 +1,6 @@
 package component.main.calendar;
 
+import data.CalendarLabel;
 import utils.WaitForCalendarReady;
 import actions.CalendarActions;
 import component.constract.CalendarRootLocator;
@@ -17,7 +18,9 @@ import java.time.Duration;
 import java.util.List;
 
 public class CalendarComp extends BaseComp {
-    private String dateXpath = "[data-value='%s']";
+    private By calendarSel = By.cssSelector("[data-slot='root']");
+    private By datePickerBtnSel = By.cssSelector("button:has(> [class*='calendar'])");
+    private String dateValueCss = "[data-value='%s']";
     private By datePickerCalenderSel = By.cssSelector("[id^='reka'][dir='ltr']");
     private By headingSel = By.cssSelector("[data-slot='header'] [data-slot='label']");
     private By nextMonthSel = By.cssSelector("[aria-label='Next month']");
@@ -35,6 +38,14 @@ public class CalendarComp extends BaseComp {
         return this.actions;
     }
 
+    public WebElement calendarByLabel(String calendarLabel) {
+        return getComponentBasedOnHeader(calendarLabel, calendarSel);
+    }
+
+    public WebElement datePickByLabel(String calendarLabel) {
+        return getComponentBasedOnHeader(calendarLabel, datePickerBtnSel);
+    }
+
     public WebElement waitForOpenDatePickerCalendarReady() {
         return new WebDriverWait(driver, Duration.ofSeconds(5))
                 .pollingEvery(Duration.ofMillis(200))
@@ -48,7 +59,7 @@ public class CalendarComp extends BaseComp {
 
     public WebElement dateCell(CalendarRootLocator rootLocator, String dateValue) {
         return rootLocator.locate()
-                .findElement(By.cssSelector(String.format(dateXpath, dateValue)));
+                .findElement(By.cssSelector(String.format(dateValueCss, dateValue)));
     }
 
     public WebElement headingEle(CalendarRootLocator rootLocator) {
@@ -75,11 +86,11 @@ public class CalendarComp extends BaseComp {
         return rootLocator.locate().findElements(selectedDateSel);
     }
 
-    public CalendarActions forCalendar(String calendarLabel) {
-        return new CalendarActions(this, new StaticCalendarRootLocator(this, calendarLabel));
+    public CalendarActions forCalendar(CalendarLabel calendarLabel) {
+        return new CalendarActions(this, new StaticCalendarRootLocator(this, calendarLabel.label()));
     }
 
-    public CalendarActions forDatePicker(String calendarLabel) {
-        return new CalendarActions(this, new DatePickerRootLocator(this, calendarLabel));
+    public CalendarActions forDatePicker(CalendarLabel calendarLabel) {
+        return new CalendarActions(this, new DatePickerRootLocator(this, calendarLabel.label()));
     }
 }

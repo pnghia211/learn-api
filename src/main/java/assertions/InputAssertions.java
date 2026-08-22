@@ -11,11 +11,13 @@ import java.util.TreeSet;
 
 import static org.junit.Assert.*;
 
-public class CalendarAssertions {
+public class InputAssertions {
+    private final CalendarComp parent;
     private final CalendarRootLocator rootLocator;
     private final CalendarActions actions;
 
-    public CalendarAssertions(CalendarRootLocator rootLocator, CalendarActions actions) {
+    public InputAssertions(CalendarComp parent, CalendarRootLocator rootLocator, CalendarActions actions) {
+        this.parent = parent;
         this.rootLocator = rootLocator;
         this.actions = actions;
     }
@@ -25,44 +27,44 @@ public class CalendarAssertions {
         return "true".equalsIgnoreCase(result);
     }
 
-    public CalendarAssertions dateIsSelected(String dateValue) {
+    public InputAssertions dateIsSelected(String dateValue) {
         assertTrue(isDateSelected(dateValue));
         return this;
     }
 
-    public CalendarAssertions dateIsNotSelected(String dateValue) {
+    public InputAssertions dateIsNotSelected(String dateValue) {
         assertFalse(isDateSelected(dateValue));
         return this;
     }
 
-    public CalendarAssertions dateIsDisabled(String dateValue) {
+    public InputAssertions dateIsDisabled(String dateValue) {
         String result = actions.getDateCell(dateValue).getAttribute("aria-disabled");
         assertEquals("true", result);
         return this;
     }
 
-    public CalendarAssertions datesAreSelected(List<String> dates) {
+    public InputAssertions datesAreSelected(List<String> dates) {
         dates.forEach(this::dateIsSelected);
         return this;
     }
 
-    public CalendarAssertions heading(String heading) {
+    public InputAssertions heading(String heading) {
         String result = DateHelper.convertHeadingFormat(heading);
         String actual = actions.getHeadingEle().getText();
         assertEquals(result, actual);
         return this;
     }
 
-    public CalendarAssertions datePickerHeading(String date) {
+    public InputAssertions datePickerHeading(String date) {
         String result = DateHelper.convertHeadingFormat(date);
         String actual = actions.getDatePickerHeadingEle(rootLocator.getCalendarLabel()).getText();
         assertEquals(result, actual);
         return this;
     }
 
-    public CalendarAssertions dateRangeSelected(String startDate, String endDate) {
+    public InputAssertions dateRangeSelected(String startDate, String endDate) {
         List<String> expected = DateHelper.buildDateRange(startDate, endDate);
-        List<String> actual = actions.getSelectedDates(rootLocator)
+        List<String> actual = parent.selectedDate(rootLocator)
                 .stream()
                 .map(el -> el.getAttribute("data-value"))
                 .toList();
@@ -71,8 +73,8 @@ public class CalendarAssertions {
         return this;
     }
 
-    public CalendarAssertions presetRangesDisplayed(List<String> expectedLabels) {
-        List<String> actualLabels = actions.getDateRangePreset(rootLocator)
+    public InputAssertions presetRangesDisplayed(List<String> expectedLabels) {
+        List<String> actualLabels = parent.dateRangePresets(rootLocator)
                 .stream()
                 .map(WebElement::getText)
                 .toList();

@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 public class TableComp extends BaseComp {
     protected String tableLabel;
     protected int tableIndex;
-    protected By tableSel = By.xpath(".//*[@data-slot='root'][./table]");
+    protected By tableSel = By.cssSelector("[data-slot='root']:has(table)");
     private By rowSel = By.cssSelector("tbody > tr");
     private By rowSelectionSel = By.cssSelector("tr td [aria-label='Select row']");
     private By checkedRowsSel = By.cssSelector("tr td [aria-label='Select row'][data-state='checked']");

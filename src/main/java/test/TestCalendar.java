@@ -4,6 +4,7 @@ import actions.CalendarActions.CalendarView;
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
 import component.main.calendar.CalendarComp;
+import data.CalendarLabel;
 import data.CalendarTestData;
 import driver.DriverFactory;
 import org.openqa.selenium.WebDriver;
@@ -27,43 +28,43 @@ public class TestCalendar {
         headerComp.clickComponentsComp();
 
         leftNavigatorComp.clickDataTableComp("calendar");
-        calendarComp.forCalendar("usage")
+        calendarComp.forCalendar(CalendarLabel.USAGE)
                 .verify().dateIsSelected(CalendarTestData.DEFAULT_DATE)
                 .and().selectDate("2022-02-04")
                 .verify().dateIsSelected("2022-02-04")
                 .dateIsNotSelected(CalendarTestData.DEFAULT_DATE);
 
-        calendarComp.forCalendar("with-disabled-dates")
+        calendarComp.forCalendar(CalendarLabel.DISABLED_DATES)
                 .selectDate(CalendarTestData.DISABLED_DATE)
                 .verify().dateIsDisabled(CalendarTestData.DISABLED_DATE);
 
-        calendarComp.forCalendar("usage")
+        calendarComp.forCalendar(CalendarLabel.USAGE)
                 .selectNextMonth()
                 .verify().heading("2022-03")
                 .and().selectNextYear()
                 .verify().heading("2023-03");
 
-        calendarComp.forCalendar("usage")
+        calendarComp.forCalendar(CalendarLabel.USAGE)
                 .selectViewGrid(CalendarView.YEAR)
                 .selectViewGrid(CalendarView.DECADE)
                 .selectViewGrid(CalendarView.MONTH);
 
         List<String> dates = List.of("2022-02-04", "2022-02-16", "2022-02-23");
-        calendarComp.forCalendar("multiple")
+        calendarComp.forCalendar(CalendarLabel.MULTIPLES)
                 .selectMultipleDates(dates)
                 .verify().datesAreSelected(dates);
 
         String startDate = "2022-02-10";
         String endDate = "2022-02-02";
-        calendarComp.forCalendar("range")
+        calendarComp.forCalendar(CalendarLabel.RANGE)
                 .selectDateRange(startDate, endDate)
                 .verify().dateRangeSelected(startDate, endDate);
 
-        calendarComp.forCalendar("usage")
+        calendarComp.forCalendar(CalendarLabel.USAGE)
                 .selectDateWithNavigation("2016-01-01")
                 .verify().heading("2016-01").dateIsSelected("2016-01-01");
 
-        calendarComp.forDatePicker("as-a-date-picker")
+        calendarComp.forDatePicker(CalendarLabel.DATE_PICKER)
                 .selectDateWithNavigation("2024-05-04")
                 .verify().heading("2024-05")
                 .and().verify().dateIsSelected("2024-05-04")
@@ -79,7 +80,7 @@ public class TestCalendar {
                 "Last 6 months",
                 "Last year");
 
-        calendarComp.forDatePicker("as-a-date-range-picker")
+        calendarComp.forDatePicker(CalendarLabel.DATE_RANGE_PICKER)
                 .selectDateWithNavigation(firstDateSelected)
                 .selectDateWithNavigation(secondDateSelected)
                 .verify().datePickerHeading(firstDateSelected + " - " + secondDateSelected)

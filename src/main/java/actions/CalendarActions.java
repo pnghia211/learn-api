@@ -27,7 +27,7 @@ public class CalendarActions{
     }
 
     public CalendarAssertions verify(){
-        return new CalendarAssertions(parent, rootLocator, this);
+        return new CalendarAssertions(rootLocator, this);
     }
 
     public WebElement getDateCell(String dateValue) {
@@ -45,6 +45,14 @@ public class CalendarActions{
     private boolean isDateSelected(String dateValue) {
         String result = getDateCell(dateValue).getAttribute("data-selected");
         return "true".equalsIgnoreCase(result);
+    }
+
+    public List<WebElement> getSelectedDates(CalendarRootLocator rootLocator) {
+        return parent.selectedDate(rootLocator);
+    }
+
+    public List<WebElement> getDateRangePreset(CalendarRootLocator rootLocator){
+        return parent.dateRangePresets(rootLocator);
     }
 
     public CalendarActions selectNextMonth() {

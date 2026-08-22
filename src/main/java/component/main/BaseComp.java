@@ -10,9 +10,6 @@ import page.BasePage;
 import java.util.List;
 
 public class BaseComp extends BasePage {
-    protected By tableSel = By.xpath(".//*[@data-slot='root'][./table]");
-    private By calendarXpath = By.xpath(".//*[@data-slot='root']");
-    private By datePickerXpath = By.xpath(".//button[./*[contains(@class,'calendar')]]");
     protected String rootComponentSel = "//*[@id='%s']/following-sibling::*[@class='my-5'][%s]";
 
     public BaseComp(WebDriver driver) {
@@ -43,13 +40,5 @@ public class BaseComp extends BasePage {
 
     protected WebElement getComponentBasedOnHeader(String compLabel, By compSel) {
         return getComponentBasedOnHeader(compLabel, compSel, TableIndexOption.PRIMARY.label());
-    }
-
-    public WebElement calendarByLabel(String calendarLabel) {
-        return getComponentBasedOnHeader(calendarLabel, calendarXpath);
-    }
-
-    public WebElement datePickByLabel(String calendarLabel) {
-        return getComponentBasedOnHeader(calendarLabel, datePickerXpath);
     }
 }

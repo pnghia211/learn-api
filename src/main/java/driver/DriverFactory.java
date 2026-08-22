@@ -39,32 +39,4 @@ public class DriverFactory{
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
         return driver;
     }
-
-    public WebDriver getDriver(String browserName) {
-        if (driver == null) {
-            DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-            desiredCapabilities.setPlatform(Platform.ANY);
-            BrowserType browserType;
-
-            try {
-                browserType = BrowserType.valueOf(browserName);
-            } catch (Exception e) {
-                throw new IllegalArgumentException(browserName + " is not supported!!!");
-            }
-
-            switch (browserType) {
-                case chrome -> desiredCapabilities.setBrowserName(BrowserType.chrome.getName());
-                case firefox -> desiredCapabilities.setBrowserName(BrowserType.firefox.getName());
-                case safari -> desiredCapabilities.setBrowserName(BrowserType.safari.getName());
-            }
-            try {
-                String hub = "http://localhost:4444/wd/hub";
-//                String hub = System.getProperty("hub").concat("/wd/hub");
-                driver = new RemoteWebDriver(new URI(hub).toURL(), desiredCapabilities);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return driver;
-    }
 }
