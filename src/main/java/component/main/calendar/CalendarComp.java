@@ -15,7 +15,9 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CalendarComp extends BaseComp {
     private By calendarSel = By.cssSelector("[data-slot='root']");
@@ -53,7 +55,7 @@ public class CalendarComp extends BaseComp {
                 .until(new WaitForCalendarReady(datePickerCalenderSel));
     }
 
-    public List<WebElement> dateRangePresets(CalendarRootLocator rootLocator){
+    public List<WebElement> dateRangePresets(CalendarRootLocator rootLocator) {
         return rootLocator.locate().findElements(dateRangePresets);
     }
 

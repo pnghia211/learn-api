@@ -32,8 +32,9 @@ public class InputActions {
     }
 
     public InputActions type(String input) {
-        typeInput().clear();
-        typeInput().sendKeys(input);
+        WebElement typeInput = typeInput();
+        typeInput.clear();
+        typeInput.sendKeys(input);
         return this;
     }
 

@@ -2,12 +2,14 @@ package component.main.form;
 
 import component.main.BaseComp;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
 public class InputComp extends BaseComp {
+    private WebElement cachedRoot;
     private final String inputLabel;
     private By rootComp = By.cssSelector("[data-slot='root'][class*='relative']");
     private By uploadFileInputSel = By.cssSelector("input[type='file']");
@@ -28,7 +30,8 @@ public class InputComp extends BaseComp {
     }
 
     public WebElement inputByLabel() {
-        return getRootComp(inputLabel);
+        cachedRoot = getOrRefreshCached(cachedRoot, () -> getRootComp(inputLabel));
+        return cachedRoot;
     }
 
     public WebElement uploadFileInput() {

@@ -1,12 +1,14 @@
 package component.main.table;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
 public class PaginationComp extends TableComp {
+    private WebElement cachedRoot;
     private By paginationComp = By.xpath(".//*[@data-slot='root'][./table]/following-sibling::div");
     private By paginationBtnSel = By.cssSelector("button[data-slot='item']");
     private By firstPageBtnSel = By.cssSelector("button[data-slot='first']");
@@ -20,7 +22,8 @@ public class PaginationComp extends TableComp {
     }
 
     private WebElement paginationNav() {
-        return getRootComp(tableLabel).findElement(paginationComp);
+        cachedRoot = getOrRefreshCached(cachedRoot, () -> getRootComp(tableLabel, tableIndex));
+        return cachedRoot;
     }
 
     public WebElement firstPageBtn(){
@@ -46,6 +49,4 @@ public class PaginationComp extends TableComp {
     public List<WebElement> listPageBtn() {
         return paginationNav().findElements(paginationBtnSel);
     }
-
-
 }

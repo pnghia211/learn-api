@@ -2,6 +2,7 @@ package component.main.table;
 
 import component.main.BaseComp;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class TableComp extends BaseComp {
+    private WebElement cachedRoot;
     protected String tableLabel;
     protected int tableIndex;
     private By rowSel = By.cssSelector("tbody > tr");
@@ -46,7 +48,8 @@ public class TableComp extends BaseComp {
     }
 
     public WebElement tableByLabel() {
-        return getRootComp(tableLabel, tableIndex);
+        cachedRoot = getOrRefreshCached(cachedRoot, () -> getRootComp(tableLabel, tableIndex));
+        return cachedRoot;
     }
 
     public List<WebElement> rowsByCellText(String cell) {
@@ -84,7 +87,9 @@ public class TableComp extends BaseComp {
     }
 
     public List<WebElement> cellsByColumnIndex(int headerIndex) {
-        return tableByLabel().findElements(By.cssSelector(String.format(cellsByColumnIndexXpath, headerIndex)));
+        WebElement root = tableByLabel();
+        actions().scrollToElement(root).perform();
+        return root.findElements(By.cssSelector(String.format(cellsByColumnIndexXpath, headerIndex)));
     }
 
     public List<WebElement> rowCheckboxesByCell(String cell) {

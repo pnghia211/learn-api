@@ -5,6 +5,10 @@ import driver.DriverFactory;
 import org.openqa.selenium.WebDriver;
 import page.HomePage;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static url.Url.mainPage;
 
 public class TestInput {
@@ -24,7 +28,8 @@ public class TestInput {
                 .verify().hasFileUploaded();
 
         inputComp.forInput("with-clear-button")
-                .verify().valueEquals("Click to clear").and()
+                .verify()
+                .valueEquals("Click to clear").and()
                 .type("text clear button")
                 .verify().valueEquals("text clear button")
                 .and().clickClearBtn()
@@ -38,49 +43,53 @@ public class TestInput {
                 .verify().inputIsVisible();
 
         inputComp.forInput("with-password-strength-indicator")
-                .verify().inputIsEmpty()
+                .verify()
+                .inputIsEmpty()
                 .indicatorValue("0")
                 .pwdStrengthRequirement("Enter a password. Must contain:")
-                .pwdRequirementNotMet("At least 8 characters")
-                .pwdRequirementNotMet("At least 1 number")
-                .pwdRequirementNotMet("At least 1 lowercase letter")
-                .pwdRequirementNotMet("At least 1 uppercase letter")
+                .pwdRequirementNotMet("At least 8 characters",
+                        "At least 1 number",
+                        "At least 1 lowercase letter",
+                        "At least 1 uppercase letter")
 
                 .and().type("a")
-                .verify().indicatorValue("1")
+                .verify()
+                .indicatorValue("1")
                 .pwdStrengthRequirement("Weak password. Must contain:")
                 .pwdRequirementMet("At least 1 lowercase letter")
                 .pwdRequirementNotMet("At least 1 number")
 
                 .and().type("1")
-                .verify().indicatorValue("1")
+                .verify()
+                .indicatorValue("1")
                 .pwdStrengthRequirement("Weak password. Must contain:")
                 .pwdRequirementMet("At least 1 number")
                 .pwdRequirementNotMet("At least 8 characters")
 
                 .and().type("12345678")
-                .verify().indicatorValue("2")
+                .verify()
+                .indicatorValue("2")
                 .pwdStrengthRequirement("Weak password. Must contain:")
-                .pwdRequirementMet("At least 1 number")
-                .pwdRequirementMet("At least 8 characters")
+                .pwdRequirementMet("At least 1 number", "At least 8 characters")
                 .pwdRequirementNotMet("At least 1 lowercase letter")
 
                 .and().type("asdqwez1")
-                .verify().indicatorValue("3")
+                .verify()
+                .indicatorValue("3")
                 .pwdStrengthRequirement("Medium password. Must contain:")
-                .pwdRequirementMet("At least 1 number")
-                .pwdRequirementMet("At least 8 characters")
-                .pwdRequirementMet("At least 1 lowercase letter")
+                .pwdRequirementMet("At least 1 number"
+                        , "At least 8 characters"
+                        , "At least 1 lowercase letter")
                 .pwdRequirementNotMet("At least 1 uppercase letter")
 
                 .and().type("Asdqwez1")
-                .verify().indicatorValue("4")
+                .verify()
+                .indicatorValue("4")
                 .pwdStrengthRequirement("Strong password. Must contain:")
-                .pwdRequirementMet("At least 1 number")
-                .pwdRequirementMet("At least 8 characters")
-                .pwdRequirementMet("At least 1 lowercase letter")
-                .pwdRequirementMet("At least 1 uppercase letter");
-
+                .pwdRequirementMet("At least 1 number"
+                        , "At least 8 characters"
+                        , "At least 1 lowercase letter"
+                        , "At least 1 uppercase letter");
 
         Thread.sleep(5000);
         driver.quit();

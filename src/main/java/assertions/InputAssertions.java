@@ -5,6 +5,8 @@ import component.main.form.InputComp;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class InputAssertions {
@@ -55,15 +57,25 @@ public class InputAssertions {
         return this;
     }
 
-    public InputAssertions pwdRequirementMet(String expected) {
-        WebElement li = actions.getRequirementItemByTxt(expected);
-        assertTrue(li.getAttribute("class").contains("text-success"));
-        return this;
+    public InputAssertions pwdRequirementMet(String... expected) {
+        return assertRequirementClass(expected, "text-success");
     }
 
-    public InputAssertions pwdRequirementNotMet(String expected) {
-        WebElement li = actions.getRequirementItemByTxt(expected);
-        assertTrue(li.getAttribute("class").contains("text-muted"));
+    public InputAssertions pwdRequirementNotMet(String... expected) {
+        return assertRequirementClass(expected, "text-muted");
+    }
+
+    private InputAssertions assertRequirementClass(String[] expected, String expectedClass) {
+        List<WebElement> items = inputComp.pwdRequirementList();
+
+        for (String s : expected) {
+            WebElement li = items.stream()
+                    .filter(e -> e.getText().contains(s))
+                    .findFirst()
+                    .orElseThrow();
+
+            assertTrue(li.getAttribute("class").contains(expectedClass));
+        }
         return this;
     }
 

@@ -39,8 +39,6 @@ public class TableActions {
     }
 
     public List<WebElement> getRows() {
-        WebElement root = getTable();
-        table.actions().scrollToElement(root).perform();
         return table.tableRows();
     }
 
