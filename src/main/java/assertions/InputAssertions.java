@@ -1,89 +1,73 @@
 package assertions;
 
-import actions.CalendarActions;
-import component.constract.CalendarRootLocator;
-import component.main.calendar.CalendarComp;
-import helpers.DateHelper;
+import actions.InputActions;
+import component.main.form.InputComp;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
-
-import java.util.List;
-import java.util.TreeSet;
 
 import static org.junit.Assert.*;
 
 public class InputAssertions {
-    private final CalendarComp parent;
-    private final CalendarRootLocator rootLocator;
-    private final CalendarActions actions;
+    private final InputComp inputComp;
+    private final InputActions actions;
 
-    public InputAssertions(CalendarComp parent, CalendarRootLocator rootLocator, CalendarActions actions) {
-        this.parent = parent;
-        this.rootLocator = rootLocator;
+    public InputAssertions(InputComp parent, InputActions actions) {
+        this.inputComp = parent;
         this.actions = actions;
     }
 
-    private boolean isDateSelected(String dateValue) {
-        String result = actions.getDateCell(dateValue).getAttribute("data-selected");
-        return "true".equalsIgnoreCase(result);
-    }
+    public InputAssertions hasFileUploaded() {
+        Long fileCount = (Long) ((JavascriptExecutor) inputComp.driver()).executeScript(
+                "return arguments[0].files.length;", inputComp.uploadFileInput());
 
-    public InputAssertions dateIsSelected(String dateValue) {
-        assertTrue(isDateSelected(dateValue));
+        assertTrue(fileCount != null && fileCount > 0);
         return this;
     }
 
-    public InputAssertions dateIsNotSelected(String dateValue) {
-        assertFalse(isDateSelected(dateValue));
+    public InputAssertions valueEquals(String expected) {
+        String actual = actions.typeInput().getDomProperty("value");
+        assertEquals(expected, actual);
         return this;
     }
 
-    public InputAssertions dateIsDisabled(String dateValue) {
-        String result = actions.getDateCell(dateValue).getAttribute("aria-disabled");
-        assertEquals("true", result);
+    public InputAssertions inputIsEmpty() {
+        assertTrue(actions.typeInput().getDomProperty("value").isEmpty());
         return this;
     }
 
-    public InputAssertions datesAreSelected(List<String> dates) {
-        dates.forEach(this::dateIsSelected);
+    public InputAssertions inputIsHidden() {
+        assertTrue(actions.typeInput().getAttribute("type").equalsIgnoreCase("password"));
         return this;
     }
 
-    public InputAssertions heading(String heading) {
-        String result = DateHelper.convertHeadingFormat(heading);
-        String actual = actions.getHeadingEle().getText();
-        assertEquals(result, actual);
+    public InputAssertions inputIsVisible() {
+        assertTrue(actions.typeInput().getAttribute("type").equalsIgnoreCase("text"));
         return this;
     }
 
-    public InputAssertions datePickerHeading(String date) {
-        String result = DateHelper.convertHeadingFormat(date);
-        String actual = actions.getDatePickerHeadingEle(rootLocator.getCalendarLabel()).getText();
-        assertEquals(result, actual);
+    public InputAssertions indicatorValue(String expected) {
+        assertEquals(expected, actions.getIndicatorValue());
         return this;
     }
 
-    public InputAssertions dateRangeSelected(String startDate, String endDate) {
-        List<String> expected = DateHelper.buildDateRange(startDate, endDate);
-        List<String> actual = parent.selectedDate(rootLocator)
-                .stream()
-                .map(el -> el.getAttribute("data-value"))
-                .toList();
-
-        assertEquals(new TreeSet<>(expected), new TreeSet<>(actual));
+    public InputAssertions pwdStrengthRequirement(String expected) {
+        assertEquals(expected, actions.getPwdStrengthRequirementTxt());
         return this;
     }
 
-    public InputAssertions presetRangesDisplayed(List<String> expectedLabels) {
-        List<String> actualLabels = parent.dateRangePresets(rootLocator)
-                .stream()
-                .map(WebElement::getText)
-                .toList();
-
-        assertEquals(expectedLabels, actualLabels);
+    public InputAssertions pwdRequirementMet(String expected) {
+        WebElement li = actions.getRequirementItemByTxt(expected);
+        assertTrue(li.getAttribute("class").contains("text-success"));
         return this;
     }
 
-    public CalendarActions and() {
+    public InputAssertions pwdRequirementNotMet(String expected) {
+        WebElement li = actions.getRequirementItemByTxt(expected);
+        assertTrue(li.getAttribute("class").contains("text-muted"));
+        return this;
+    }
+
+    public InputActions and() {
         return actions;
     }
 }

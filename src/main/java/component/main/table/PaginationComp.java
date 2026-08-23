@@ -20,7 +20,7 @@ public class PaginationComp extends TableComp {
     }
 
     private WebElement paginationNav() {
-        return getComponentBasedOnHeader(tableLabel, paginationComp);
+        return getRootComp(tableLabel).findElement(paginationComp);
     }
 
     public WebElement firstPageBtn(){

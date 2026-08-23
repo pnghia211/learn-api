@@ -1,16 +1,14 @@
 package component.main;
 
-import data.TableIndexOption;
+import data.ComponentIndexOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import page.BasePage;
 
-import java.util.List;
-
 public class BaseComp extends BasePage {
-    protected String rootComponentSel = "//*[@id='%s']/following-sibling::*[@class='my-5'][%s]";
+    protected String rootComponentXpath = "//*[@id='%s']/following-sibling::*[@class='my-5'][%s]/*[@class='relative group/component']";
 
     public BaseComp(WebDriver driver) {
         super(driver);
@@ -25,20 +23,12 @@ public class BaseComp extends BasePage {
     }
 
     protected WebElement getRootComp(String compLabel, int index) {
-        return driver.findElement(By.xpath(String.format(rootComponentSel, compLabel, index)));
+        WebElement rootEle = driver.findElement(By.xpath(String.format(rootComponentXpath, compLabel, index)));
+        actions.scrollToElement(rootEle).perform();
+        return rootEle;
     }
 
     protected WebElement getRootComp(String compLabel) {
-        return getRootComp(compLabel, TableIndexOption.PRIMARY.label());
-    }
-
-    protected WebElement getComponentBasedOnHeader(String compLabel, By compSel, int index) {
-        WebElement rootEle = getRootComp(compLabel, index);
-        actions.scrollToElement(rootEle).perform();
-        return rootEle.findElement(compSel);
-    }
-
-    protected WebElement getComponentBasedOnHeader(String compLabel, By compSel) {
-        return getComponentBasedOnHeader(compLabel, compSel, TableIndexOption.PRIMARY.label());
+        return getRootComp(compLabel, ComponentIndexOption.PRIMARY.label());
     }
 }

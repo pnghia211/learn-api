@@ -1,11 +1,11 @@
 package data;
 
-public enum TableIndexOption {
+public enum ComponentIndexOption {
     PRIMARY(1),
     SECONDARY(2);
     private final int label;
 
-    TableIndexOption(int label) {
+    ComponentIndexOption(int label) {
         this.label = label;
     }
 

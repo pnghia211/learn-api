@@ -39,11 +39,11 @@ public class CalendarComp extends BaseComp {
     }
 
     public WebElement calendarByLabel(String calendarLabel) {
-        return getComponentBasedOnHeader(calendarLabel, calendarSel);
+        return getRootComp(calendarLabel).findElement(calendarSel);
     }
 
     public WebElement datePickByLabel(String calendarLabel) {
-        return getComponentBasedOnHeader(calendarLabel, datePickerBtnSel);
+        return getRootComp(calendarLabel).findElement(datePickerBtnSel);
     }
 
     public WebElement waitForOpenDatePickerCalendarReady() {

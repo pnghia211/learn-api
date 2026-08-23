@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 
 public class FooterComp extends TableComp {
     private String cellFooterByColumnIndexXpath = ".//tfoot//tr/th[%s]";
-    private By cellFooterSummaryXpath = By.xpath("./following-sibling::*");
+    private By cellFooterSummaryXpath = By.cssSelector("[data-slot='root'] + div");
 
     public FooterComp(WebDriver driver, String tableLabel, int tableIndex) {
         super(driver, tableLabel, tableIndex);

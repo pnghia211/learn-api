@@ -12,10 +12,8 @@ import java.util.NoSuchElementException;
 
 public class HeaderComp extends TableComp {
     String tableLabel;
-    private By headerSel = By.cssSelector("thead");
     private By headerCellsSel = By.cssSelector("thead tr th");
     private By allSelectionSel = By.cssSelector("tr th [aria-label='Select all']");
-    private By toolbarXpath = By.xpath(".//*[@data-slot='root']/preceding-sibling::div");
     private By dropdownButtonSel = By.cssSelector("button[id^='reka-dropdown-menu']");
     private String dropdownOptionsXpath = "//*[contains(@id,'reka-dropdown') and @dir='ltr']//*[@data-slot='item' and normalize-space(.)='%s']";
     private String sortingHeaderSel = ".//thead/tr/th/button[normalize-space()='%s']";
@@ -25,28 +23,20 @@ public class HeaderComp extends TableComp {
         this.tableLabel = tableLabel;
     }
 
-    public WebElement table() {
-        return tableByLabel();
-    }
-
-    public WebElement headerNav() {
-        return table().findElement(headerSel);
-    }
-
     public WebElement headerDropdownButton() {
-        return getComponentBasedOnHeader(tableLabel, toolbarXpath).findElement(dropdownButtonSel);
+        return tableByLabel().findElement(dropdownButtonSel);
     }
 
     public WebElement btnDropdownOptions(DropdownOption option) {
-        return table().findElement(By.xpath(String.format(dropdownOptionsXpath, option.label())));
+        return tableByLabel().findElement(By.xpath(String.format(dropdownOptionsXpath, option.label())));
     }
 
     public WebElement headerDropdownOptions(SortingOption option) {
-        return table().findElement(By.xpath(String.format(dropdownOptionsXpath, option.label())));
+        return tableByLabel().findElement(By.xpath(String.format(dropdownOptionsXpath, option.label())));
     }
 
     public WebElement sortingHeader(HeaderColumnOption option) {
-        List<WebElement> headers = table().findElements(headerCellsSel);
+        List<WebElement> headers = tableByLabel().findElements(headerCellsSel);
 
         String extracted = headers.stream()
                 .map(h -> h.getText().trim())
@@ -55,14 +45,14 @@ public class HeaderComp extends TableComp {
                 .orElseThrow(() -> new NoSuchElementException(
                         "No header found matching " + option + " (aliases: " + option.getHeaderAliases() + ")"));
 
-        return table().findElement(By.xpath(String.format(sortingHeaderSel, extracted)));
+        return tableByLabel().findElement(By.xpath(String.format(sortingHeaderSel, extracted)));
     }
 
     public WebElement headerCheckbox() {
-        return table().findElement(allSelectionSel);
+        return tableByLabel().findElement(allSelectionSel);
     }
 
     public List<WebElement> headerColumns() {
-        return table().findElements(headerCellsSel);
+        return tableByLabel().findElements(headerCellsSel);
     }
 }

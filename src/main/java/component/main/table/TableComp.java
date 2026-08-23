@@ -12,7 +12,6 @@ import java.util.NoSuchElementException;
 public class TableComp extends BaseComp {
     protected String tableLabel;
     protected int tableIndex;
-    protected By tableSel = By.cssSelector("[data-slot='root']:has(table)");
     private By rowSel = By.cssSelector("tbody > tr");
     private By rowSelectionSel = By.cssSelector("tr td [aria-label='Select row']");
     private By checkedRowsSel = By.cssSelector("tr td [aria-label='Select row'][data-state='checked']");
@@ -47,7 +46,7 @@ public class TableComp extends BaseComp {
     }
 
     public WebElement tableByLabel() {
-        return getComponentBasedOnHeader(tableLabel, tableSel, tableIndex);
+        return getRootComp(tableLabel, tableIndex);
     }
 
     public List<WebElement> rowsByCellText(String cell) {

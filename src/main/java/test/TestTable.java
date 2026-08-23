@@ -2,7 +2,7 @@ package test;
 
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
-import component.main.table.TableFactory;
+import component.main.factory.TableFactory;
 import data.*;
 import driver.DriverFactory;
 import model.TableRecord;
@@ -78,7 +78,7 @@ public class TestTable {
         tableFactory.forTable(TableLabel.WITH_COLUMN_SPAN).verify().groupsAreContiguous(HeaderColumnOption.CATEGORY)
                 .columnValuesEqual(HeaderColumnOption.NAME, names);
 
-        tableFactory.forTable(TableLabel.WITH_COLUMN_SORTING, TableIndexOption.SECONDARY)
+        tableFactory.forTable(TableLabel.WITH_COLUMN_SORTING, ComponentIndexOption.SECONDARY)
                 .headerActions().and()
                 .verify().cellsByColumnIsSorted(HeaderColumnOption.ID, SortingOption.ASC).and()
                 .verify().cellsByColumnIsSorted(HeaderColumnOption.ID, SortingOption.DESC).and()

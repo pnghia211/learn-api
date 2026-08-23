@@ -3,8 +3,8 @@ package page;
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
 import component.main.calendar.CalendarComp;
-import component.main.form.InputComp;
-import component.main.table.TableFactory;
+import component.main.factory.InputFactory;
+import component.main.factory.TableFactory;
 import org.openqa.selenium.WebDriver;
 
 public class HomePage extends BasePage {
@@ -24,8 +24,8 @@ public class HomePage extends BasePage {
         return new TableFactory(driver);
     }
 
-    public InputComp inputComp(){
-        return new InputComp(driver);
+    public InputFactory inputComp(){
+        return new InputFactory(driver);
     }
 
     public CalendarComp calenderComp(){

@@ -1,8 +1,8 @@
-package component.main.table;
+package component.main.factory;
 
 import actions.TableActions;
 import component.main.BaseComp;
-import data.TableIndexOption;
+import data.ComponentIndexOption;
 import data.TableLabel;
 import org.openqa.selenium.WebDriver;
 
@@ -12,10 +12,10 @@ public class TableFactory extends BaseComp {
     }
 
     public TableActions forTable(TableLabel tableLabel) {
-        return forTable(tableLabel, TableIndexOption.PRIMARY);
+        return forTable(tableLabel, ComponentIndexOption.PRIMARY);
     }
 
-    public TableActions forTable(TableLabel tableLabel, TableIndexOption option) {
+    public TableActions forTable(TableLabel tableLabel, ComponentIndexOption option) {
         return new TableActions(driver, tableLabel.label(), option.label());
     }
 }

@@ -18,7 +18,7 @@ public class RowDropdownComp extends TableComp {
         this.tableLabel = tableLabel;
     }
 
-    public WebElement actionBtnByCellText( String cell){
+    public WebElement actionBtnByCellText(String cell) {
         return rowsByCellText(cell).get(0).findElement(actionButtonSel);
     }
 
