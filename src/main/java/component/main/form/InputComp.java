@@ -14,7 +14,6 @@ public class InputComp extends BaseComp {
     private By uploadFileInputSel = By.cssSelector("input[type='file']");
     private By textInputSel = By.cssSelector("input");
     private By clearBtnSel = By.cssSelector("button[aria-label='Clear input']");
-    private By passwordInputSel = By.cssSelector("input[type='password']");
     private By showPasswordBtnSel = By.cssSelector("button[aria-label='Show password']");
     private By indicatorSel = By.cssSelector("[data-slot='indicator']");
     private By pwdStrengthRequirementSel = By.cssSelector("#password-strength");
@@ -22,6 +21,13 @@ public class InputComp extends BaseComp {
     private By creditCardSel = By.cssSelector("input[placeholder*='4242']");
     private By calendarSel = By.cssSelector("input[placeholder*='MM/YY']");
     private By cvcSel = By.cssSelector("input[placeholder*='CVC']");
+    private By singleInputMonthSel = By.cssSelector("[data-segment='month']");
+    private By singleInputDaySel = By.cssSelector("[data-segment='day']");
+    private By singleInputYearSel = By.cssSelector("[data-segment='year']");
+
+    private String rangeInputMonthSel = "[data-segment='month'][data-reka-date-range-field-segment-type='%s']";
+    private String rangeInputDaySel = "[data-segment='day'][data-reka-date-range-field-segment-type='%s']";
+    private String rangeInputYearSel = "[data-segment='year'][data-reka-date-range-field-segment-type='%s']";
 
     public InputComp(WebDriver driver, String inputLabel) {
         super(driver);
@@ -39,10 +45,6 @@ public class InputComp extends BaseComp {
 
     public WebElement textInput() {
         return inputByLabel().findElement(textInputSel);
-    }
-
-    public WebElement passwordInput() {
-        return inputByLabel().findElement(passwordInputSel);
     }
 
     public WebElement clearBtn() {
@@ -71,6 +73,38 @@ public class InputComp extends BaseComp {
 
     public WebElement calendarInput() {
         return inputByLabel().findElement(calendarSel);
+    }
+
+    public WebElement singleInputMonth() {
+        return inputByLabel().findElement(singleInputMonthSel);
+    }
+
+    public WebElement singleInputDay() {
+        return inputByLabel().findElement(singleInputDaySel);
+    }
+
+    public WebElement singleInputYear() {
+        return inputByLabel().findElement(singleInputYearSel);
+    }
+
+    public WebElement rangeInputMonth(RangeBound rangeBound) {
+        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputMonthSel, rangeBound.value())));
+    }
+
+    public WebElement rangeInputDay(RangeBound rangeBound) {
+        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputDaySel, rangeBound.value())));
+    }
+
+    public WebElement rangeInputYear(RangeBound rangeBound) {
+        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputYearSel, rangeBound.value())));
+    }
+
+    public enum RangeBound {
+        START, END;
+
+        public String value() {
+            return name().toLowerCase();
+        }
     }
 
     public WebElement cvcInput() {

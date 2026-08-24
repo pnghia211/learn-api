@@ -9,6 +9,7 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import component.main.form.InputComp.*;
 
 public class InputAssertions {
     private final InputComp inputComp;
@@ -84,6 +85,20 @@ public class InputAssertions {
         assertEquals(expected.cardNumber(), inputComp.creditCardInput().getDomProperty("value"));
         assertEquals(expected.expiry(), inputComp.calendarInput().getDomProperty("value"));
         assertEquals(expected.cvc(), inputComp.cvcInput().getDomProperty("value"));
+        return this;
+    }
+
+    public InputAssertions dateSingleInput(String expected) {
+        String actual = actions.getSingleDateInputTxt();
+        assertEquals(expected, actual);
+        return this;
+    }
+
+    public InputAssertions dateRangeInput(String expectedStart, String expectedEnd) {
+        String actualStart = actions.getRangeDateInputTxt(RangeBound.START);
+        String actualEnd = actions.getRangeDateInputTxt(RangeBound.END);
+        assertEquals(expectedStart, actualStart);
+        assertEquals(expectedEnd, actualEnd);
         return this;
     }
 

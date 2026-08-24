@@ -1,6 +1,7 @@
 package test;
 
 import component.main.factory.InputFactory;
+import component.main.form.InputComp;
 import driver.DriverFactory;
 import model.CardMaskData;
 import org.openqa.selenium.WebDriver;
@@ -94,6 +95,14 @@ public class TestInput {
                 .fillMaskInputFields(validCard)
                 .verify().maskInputFieldsEqual(validCard);
 
+        // Verify input date
+        homePage.leftNavigatorComp().clickDataTableComp("input-date");
+
+        inputComp.forInput("usage").fillOneDateBound("01-21-1995")
+                .verify().dateSingleInput("01-21-1995");
+
+        inputComp.forInput("range").fillDateRangeInput("01-21-1995", "12-12-2026")
+                .verify().dateRangeInput("01-21-1995", "12-12-2026");
 
         Thread.sleep(5000);
         driver.quit();
