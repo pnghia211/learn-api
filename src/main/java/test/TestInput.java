@@ -2,12 +2,9 @@ package test;
 
 import component.main.factory.InputFactory;
 import driver.DriverFactory;
+import model.CardMaskData;
 import org.openqa.selenium.WebDriver;
 import page.HomePage;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static url.Url.mainPage;
 
@@ -90,6 +87,13 @@ public class TestInput {
                         , "At least 8 characters"
                         , "At least 1 lowercase letter"
                         , "At least 1 uppercase letter");
+
+        CardMaskData validCard = new CardMaskData("4242 4242 4242 4242", "12/25", "123");
+
+        inputComp.forInput("with-mask")
+                .fillMaskInputFields(validCard)
+                .verify().maskInputFieldsEqual(validCard);
+
 
         Thread.sleep(5000);
         driver.quit();

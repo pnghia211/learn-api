@@ -23,10 +23,6 @@ public class HeaderActions {
         this.tableActions = tableActions;
     }
 
-    public WebElement getHeaderDropdownButton() {
-        return headerComp.headerDropdownButton();
-    }
-
     public WebElement getHeaderCheckbox() {
         return headerComp.headerCheckbox();
     }

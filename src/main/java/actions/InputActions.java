@@ -2,28 +2,21 @@ package actions;
 
 import assertions.InputAssertions;
 import component.main.form.InputComp;
+import model.CardMaskData;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
 public class InputActions {
-    private final WebDriver driver;
     private final InputComp inputComp;
-    public final String inputLabel;
 
-    public InputActions(WebDriver driver, String inputLabel) {
-        this.driver = driver;
-        this.inputComp = new InputComp(driver, inputLabel);
-        this.inputLabel = inputLabel;
+    public InputActions(InputComp inputComp) {
+        this.inputComp = inputComp;
     }
 
     public WebElement typeInput() {
         return inputComp.textInput();
-    }
-
-    public WebElement passwordInput() {
-        return inputComp.passwordInput();
     }
 
     public InputActions uploadFile(String filePath) {
@@ -32,9 +25,7 @@ public class InputActions {
     }
 
     public InputActions type(String input) {
-        WebElement typeInput = typeInput();
-        typeInput.clear();
-        typeInput.sendKeys(input);
+        clearAndType(typeInput(), input);
         return this;
     }
 
@@ -56,10 +47,16 @@ public class InputActions {
         return inputComp.pwdRequirement().getText();
     }
 
-    public WebElement getRequirementItemByTxt(String expected) {
-        List<WebElement> items = inputComp.pwdRequirementList();
-        return items.stream().filter(i -> i.getText().contains(expected))
-                .findFirst().orElseThrow();
+    public InputActions fillMaskInputFields(CardMaskData data) {
+        clearAndType(inputComp.creditCardInput(), data.cardNumber());
+        clearAndType(inputComp.calendarInput(), data.expiry());
+        clearAndType(inputComp.cvcInput(), data.cvc());
+        return this;
+    }
+
+    protected void clearAndType(WebElement element, String input) {
+        element.clear();
+        element.sendKeys(input);
     }
 
     public InputAssertions verify() {

@@ -1,5 +1,6 @@
 package component.main.table;
 
+import component.main.BaseComp;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -7,9 +8,9 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-public class PaginationComp extends TableComp {
+public class PaginationComp extends BaseComp {
+    String tableLabel;
     private WebElement cachedRoot;
-    private By paginationComp = By.xpath(".//*[@data-slot='root'][./table]/following-sibling::div");
     private By paginationBtnSel = By.cssSelector("button[data-slot='item']");
     private By firstPageBtnSel = By.cssSelector("button[data-slot='first']");
     private By prevPageBtnSel = By.cssSelector("button[data-slot='prev']");
@@ -17,32 +18,33 @@ public class PaginationComp extends TableComp {
     private By lastPageBtnSel = By.cssSelector("button[data-slot='last']");
     private By currentPageSel = By.cssSelector("button[data-slot='item'][aria-current='page']");
 
-    public PaginationComp(WebDriver driver, String tableLabel, int tableIndex) {
-        super(driver, tableLabel, tableIndex);
+    public PaginationComp(WebDriver driver, String tableLabel) {
+        super(driver);
+        this.tableLabel = tableLabel;
     }
 
     private WebElement paginationNav() {
-        cachedRoot = getOrRefreshCached(cachedRoot, () -> getRootComp(tableLabel, tableIndex));
+        cachedRoot = getOrRefreshCached(cachedRoot, () -> getRootComp(tableLabel));
         return cachedRoot;
     }
 
-    public WebElement firstPageBtn(){
+    public WebElement firstPageBtn() {
         return paginationNav().findElement(firstPageBtnSel);
     }
 
-    public WebElement previousPageBtn(){
+    public WebElement previousPageBtn() {
         return paginationNav().findElement(prevPageBtnSel);
     }
 
-    public WebElement nextPageBtn(){
+    public WebElement nextPageBtn() {
         return paginationNav().findElement(nextPageBtnSel);
     }
 
-    public WebElement lastPageBtn(){
+    public WebElement lastPageBtn() {
         return paginationNav().findElement(lastPageBtnSel);
     }
 
-    public WebElement currentPageBtn(){
+    public WebElement currentPageBtn() {
         return paginationNav().findElement(currentPageSel);
     }
 

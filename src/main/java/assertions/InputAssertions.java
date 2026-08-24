@@ -2,6 +2,7 @@ package assertions;
 
 import actions.InputActions;
 import component.main.form.InputComp;
+import model.CardMaskData;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
@@ -76,6 +77,13 @@ public class InputAssertions {
 
             assertTrue(li.getAttribute("class").contains(expectedClass));
         }
+        return this;
+    }
+
+    public InputAssertions maskInputFieldsEqual(CardMaskData expected) {
+        assertEquals(expected.cardNumber(), inputComp.creditCardInput().getDomProperty("value"));
+        assertEquals(expected.expiry(), inputComp.calendarInput().getDomProperty("value"));
+        assertEquals(expected.cvc(), inputComp.cvcInput().getDomProperty("value"));
         return this;
     }
 

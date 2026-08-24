@@ -4,19 +4,20 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class FooterComp extends TableComp {
+public class FooterComp {
+    TableComp tableComp;
     private String cellFooterByColumnIndexXpath = ".//tfoot//tr/th[%s]";
     private By cellFooterSummaryXpath = By.cssSelector("[data-slot='root'] + div");
 
-    public FooterComp(WebDriver driver, String tableLabel, int tableIndex) {
-        super(driver, tableLabel, tableIndex);
+    public FooterComp(TableComp tableComp) {
+        this.tableComp = tableComp;
     }
 
     public WebElement getFooterCellByIndex(int headerIndex) {
-        return tableByLabel().findElement(By.xpath(String.format(cellFooterByColumnIndexXpath, headerIndex)));
+        return tableComp.tableByLabel().findElement(By.xpath(String.format(cellFooterByColumnIndexXpath, headerIndex)));
     }
 
     public WebElement getFooterSummary() {
-        return tableByLabel().findElement(cellFooterSummaryXpath);
+        return tableComp.tableByLabel().findElement(cellFooterSummaryXpath);
     }
 }

@@ -6,24 +6,23 @@ import org.openqa.selenium.WebElement;
 
 import java.util.NoSuchElementException;
 
-public class RowDropdownComp extends TableComp {
-    String tableLabel;
+public class RowDropdownComp{
+    TableComp tableComp;
     private By actionButtonSel = By.cssSelector("td button");
     private By actionDropdownMenuSel = By.cssSelector("[id^='reka-dropdown-menu'][dir='ltr']");
     private String menuItemCssXpath = "button[data-slot='item'][role='menuitem']";
     private By copyNotificationPopupSel = By.cssSelector("[aria-label^='Notifications'] [data-slot=base]");
 
-    public RowDropdownComp(WebDriver driver, String tableLabel, int tableIndex) {
-        super(driver, tableLabel, tableIndex);
-        this.tableLabel = tableLabel;
+    public RowDropdownComp(TableComp tableComp) {
+        this.tableComp = tableComp;
     }
 
     public WebElement actionBtnByCellText(String cell) {
-        return rowsByCellText(cell).get(0).findElement(actionButtonSel);
+        return tableComp.rowsByCellText(cell).get(0).findElement(actionButtonSel);
     }
 
     public WebElement rowDropdownMenu() {
-        return driver.findElement(actionDropdownMenuSel);
+        return tableComp.driver().findElement(actionDropdownMenuSel);
     }
 
     public WebElement menuItemByLabel(String label) {
@@ -34,6 +33,6 @@ public class RowDropdownComp extends TableComp {
     }
 
     public WebElement copyNotificationPopup() {
-        return driver.findElement(copyNotificationPopupSel);
+        return tableComp.driver().findElement(copyNotificationPopupSel);
     }
 }

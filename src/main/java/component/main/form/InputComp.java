@@ -11,7 +11,6 @@ import java.util.List;
 public class InputComp extends BaseComp {
     private WebElement cachedRoot;
     private final String inputLabel;
-    private By rootComp = By.cssSelector("[data-slot='root'][class*='relative']");
     private By uploadFileInputSel = By.cssSelector("input[type='file']");
     private By textInputSel = By.cssSelector("input");
     private By clearBtnSel = By.cssSelector("button[aria-label='Clear input']");
@@ -66,7 +65,15 @@ public class InputComp extends BaseComp {
         return inputByLabel().findElements(pwdRequirementList);
     }
 
-//    public WebElement creditCardInput() {
-//        return getRootComp()
-//    }
+    public WebElement creditCardInput() {
+        return inputByLabel().findElement(creditCardSel);
+    }
+
+    public WebElement calendarInput() {
+        return inputByLabel().findElement(calendarSel);
+    }
+
+    public WebElement cvcInput() {
+        return inputByLabel().findElement(cvcSel);
+    }
 }

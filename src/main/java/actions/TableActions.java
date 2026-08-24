@@ -19,50 +19,44 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TableActions {
-    private final WebDriver driver;
-    private final String tableLabel;
-    private final int tableIndex;
-    private final TableComp table;
+    private final TableComp tableComp;
     private HeaderActions headerActions;
     private FooterActions footerActions;
     private PaginationActions paginationActions;
 
-    public TableActions(WebDriver driver, String tableLabel, int tableIndex) {
-        this.driver = driver;
-        this.tableLabel = tableLabel;
-        this.tableIndex = tableIndex;
-        this.table = new TableComp(driver, tableLabel, tableIndex);
+    public TableActions(TableComp tableComp) {
+        this.tableComp = tableComp;
     }
 
     private WebElement getTable() {
-        return table.tableByLabel();
+        return tableComp.tableByLabel();
     }
 
     public List<WebElement> getRows() {
-        return table.tableRows();
+        return tableComp.tableRows();
     }
 
     public FooterActions footerActions() {
-        if (footerActions == null) footerActions = new FooterActions(table.footerComp(), this);
+        if (footerActions == null) footerActions = new FooterActions(tableComp.footerComp(), this);
         return footerActions;
     }
 
     public HeaderActions headerActions() {
-        if (headerActions == null) headerActions = new HeaderActions(table.headerComp(), this);
+        if (headerActions == null) headerActions = new HeaderActions(tableComp.headerComp(), this);
         return headerActions;
     }
 
     public PaginationActions paginationActions() {
-        if (paginationActions == null) paginationActions = new PaginationActions(table.paginationComp(), this);
+        if (paginationActions == null) paginationActions = new PaginationActions(tableComp.paginationComp(), this);
         return paginationActions;
     }
 
     public List<WebElement> getRowsByCellValue(String cell) {
-        return table.rowsByCellText(cell);
+        return tableComp.rowsByCellText(cell);
     }
 
     public WebElement getActionBtnByCellValue(String cell) {
-        return table.rowDropdownComp().actionBtnByCellText(cell);
+        return tableComp.rowDropdownComp().actionBtnByCellText(cell);
     }
 
     public List<String> getCellsByColumn(HeaderColumnOption option) {
@@ -78,7 +72,7 @@ public class TableActions {
             return List.of();
         }
 
-        List<WebElement> cellsEle = table.cellsByColumnIndex(index + 1);
+        List<WebElement> cellsEle = tableComp.cellsByColumnIndex(index + 1);
         if (cellsEle.isEmpty()) {
             throw new IllegalStateException("No cells found for column: " + option);
         }
@@ -89,7 +83,7 @@ public class TableActions {
     public Integer getCellsTotalAmount() {
         Integer index = headerActions().getHeadersMap().get(HeaderColumnOption.AMOUNT.label());
 
-        List<WebElement> cellsEle = table.cellsByColumnIndex(index + 1);
+        List<WebElement> cellsEle = tableComp.cellsByColumnIndex(index + 1);
 
         return cellsEle.stream().mapToInt(c -> {
             String text = c.getText().replace("€", "").replace(",", "").trim();
@@ -98,18 +92,18 @@ public class TableActions {
     }
 
     public TableActions clickActionButton(String cell) {
-        table.actions().moveToElement(getActionBtnByCellValue(cell)).perform();
+        tableComp.actions().moveToElement(getActionBtnByCellValue(cell)).perform();
         getActionBtnByCellValue(cell).click();
         return this;
     }
 
     public TableActions selectCopyPaymentIdOpt(RowActionOption option) {
-        table.rowDropdownComp().menuItemByLabel(option.label()).click();
+        tableComp.rowDropdownComp().menuItemByLabel(option.label()).click();
         return this;
     }
 
     public WebElement getCopyNotificationPopup() {
-        return table.rowDropdownComp().copyNotificationPopup();
+        return tableComp.rowDropdownComp().copyNotificationPopup();
     }
 
     public TableActions scrollTillCellDisplayed(String cell) {
@@ -123,16 +117,16 @@ public class TableActions {
             WebElement match = findMatchInNewRows(tableRows, lastPosition, cell);
 
             if (match != null) {
-                table.actions().scrollToElement(match).perform();
+                tableComp.actions().scrollToElement(match).perform();
                 return this;
             }
 
             int currentRowCount = tableRows.size();
 
             WebElement lastRow = tableEle.findElement(By.cssSelector("tbody > tr:nth-of-type(" + currentRowCount + ")"));
-            table.actions().scrollToElement(lastRow).perform();
+            tableComp.actions().scrollToElement(lastRow).perform();
 
-            new WebDriverWait(table.driver(), Duration.ofSeconds(5))
+            new WebDriverWait(tableComp.driver(), Duration.ofSeconds(5))
                     .until(new WaitForClassTransition(tableEle));
 
             lastPosition = currentRowCount;
@@ -157,18 +151,18 @@ public class TableActions {
     public boolean isCellDisplayed(String cell) {
         List<WebElement> matches = getRowsByCellValue(cell);
         if (!matches.isEmpty() && matches.get(0).isDisplayed()) {
-            table.actions().scrollToElement(matches.get(0)).perform();
+            tableComp.actions().scrollToElement(matches.get(0)).perform();
             return true;
         }
         return false;
     }
 
     public List<WebElement> getRowCheckboxesByCell(String cell) {
-        return table.rowCheckboxesByCell(cell);
+        return tableComp.rowCheckboxesByCell(cell);
     }
 
     public List<WebElement> getCheckedRows() {
-        return table.checkedRows();
+        return tableComp.checkedRows();
     }
 
     public int[] getSelectedRowsAndTotalCounts() {
@@ -219,7 +213,7 @@ public class TableActions {
             if ("checked".equals(checkbox.getDomAttribute("data-state"))) {
                 return;
             }
-            JsExecutorHelper.scrollIntoViewCentered(table.driver(), checkbox);
+            JsExecutorHelper.scrollIntoViewCentered(tableComp.driver(), checkbox);
             checkbox.click();
         });
         return this;
@@ -233,7 +227,7 @@ public class TableActions {
     }
 
     public TableActions clickExpandBtn() {
-        table.expandButton().click();
+        tableComp.expandButton().click();
         return this;
     }
 
@@ -246,27 +240,27 @@ public class TableActions {
     }
 
     public List<Map<String, String>> getPinnedRowsData() {
-        return toRowsData(table.pinnedRows());
+        return toRowsData(tableComp.pinnedRows());
     }
 
     public List<Map<String, String>> getUnpinnedRowsData() {
-        return toRowsData(table.unpinnedRows());
+        return toRowsData(tableComp.unpinnedRows());
     }
 
     public TableActions unpinAllRows() {
-        table.unpinnedButtons().forEach(WebElement::click);
+        tableComp.unpinnedButtons().forEach(WebElement::click);
         return this;
     }
 
     public TableActions pinRowByCell(String cell) {
-        table.pinBtnRowByCell(cell).click();
+        tableComp.pinBtnRowByCell(cell).click();
         return this;
     }
 
     public TableActions pinRowsByCells(List<String> cells) {
         cells.forEach(this::pinRowByCell);
-        List<WebElement> pinnedRows = table.pinnedRows();
-        table.actions().scrollToElement(pinnedRows.get(pinnedRows.size() - 1));
+        List<WebElement> pinnedRows = tableComp.pinnedRows();
+        tableComp.actions().scrollToElement(pinnedRows.get(pinnedRows.size() - 1));
         return this;
     }
 
@@ -275,7 +269,7 @@ public class TableActions {
             return this;
         }
 
-        List<WebElement> topLevelRows = table.expandableRows();
+        List<WebElement> topLevelRows = tableComp.expandableRows();
         boolean found = expandBranch(topLevelRows, targetCell);
 
         if (!found) {

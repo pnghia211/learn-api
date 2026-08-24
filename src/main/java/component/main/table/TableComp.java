@@ -25,6 +25,7 @@ public class TableComp extends BaseComp {
     private By unpinRowBtn = By.cssSelector("td button[aria-label='Unpin row']");
     private By unpinRows = By.cssSelector("tbody tr:not([data-pinned='top'])");
     private By pinRowBtn = By.cssSelector("td button[aria-label='Pin row to top']");
+
     public TableComp(WebDriver driver, String tableLabel, int tableIndex) {
         super(driver);
         this.tableLabel = tableLabel;
@@ -32,19 +33,19 @@ public class TableComp extends BaseComp {
     }
 
     public FooterComp footerComp() {
-        return new FooterComp(driver, tableLabel, tableIndex);
+        return new FooterComp(this);
     }
 
     public HeaderComp headerComp() {
-        return new HeaderComp(driver, tableLabel, tableIndex);
+        return new HeaderComp(this);
     }
 
     public RowDropdownComp rowDropdownComp() {
-        return new RowDropdownComp(driver, tableLabel, tableIndex);
+        return new RowDropdownComp(this);
     }
 
     public PaginationComp paginationComp() {
-        return new PaginationComp(driver, tableLabel, tableIndex);
+        return new PaginationComp(driver, tableLabel);
     }
 
     public WebElement tableByLabel() {
@@ -113,7 +114,7 @@ public class TableComp extends BaseComp {
         return rowsByCellText(cell).get(0).findElement(pinRowBtn);
     }
 
-    public List<WebElement> unpinnedRows(){
+    public List<WebElement> unpinnedRows() {
         return tableByLabel().findElements(unpinRows);
     }
 
