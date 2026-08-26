@@ -2,13 +2,16 @@ package assertions;
 
 import actions.InputActions;
 import component.main.form.InputComp;
+import data.DropdownOption;
 import model.CardMaskData;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
+
 import component.main.form.InputComp.*;
 
 public class InputAssertions {
@@ -99,6 +102,18 @@ public class InputAssertions {
         String actualEnd = actions.getRangeDateInputTxt(RangeBound.END);
         assertEquals(expectedStart, actualStart);
         assertEquals(expectedEnd, actualEnd);
+        return this;
+    }
+
+    public InputAssertions selectedOptionsInOrder(DropdownOption... expected) {
+        List<String> actual = actions.selectDropdownOptionsInOrder(expected);
+
+        List<String> expectedLabels = Arrays.stream(expected)
+                .map(DropdownOption::label)
+                .toList();
+
+        assertEquals(actual, expectedLabels);
+
         return this;
     }
 

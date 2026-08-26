@@ -6,8 +6,10 @@ public enum DropdownOption {
     STATUS("Status"),
     EMAIL("Email"),
     AMOUNT("Amount"),
-    ASC("Asc"),
-    DESC("Desc");
+    BACKLOG("Backlog"),
+    TO_DO("Todo"),
+    IN_PROGRESS("In Progress"),
+    DONE("Done");
 
     private final String label;
 

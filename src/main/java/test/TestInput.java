@@ -1,7 +1,7 @@
 package test;
 
 import component.main.factory.InputFactory;
-import component.main.form.InputComp;
+import data.DropdownOption;
 import driver.DriverFactory;
 import model.CardMaskData;
 import org.openqa.selenium.WebDriver;
@@ -103,6 +103,12 @@ public class TestInput {
 
         inputComp.forInput("range").fillDateRangeInput("01-21-1995", "12-12-2026")
                 .verify().dateRangeInput("01-21-1995", "12-12-2026");
+
+        // Verify input menu
+        homePage.leftNavigatorComp().clickDataTableComp("input-menu");
+
+        DropdownOption[] opts = {DropdownOption.BACKLOG, DropdownOption.TO_DO, DropdownOption.IN_PROGRESS, DropdownOption.DONE};
+        inputComp.forInput("usage").verify().selectedOptionsInOrder(opts);
 
         Thread.sleep(5000);
         driver.quit();

@@ -8,6 +8,7 @@ import page.BasePage;
 
 public class LeftNavigatorComp extends BasePage {
     private String leftNavigatorCompXpath = "aside[data-slot='left'] a[href='/docs/components/%s']";
+    private String compTitle = "//div[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '%s')]";
 
     public LeftNavigatorComp(WebDriver driver) {
         super(driver);
@@ -18,5 +19,6 @@ public class LeftNavigatorComp extends BasePage {
         actions.moveToElement(element).perform();
         element.click();
         wait.until(ExpectedConditions.urlContains("/" + option));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(compTitle,option.replaceAll("-","").toLowerCase()))));
     }
 }

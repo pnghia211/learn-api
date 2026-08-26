@@ -2,12 +2,25 @@ package actions;
 
 import assertions.InputAssertions;
 import component.main.form.InputComp;
+import data.DropdownOption;
 import model.CardMaskData;
+import org.junit.Assert;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 
 import component.main.form.InputComp.*;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.WaitUtils;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.base.Ascii.ESC;
 
 public class InputActions {
     private final InputComp inputComp;
@@ -61,11 +74,9 @@ public class InputActions {
     }
 
     protected void typeForDateInputSegment(WebElement element, String input) {
-//        element.clear();
         for (char c : input.toCharArray()) {
             element.sendKeys(String.valueOf(c));
         }
-        element.sendKeys(Keys.TAB);
     }
 
     private String[] validateAndSplitDate(String date) {
@@ -131,6 +142,43 @@ public class InputActions {
                 Integer.parseInt(month),
                 Integer.parseInt(day),
                 year);
+    }
+
+    public InputActions clickPopupBtn() {
+        inputComp.popupBtn().click();
+
+        WebElement popupDropdown = inputComp.popupDropdown();
+        WaitUtils.waitForVisibility(inputComp.driver(), popupDropdown);
+        return this;
+    }
+
+    public void selectDropdownOpt(DropdownOption option) {
+        WebElement ele = inputComp.dropdownOption(option);
+        if ("unchecked".equalsIgnoreCase(ele.getAttribute("data-state"))) {
+            WebElement popupDropdown = inputComp.popupDropdown();
+            inputComp.dropdownOption(option).click();
+
+            WaitUtils.waitForInvisibility(inputComp.driver(), popupDropdown);
+        }
+    }
+
+    public List<String> selectDropdownOptionsInOrder(DropdownOption... options) {
+        List<String> actualValues = new ArrayList<>();
+
+        for (DropdownOption option : options) {
+            String dropdownValue = inputComp.textInput().getAttribute("value");
+
+            if (option.label().equalsIgnoreCase(dropdownValue)) {
+                actualValues.add(dropdownValue);
+                continue;
+            }
+
+            clickPopupBtn();
+            selectDropdownOpt(option);
+
+            actualValues.add(inputComp.textInput().getAttribute("value"));
+        }
+        return actualValues;
     }
 
     public InputAssertions verify() {
