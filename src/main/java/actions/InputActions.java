@@ -146,9 +146,7 @@ public class InputActions {
 
     public InputActions clickPopupBtn() {
         inputComp.popupBtn().click();
-
-        WebElement popupDropdown = inputComp.popupDropdown();
-        WaitUtils.waitForVisibility(inputComp.driver(), popupDropdown);
+        WaitUtils.waitForVisibility(inputComp.driver(), inputComp.popupDropdown());
         return this;
     }
 
@@ -160,6 +158,23 @@ public class InputActions {
 
             WaitUtils.waitForInvisibility(inputComp.driver(), popupDropdown);
         }
+    }
+
+    public InputActions selectMultiDropdownOpt(DropdownOption... options) {
+        clickPopupBtn();
+
+        for (DropdownOption option : options) {
+            WebElement ele = inputComp.dropdownOption(option);
+            if ("unchecked".equalsIgnoreCase(ele.getAttribute("data-state"))) {
+                inputComp.dropdownOption(option).click();
+
+                new WebDriverWait(inputComp.driver(), Duration.ofSeconds(5))
+                        .until(d -> "checked".equalsIgnoreCase(
+                                inputComp.dropdownOption(option).getAttribute("data-state")));
+            }
+        }
+
+        return this;
     }
 
     public List<String> selectDropdownOptionsInOrder(DropdownOption... options) {
@@ -179,6 +194,24 @@ public class InputActions {
             actualValues.add(inputComp.textInput().getAttribute("value"));
         }
         return actualValues;
+    }
+
+    public InputActions removeOption(DropdownOption... options) {
+        inputComp.actions().sendKeys(Keys.ESCAPE).perform();
+        for (DropdownOption option : options) {
+            inputComp.deleteIconByItem(option.label()).click();
+        }
+        return this;
+    }
+
+    public List<String> getSelectedOptions() {
+        List<String> result = new ArrayList<>();
+        for (WebElement element : inputComp.tagsItem()) {
+            String value = element.getText();
+            result.add(value);
+        }
+
+        return result;
     }
 
     public InputAssertions verify() {

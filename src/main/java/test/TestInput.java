@@ -110,6 +110,10 @@ public class TestInput {
         DropdownOption[] opts = {DropdownOption.BACKLOG, DropdownOption.TO_DO, DropdownOption.IN_PROGRESS, DropdownOption.DONE};
         inputComp.forInput("usage").verify().selectedOptionsInOrder(opts);
 
+        inputComp.forInput("multiple").selectMultiDropdownOpt(opts)
+                .removeOption(DropdownOption.BACKLOG, DropdownOption.TO_DO, DropdownOption.DONE)
+                .verify().selectedOptions(DropdownOption.IN_PROGRESS);
+
         Thread.sleep(5000);
         driver.quit();
     }

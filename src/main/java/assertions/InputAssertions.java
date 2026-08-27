@@ -117,6 +117,18 @@ public class InputAssertions {
         return this;
     }
 
+    public InputAssertions selectedOptions(DropdownOption... expected) {
+        List<String> actual = actions.getSelectedOptions();
+
+        List<String> expectedLabels = Arrays.stream(expected)
+                .map(DropdownOption::label)
+                .toList();
+
+        assertEquals(actual, expectedLabels);
+
+        return this;
+    }
+
     public InputActions and() {
         return actions;
     }

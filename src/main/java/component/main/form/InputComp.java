@@ -33,6 +33,8 @@ public class InputComp extends BaseComp {
     private String rangeInputMonthSel = "[data-segment='month'][data-reka-date-range-field-segment-type='%s']";
     private String rangeInputDaySel = "[data-segment='day'][data-reka-date-range-field-segment-type='%s']";
     private String rangeInputYearSel = "[data-segment='year'][data-reka-date-range-field-segment-type='%s']";
+    private By tagsItem = By.cssSelector("[data-slot='tagsItem']");
+    private String tagItemDeleteIconXpath = ".//span[contains(.,'%s')]/following-sibling::button[@data-slot='tagsItemDelete']";
 
     public InputComp(WebDriver driver, String inputLabel) {
         super(driver);
@@ -114,6 +116,14 @@ public class InputComp extends BaseComp {
 
     public WebElement rangeInputYear(RangeBound rangeBound) {
         return inputByLabel().findElement(By.cssSelector(String.format(rangeInputYearSel, rangeBound.value())));
+    }
+
+    public List<WebElement> tagsItem() {
+        return inputByLabel().findElements(tagsItem);
+    }
+
+    public WebElement deleteIconByItem(String tagItem) {
+        return inputByLabel().findElement(By.xpath(String.format(tagItemDeleteIconXpath, tagItem)));
     }
 
     public enum RangeBound {
