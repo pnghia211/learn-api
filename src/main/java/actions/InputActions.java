@@ -4,23 +4,17 @@ import assertions.InputAssertions;
 import component.main.form.InputComp;
 import data.DropdownOption;
 import model.CardMaskData;
-import org.junit.Assert;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 
 import component.main.form.InputComp.*;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.WaitUtils;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.google.common.base.Ascii.ESC;
 
 public class InputActions {
     private final InputComp inputComp;
@@ -29,8 +23,12 @@ public class InputActions {
         this.inputComp = inputComp;
     }
 
-    public WebElement typeInput() {
+    public WebElement getTypeInput() {
         return inputComp.textInput();
+    }
+
+    public WebElement getCountryCodeInput() {
+        return inputComp.countryCodeInput();
     }
 
     public InputActions uploadFile(String filePath) {
@@ -39,7 +37,7 @@ public class InputActions {
     }
 
     public InputActions type(String input) {
-        clearAndType(typeInput(), input);
+        clearAndType(getTypeInput(), input);
         return this;
     }
 
@@ -150,14 +148,28 @@ public class InputActions {
         return this;
     }
 
-    public void selectDropdownOpt(DropdownOption option) {
+    private void selectDropdownOpt(DropdownOption option) {
         WebElement ele = inputComp.dropdownOption(option);
         if ("unchecked".equalsIgnoreCase(ele.getAttribute("data-state"))) {
             WebElement popupDropdown = inputComp.popupDropdown();
-            inputComp.dropdownOption(option).click();
+            ele.click();
 
             WaitUtils.waitForInvisibility(inputComp.driver(), popupDropdown);
         }
+    }
+
+    public InputActions selectDropdownOpt(String option) {
+        clickPopupBtn();
+        WebElement ele = inputComp.dropdownOption(option);
+
+        if ("unchecked".equalsIgnoreCase(ele.getAttribute("data-state"))) {
+            WebElement popupDropdown = inputComp.popupDropdown();
+            ele.click();
+
+            WaitUtils.waitForInvisibility(inputComp.driver(), popupDropdown);
+        }
+
+        return this;
     }
 
     public InputActions selectMultiDropdownOpt(DropdownOption... options) {
@@ -213,6 +225,21 @@ public class InputActions {
 
         return result;
     }
+
+    public InputActions typeInputs(String input) {
+        List<WebElement> elements = inputComp.pinInputs();
+        if (input.length() != elements.size()) {
+            throw new IllegalArgumentException(
+                    "Expected " + elements.size() + " characters but got " + input.length());
+        }
+        for (int i = 0; i < elements.size(); i++) {
+            clearAndType(elements.get(i), String.valueOf(input.charAt(i)));
+        }
+
+        return this;
+    }
+
+//    public InputActions
 
     public InputAssertions verify() {
         return new InputAssertions(inputComp, this);

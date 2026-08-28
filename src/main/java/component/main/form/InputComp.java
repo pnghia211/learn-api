@@ -5,22 +5,21 @@ import data.DropdownOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 import java.util.List;
 
 public class InputComp extends BaseComp {
     private WebElement cachedRoot;
     private final String inputLabel;
     private String dropdownOpt = ".//*[contains(@id,'reka-combobox-item')][.//span[contains(.,'%s')]]";
-    private By popupSel = By.cssSelector("[id*='reka-combobox-content'][data-state='open']");
+    private By popupSel = By.cssSelector("[id*='reka-combobox-content']");
     private By uploadFileInputSel = By.cssSelector("input[type='file']");
     private By textInputSel = By.cssSelector("input");
+    private By countryCodeSel = By.cssSelector("span[data-slot='leading'] span");
+    private By pinInputSel = By.cssSelector("input[type='text']");
     private By clearBtnSel = By.cssSelector("button[aria-label='Clear input']");
     private By showPasswordBtnSel = By.cssSelector("button[aria-label='Show password']");
-    private By showPopupBtnSel = By.cssSelector("button[aria-label='Show popup'] > span");
+    private By showPopupBtnSel = By.cssSelector("button[aria-label='Show popup']");
     private By indicatorSel = By.cssSelector("[data-slot='indicator']");
     private By pwdStrengthRequirementSel = By.cssSelector("#password-strength");
     private By pwdRequirementList = By.cssSelector("ul li");
@@ -54,6 +53,14 @@ public class InputComp extends BaseComp {
         return inputByLabel().findElement(textInputSel);
     }
 
+    public WebElement countryCodeInput() {
+        return inputByLabel().findElement(countryCodeSel);
+    }
+
+    public List<WebElement> pinInputs() {
+        return inputByLabel().findElements(pinInputSel);
+    }
+
     public WebElement clearBtn() {
         return inputByLabel().findElement(clearBtnSel);
     }
@@ -72,6 +79,10 @@ public class InputComp extends BaseComp {
 
     public WebElement dropdownOption(DropdownOption option) {
         return popupDropdown().findElement(By.xpath(String.format(dropdownOpt, option.label())));
+    }
+
+    public WebElement dropdownOption(String option) {
+        return popupDropdown().findElement(By.xpath(String.format(dropdownOpt, option)));
     }
 
     public WebElement indicator() {

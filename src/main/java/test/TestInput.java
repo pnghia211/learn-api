@@ -114,6 +114,20 @@ public class TestInput {
                 .removeOption(DropdownOption.BACKLOG, DropdownOption.TO_DO, DropdownOption.DONE)
                 .verify().selectedOptions(DropdownOption.IN_PROGRESS);
 
+        inputComp.forInput("as-a-country-picker")
+                .verify().countryPickerDefault()
+                .and().selectDropdownOpt("Vietnam")
+                .verify().selectedCountryInput("VN", "Vietnam");
+
+        // Verify pin input
+        homePage.leftNavigatorComp().clickDataTableComp("pin-input");
+
+        inputComp.forInput("otp").typeInputs("12345")
+                .verify().inputForm("12345");
+
+        inputComp.forInput("separator").typeInputs("123456")
+                .verify().inputForm("123456");
+
         Thread.sleep(5000);
         driver.quit();
     }

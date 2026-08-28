@@ -32,23 +32,23 @@ public class InputAssertions {
     }
 
     public InputAssertions valueEquals(String expected) {
-        String actual = actions.typeInput().getDomProperty("value");
+        String actual = actions.getTypeInput().getDomProperty("value");
         assertEquals(expected, actual);
         return this;
     }
 
     public InputAssertions inputIsEmpty() {
-        assertTrue(actions.typeInput().getDomProperty("value").isEmpty());
+        assertTrue(actions.getTypeInput().getDomProperty("value").isEmpty());
         return this;
     }
 
     public InputAssertions inputIsHidden() {
-        assertTrue(actions.typeInput().getAttribute("type").equalsIgnoreCase("password"));
+        assertTrue(actions.getTypeInput().getAttribute("type").equalsIgnoreCase("password"));
         return this;
     }
 
     public InputAssertions inputIsVisible() {
-        assertTrue(actions.typeInput().getAttribute("type").equalsIgnoreCase("text"));
+        assertTrue(actions.getTypeInput().getAttribute("type").equalsIgnoreCase("text"));
         return this;
     }
 
@@ -117,6 +117,23 @@ public class InputAssertions {
         return this;
     }
 
+    public InputAssertions selectedCountryInput(String code, String country) {
+        String actualCountry = actions.getTypeInput().getAttribute("value");
+        String actualCountryCode = actions.getCountryCodeInput().getText();
+
+        assertEquals(countryCodeToEmoji(code), actualCountryCode);
+        assertEquals(country, actualCountry);
+
+        return this;
+    }
+
+    private String countryCodeToEmoji(String countryCode) {
+        String code = countryCode.toUpperCase();
+        int firstChar = Character.codePointAt(code, 0) - 0x41 + 0x1F1E6;
+        int secondChar = Character.codePointAt(code, 1) - 0x41 + 0x1F1E6;
+        return new String(Character.toChars(firstChar)) + new String(Character.toChars(secondChar));
+    }
+
     public InputAssertions selectedOptions(DropdownOption... expected) {
         List<String> actual = actions.getSelectedOptions();
 
@@ -126,6 +143,21 @@ public class InputAssertions {
 
         assertEquals(actual, expectedLabels);
 
+        return this;
+    }
+
+    public InputAssertions inputForm(String expected) {
+        StringBuilder actual = new StringBuilder();
+        for (WebElement element : inputComp.pinInputs()) {
+            actual.append(element.getAttribute("value"));
+        }
+
+        assertEquals(expected, actual.toString());
+        return this;
+    }
+
+    public InputAssertions countryPickerDefault() {
+        assertTrue("Select country".equalsIgnoreCase(inputComp.textInput().getAttribute("placeholder")));
         return this;
     }
 
