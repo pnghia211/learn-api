@@ -7,12 +7,11 @@ import data.SortingOption;
 import helpers.TableRecordNormalizer;
 import model.TableRecord;
 import org.openqa.selenium.WebElement;
+import org.testng.asserts.SoftAssert;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.testng.Assert.*;
 
 public class TableAssertions {
     private final TableActions actions;
@@ -39,7 +38,7 @@ public class TableAssertions {
 
     public TableAssertions cellsByColumnNotDisplayed(HeaderColumnOption column) {
         List<String> cells = actions.getCellsByColumn(column);
-        assertTrue("Expected no cells for hidden column: " + column.label(), cells.isEmpty());
+        assertTrue(cells.isEmpty(), "Expected no cells for hidden column: " + column.label());
         return this;
     }
 
@@ -130,7 +129,7 @@ public class TableAssertions {
 
     public TableAssertions columnValuesEqual(HeaderColumnOption option, List<String> expected) {
         List<String> actual = actions.getCellsByColumn(option);
-        assertEquals("Mismatch for column: " + option.label(), expected, actual);
+        assertEquals(expected, actual, "Mismatch for column: " + option.label());
         return this;
     }
 
@@ -154,11 +153,16 @@ public class TableAssertions {
     }
 
     public TableAssertions paginationDefaultState() {
-        assertAll(() -> assertFalse(actions.paginationActions().getFirstPageBtn().isEnabled()),
-                () -> assertFalse(actions.paginationActions().getPreviousPageBtn().isEnabled()),
-                () -> assertTrue(actions.paginationActions().getNextPageBtn().isEnabled()),
-                () -> assertTrue(actions.paginationActions().getLastPageBtn().isEnabled()),
-                () -> assertEquals("Page 1 should be selected", actions.paginationActions().getCurrentPageBtn().getText().trim(), "1"));
+        SoftAssert softAssert = new SoftAssert();
+
+        softAssert.assertFalse(actions.paginationActions().getFirstPageBtn().isEnabled());
+        softAssert.assertFalse(actions.paginationActions().getPreviousPageBtn().isEnabled());
+        softAssert.assertTrue(actions.paginationActions().getNextPageBtn().isEnabled());
+        softAssert.assertTrue(actions.paginationActions().getLastPageBtn().isEnabled());
+        softAssert.assertEquals(actions.paginationActions().getCurrentPageBtn().getText().trim(), "1",
+                "Page 1 should be selected");
+
+        softAssert.assertAll(); // MUST call this, or nothing actually fails
         return this;
     }
 

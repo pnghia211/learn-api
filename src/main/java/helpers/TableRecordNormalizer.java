@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Normalizes and verifies TableRecord (raw JSON / expected) data against

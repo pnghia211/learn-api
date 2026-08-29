@@ -2,6 +2,7 @@ package assertions;
 
 import actions.InputActions;
 import component.main.form.InputComp;
+import component.main.form.InputComp.RangeBound;
 import data.DropdownOption;
 import model.CardMaskData;
 import org.openqa.selenium.JavascriptExecutor;
@@ -10,9 +11,8 @@ import org.openqa.selenium.WebElement;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
-import component.main.form.InputComp.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class InputAssertions {
     private final InputComp inputComp;

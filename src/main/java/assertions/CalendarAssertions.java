@@ -2,14 +2,13 @@ package assertions;
 
 import actions.CalendarActions;
 import component.constract.CalendarRootLocator;
-import component.main.calendar.CalendarComp;
 import helpers.DateHelper;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 import java.util.TreeSet;
 
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
 
 public class CalendarAssertions {
     private final CalendarRootLocator rootLocator;

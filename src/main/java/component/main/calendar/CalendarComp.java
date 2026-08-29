@@ -1,23 +1,21 @@
 package component.main.calendar;
 
-import data.CalendarLabel;
-import utils.WaitForCalendarReady;
 import actions.CalendarActions;
 import component.constract.CalendarRootLocator;
 import component.constract.locator.DatePickerRootLocator;
 import component.constract.locator.StaticCalendarRootLocator;
 import component.main.BaseComp;
+import data.CalendarLabel;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.WaitForCalendarReady;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CalendarComp extends BaseComp {
     private By calendarSel = By.cssSelector("[data-slot='root']");

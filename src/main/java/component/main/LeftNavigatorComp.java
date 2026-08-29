@@ -7,7 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import page.BasePage;
 
 public class LeftNavigatorComp extends BasePage {
-    private String leftNavigatorCompXpath = "aside[data-slot='left'] a[href='/docs/components/%s']";
+    private String leftNavigatorCompCss = "aside[data-slot='left'] a[href='/docs/components/%s']";
     private String compTitle = "//div[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '%s')]";
 
     public LeftNavigatorComp(WebDriver driver) {
@@ -15,7 +15,7 @@ public class LeftNavigatorComp extends BasePage {
     }
 
     public void clickDataTableComp(String option) {
-        WebElement element = driver.findElement(By.cssSelector(String.format(leftNavigatorCompXpath, option)));
+        WebElement element = driver.findElement(By.cssSelector(String.format(leftNavigatorCompCss, option)));
         actions.moveToElement(element).perform();
         element.click();
         wait.until(ExpectedConditions.urlContains("/" + option));

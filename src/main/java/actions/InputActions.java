@@ -2,13 +2,11 @@ package actions;
 
 import assertions.InputAssertions;
 import component.main.form.InputComp;
+import component.main.form.InputComp.RangeBound;
 import data.DropdownOption;
 import model.CardMaskData;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-
-
-import component.main.form.InputComp.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.WaitUtils;
 

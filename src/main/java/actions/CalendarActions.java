@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import static helpers.DateHelper.parseMonthYear;
-import static org.junit.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class CalendarActions{
     private final CalendarRootLocator rootLocator;

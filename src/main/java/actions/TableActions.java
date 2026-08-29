@@ -1,15 +1,14 @@
 package actions;
 
-import data.RowActionOption;
-import utils.WaitForClassTransition;
 import assertions.TableAssertions;
 import component.main.table.TableComp;
 import data.HeaderColumnOption;
+import data.RowActionOption;
 import helpers.JsExecutorHelper;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.WaitForClassTransition;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
