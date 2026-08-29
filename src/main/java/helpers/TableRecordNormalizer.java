@@ -81,7 +81,7 @@ public class TableRecordNormalizer {
             }
 
             String expectedValue = expected.get(expectedKey);
-            assertEquals("Mismatch for column: " + column, expectedValue, actualValue);
+            assertEquals(expectedValue, actualValue, "Mismatch for column: " + column);
         }
     }
 
