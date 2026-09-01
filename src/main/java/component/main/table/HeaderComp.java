@@ -12,11 +12,11 @@ import java.util.NoSuchElementException;
 
 public class HeaderComp extends BaseComp {
     TableComp tableComp;
-    private By headerCellsSel = By.cssSelector("thead tr th");
-    private By allSelectionSel = By.cssSelector("tr th [aria-label='Select all']");
-    private By dropdownButtonSel = By.cssSelector("button[id^='reka-dropdown-menu']");
-    private String dropdownOptionsXpath = "//*[contains(@id,'reka-dropdown') and @dir='ltr']//*[@data-slot='item' and normalize-space(.)='%s']";
-    private String sortingHeaderSel = ".//thead/tr/th/button[normalize-space()='%s']";
+    private static final By headerCellsSel = By.cssSelector("thead tr th");
+    private static final By allSelectionSel = By.cssSelector("tr th [aria-label='Select all']");
+    private static final By dropdownButtonSel = By.cssSelector("button[id^='reka-dropdown-menu']");
+    private static final String dropdownOptionsXpath = "//*[contains(@id,'reka-dropdown') and @dir='ltr']//*[@data-slot='item' and normalize-space(.)='%s']";
+    private static final String sortingHeaderSel = ".//thead/tr/th/button[normalize-space()='%s']";
 
     public HeaderComp(TableComp tableComp) {
         super(tableComp.driver());

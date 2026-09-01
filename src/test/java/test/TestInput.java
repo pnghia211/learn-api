@@ -14,6 +14,8 @@ import page.HomePage;
 
 import static url.Url.mainPage;
 
+import component.main.form.InputComp.*;
+
 public class TestInput {
     private WebDriver driver;
     private LeftNavigatorComp leftNavigatorComp;
@@ -129,7 +131,7 @@ public class TestInput {
     @Test
     public void singleDateInput_acceptsAndDisplaysDate() {
         leftNavigatorComp.clickDataTableComp("input-date");
-        inputComp.forInput("usage").fillOneDateBound("01-21-1995")
+        inputComp.forInput("usage").fillDate("01-21-1995")
                 .verify().dateSingleInput("01-21-1995");
     }
 
@@ -137,6 +139,33 @@ public class TestInput {
     public void dateRangeInput_acceptsAndDisplaysRange() {
         inputComp.forInput("range").fillDateRangeInput("01-21-1995", "12-12-2026")
                 .verify().dateRangeInput("01-21-1995", "12-12-2026");
+    }
+
+    @Test
+    public void timeInput_fillSingleInputTime() {
+        leftNavigatorComp.clickDataTableComp("input-time");
+        inputComp.forInput("usage")
+                .fillTime("04:20", "PM")
+                .verify().timeValue("04:20", "PM");
+    }
+
+    @Test
+    public void timeInput_fillRangeInputTime() {
+        leftNavigatorComp.clickDataTableComp("input-time");
+        inputComp.forInput("range")
+                .fillTimeRangeInput(RangeBound.START, "08:30", "AM")
+                .fillTimeRangeInput(RangeBound.END, "04:20", "PM")
+                .verify()
+                .timeRangeInput(RangeBound.START, "08:30", "AM")
+                .timeRangeInput(RangeBound.END, "04:20", "PM");
+    }
+
+    @Test
+    public void inputTags_addAndRemoveTags() {
+        leftNavigatorComp.clickDataTableComp("input-tags");
+        inputComp.forInput("usage")
+                .inputTags("abc", "test")
+                .verify().tagItems("Vue", "abc", "test");
     }
 
     @Test
@@ -149,6 +178,7 @@ public class TestInput {
 
     @Test
     public void multiSelect_selectAndRemoveOptions() {
+        leftNavigatorComp.clickDataTableComp("input-menu");
         DropdownOption[] opts = {DropdownOption.BACKLOG, DropdownOption.TO_DO,
                 DropdownOption.IN_PROGRESS, DropdownOption.DONE};
         inputComp.forInput("multiple").selectMultiDropdownOpt(opts)

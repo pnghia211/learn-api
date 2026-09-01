@@ -6,8 +6,8 @@ import org.openqa.selenium.WebElement;
 
 public class FooterComp extends BaseComp {
     TableComp tableComp;
-    private String cellFooterByColumnIndexXpath = ".//tfoot//tr/th[%s]";
-    private By cellFooterSummaryXpath = By.cssSelector("[data-slot='root'] + div");
+    private static final String cellFooterByColumnIndexXpath = ".//tfoot//tr/th[%s]";
+    private static final By cellFooterSummaryXpath = By.cssSelector("[data-slot='root'] + div");
 
     public FooterComp(TableComp tableComp) {
         super(tableComp.driver());

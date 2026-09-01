@@ -8,14 +8,14 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 
 public class PaginationComp extends BaseComp {
-    String tableLabel;
+    private final String tableLabel;
     private WebElement cachedRoot;
-    private By paginationBtnSel = By.cssSelector("button[data-slot='item']");
-    private By firstPageBtnSel = By.cssSelector("button[data-slot='first']");
-    private By prevPageBtnSel = By.cssSelector("button[data-slot='prev']");
-    private By nextPageBtnSel = By.cssSelector("button[data-slot='next']");
-    private By lastPageBtnSel = By.cssSelector("button[data-slot='last']");
-    private By currentPageSel = By.cssSelector("button[data-slot='item'][aria-current='page']");
+    private static final By paginationBtnSel = By.cssSelector("button[data-slot='item']");
+    private static final By firstPageBtnSel = By.cssSelector("button[data-slot='first']");
+    private static final By prevPageBtnSel = By.cssSelector("button[data-slot='prev']");
+    private static final By nextPageBtnSel = By.cssSelector("button[data-slot='next']");
+    private static final By lastPageBtnSel = By.cssSelector("button[data-slot='last']");
+    private static final By currentPageSel = By.cssSelector("button[data-slot='item'][aria-current='page']");
 
     public PaginationComp(WebDriver driver, String tableLabel) {
         super(driver);

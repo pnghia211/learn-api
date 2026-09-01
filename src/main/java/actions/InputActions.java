@@ -1,9 +1,11 @@
 package actions;
 
 import assertions.InputAssertions;
+import com.beust.ah.A;
 import component.main.form.InputComp;
 import component.main.form.InputComp.RangeBound;
 import data.DropdownOption;
+import helpers.DateHelper;
 import model.CardMaskData;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -11,6 +13,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.WaitUtils;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +41,24 @@ public class InputActions {
     public InputActions type(String input) {
         clearAndType(getTypeInput(), input);
         return this;
+    }
+
+    public InputActions inputTags(String... inputs) {
+        for (String input : inputs) {
+            typeAndEnter(getTypeInput(), input);
+        }
+        return this;
+    }
+
+    public List<String> getTagItemsTxt() {
+        List<String> result = new ArrayList<>();
+        for (WebElement element : inputComp.tagsItem()) {
+            String txt = element.getText();
+
+            result.add(txt);
+        }
+
+        return result;
     }
 
     public InputActions clickClearBtn() {
@@ -69,59 +91,65 @@ public class InputActions {
         element.sendKeys(input);
     }
 
-    protected void typeForDateInputSegment(WebElement element, String input) {
+    protected void typeAndEnter(WebElement element, String input) {
+        element.sendKeys(input);
+        inputComp.actions().sendKeys(Keys.ENTER).perform();
+    }
+
+    protected void typeInputSegment(WebElement element, String input) {
         for (char c : input.toCharArray()) {
             element.sendKeys(String.valueOf(c));
         }
     }
 
-    private String[] validateAndSplitDate(String date) {
-        String[] parts = date.split("-");
-        if (parts.length != 3) {
-            throw new IllegalArgumentException("Expected mm-dd-yyyy, got: " + date);
-        }
+    public InputActions fillDate(String date) {
+        String[] parts = DateHelper.validateAndSplitDate(date);
 
-        int month = Integer.parseInt(parts[0]);
-        int day = Integer.parseInt(parts[1]);
-
-        if (month < 1 || month > 12) {
-            throw new IllegalArgumentException("Month out of range (1-12): " + month);
-        }
-        if (day < 1 || day > 31) {
-            throw new IllegalArgumentException("Day out of range (1-31): " + day);
-        }
-
-        return parts;
-    }
-
-    public InputActions fillOneDateBound(String date) {
-        String[] parts = validateAndSplitDate(date);
-
-        typeForDateInputSegment(inputComp.singleInputMonth(), parts[0]);
-        typeForDateInputSegment(inputComp.singleInputDay(), parts[1]);
-        typeForDateInputSegment(inputComp.singleInputYear(), parts[2]);
+        typeInputSegment(inputComp.singleInputMonth(), parts[0]);
+        typeInputSegment(inputComp.singleInputDay(), parts[1]);
+        typeInputSegment(inputComp.singleInputYear(), parts[2]);
 
         return this;
     }
 
-    private void fillOneDateBound(String date, RangeBound bound) {
-        String[] parts = validateAndSplitDate(date);
+    public InputActions fillTime(String timeInput, String period) {
+        LocalTime time = LocalTime.parse(timeInput);
+        String hour = String.valueOf(time.getHour());
+        String minute = String.valueOf(time.getMinute());
 
-        typeForDateInputSegment(inputComp.rangeInputMonth(bound), parts[0]);
-        typeForDateInputSegment(inputComp.rangeInputDay(bound), parts[1]);
-        typeForDateInputSegment(inputComp.rangeInputYear(bound), parts[2]);
+        inputComp.singleHourInput().sendKeys(hour);
+        inputComp.singleMinuteInput().sendKeys(minute);
+        inputComp.singleDayPeriodInput().sendKeys(period);
+
+        return this;
+    }
+
+    public InputActions fillTimeRangeInput(RangeBound bound, String time, String period) {
+        LocalTime t = LocalTime.parse(time);
+        inputComp.rangeInputHour(bound).sendKeys(String.valueOf(t.getHour()));
+        inputComp.rangeInputMinute(bound).sendKeys(String.valueOf(t.getMinute()));
+        inputComp.rangeInputPeriod(bound).sendKeys(period);
+        return this;
+    }
+
+    private void fillDateWithBound(String date, RangeBound bound) {
+        String[] parts = DateHelper.validateAndSplitDate(date);
+
+        typeInputSegment(inputComp.rangeInputMonth(bound), parts[0]);
+        typeInputSegment(inputComp.rangeInputDay(bound), parts[1]);
+        typeInputSegment(inputComp.rangeInputYear(bound), parts[2]);
     }
 
     public InputActions fillDateRangeInput(String startDate, String endDate) {
-        fillOneDateBound(startDate, RangeBound.START);
-        fillOneDateBound(endDate, RangeBound.END);
+        fillDateWithBound(startDate, RangeBound.START);
+        fillDateWithBound(endDate, RangeBound.END);
         return this;
     }
 
     public String getSingleDateInputTxt() {
-        String month = inputComp.singleInputMonth().getAttribute("aria-valuenow");
-        String day = inputComp.singleInputDay().getAttribute("aria-valuenow");
-        String year = inputComp.singleInputYear().getAttribute("aria-valuenow");
+        String month = inputComp.singleInputMonth().getText();
+        String day = inputComp.singleInputDay().getText();
+        String year = inputComp.singleInputYear().getText();
 
         return String.format("%02d-%02d-%s",
                 Integer.parseInt(month),
@@ -130,14 +158,25 @@ public class InputActions {
     }
 
     public String getRangeDateInputTxt(RangeBound bound) {
-        String month = inputComp.rangeInputMonth(bound).getAttribute("aria-valuenow");
-        String day = inputComp.rangeInputDay(bound).getAttribute("aria-valuenow");
-        String year = inputComp.rangeInputYear(bound).getAttribute("aria-valuenow");
+        String month = inputComp.rangeInputMonth(bound).getText();
+        String day = inputComp.rangeInputDay(bound).getText();
+        String year = inputComp.rangeInputYear(bound).getText();
 
         return String.format("%02d-%02d-%s",
                 Integer.parseInt(month),
                 Integer.parseInt(day),
                 year);
+    }
+
+    public String getRangeTimeInputTxt(RangeBound bound) {
+        int hour = Integer.parseInt(inputComp.rangeInputHour(bound).getText());
+        int minute = Integer.parseInt(inputComp.rangeInputMinute(bound).getText());
+
+        return String.format("%02d:%02d", hour, minute);
+    }
+
+    public String getRangePeriodInputTxt(RangeBound bound) {
+        return inputComp.rangeInputPeriod(bound).getText();
     }
 
     public InputActions clickPopupBtn() {

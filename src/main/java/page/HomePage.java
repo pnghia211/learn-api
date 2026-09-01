@@ -3,6 +3,7 @@ package page;
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
 import component.main.factory.CalendarFactory;
+import component.main.factory.FormFactory;
 import component.main.factory.InputFactory;
 import component.main.factory.TableFactory;
 import org.openqa.selenium.WebDriver;
@@ -26,6 +27,9 @@ public class HomePage extends BasePage {
 
     public InputFactory inputComp(){
         return new InputFactory(driver);
+    }
+    public FormFactory formComp(){
+        return new FormFactory(driver);
     }
 
     public CalendarFactory calenderComp(){

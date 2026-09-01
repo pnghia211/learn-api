@@ -15,17 +15,17 @@ import java.util.List;
 
 public class CalendarComp extends BaseComp {
     private WebElement cachedRoot;
-    private By calendarSel = By.cssSelector("[data-slot='root']");
-    private By datePickerBtnSel = By.cssSelector("button:has(> [class*='calendar'])");
-    private String dateValueCss = "[data-value='%s']";
-    private By datePickerCalenderSel = By.cssSelector("[id^='reka'][dir='ltr']");
-    private By headingSel = By.cssSelector("[data-slot='header'] [data-slot='label']");
-    private By nextMonthSel = By.cssSelector("[aria-label='Next month']");
-    private By previousMonthSel = By.cssSelector("[aria-label='Previous month']");
-    private By nextYearSel = By.cssSelector("[aria-label='Next year']");
-    private By previousYearSel = By.cssSelector("[aria-label='Previous year']");
-    private By selectedDateSel = By.cssSelector("[data-selected='true']");
-    private By dateRangePresets = By.xpath("//div[@data-slot='root']/preceding-sibling::div/button");
+    private static final By calendarSel = By.cssSelector("[data-slot='root']");
+    private static final By datePickerBtnSel = By.cssSelector("button:has(> [class*='calendar'])");
+    private static final String dateValueCss = "[data-value='%s']";
+    private static final By datePickerCalenderSel = By.cssSelector("[id^='reka'][dir='ltr']");
+    private static final By headingSel = By.cssSelector("[data-slot='header'] [data-slot='label']");
+    private static final By nextMonthSel = By.cssSelector("[aria-label='Next month']");
+    private static final By previousMonthSel = By.cssSelector("[aria-label='Previous month']");
+    private static final By nextYearSel = By.cssSelector("[aria-label='Next year']");
+    private static final By previousYearSel = By.cssSelector("[aria-label='Previous year']");
+    private static final By selectedDateSel = By.cssSelector("[data-selected='true']");
+    private static final By dateRangePresets = By.xpath("//div[@data-slot='root']/preceding-sibling::div/button");
 
     public CalendarComp(WebDriver driver) {
         super(driver);

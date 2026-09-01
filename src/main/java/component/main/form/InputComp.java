@@ -11,28 +11,35 @@ import java.util.List;
 public class InputComp extends BaseComp {
     private WebElement cachedRoot;
     private final String inputLabel;
-    private String dropdownOpt = ".//*[contains(@id,'reka-combobox-item')][.//span[contains(.,'%s')]]";
-    private By popupSel = By.cssSelector("[id*='reka-combobox-content']");
-    private By uploadFileInputSel = By.cssSelector("input[type='file']");
-    private By textInputSel = By.cssSelector("input");
-    private By countryCodeSel = By.cssSelector("span[data-slot='leading'] span");
-    private By pinInputSel = By.cssSelector("input[type='text']");
-    private By clearBtnSel = By.cssSelector("button[aria-label='Clear input']");
-    private By showPasswordBtnSel = By.cssSelector("button[aria-label='Show password']");
-    private By showPopupBtnSel = By.cssSelector("button[aria-label='Show popup']");
-    private By indicatorSel = By.cssSelector("[data-slot='indicator']");
-    private By pwdStrengthRequirementSel = By.cssSelector("#password-strength");
-    private By pwdRequirementList = By.cssSelector("ul li");
-    private By creditCardSel = By.cssSelector("input[placeholder*='4242']");
-    private By calendarSel = By.cssSelector("input[placeholder*='MM/YY']");
-    private By cvcSel = By.cssSelector("input[placeholder*='CVC']");
-    private By singleInputMonthSel = By.cssSelector("[data-segment='month']");
-    private By singleInputDaySel = By.cssSelector("[data-segment='day']");
-    private By singleInputYearSel = By.cssSelector("[data-segment='year']");
+    private static final String dropdownOpt = ".//*[contains(@id,'reka-combobox-item')][.//span[contains(.,'%s')]]";
+    private static final By popupSel = By.cssSelector("[id*='reka-combobox-content']");
+    private static final By uploadFileInputSel = By.cssSelector("input[type='file']");
+    private static final By textInputSel = By.cssSelector("input");
+    private static final By countryCodeSel = By.cssSelector("span[data-slot='leading'] span");
+    private static final By pinInputSel = By.cssSelector("input[inputmode='text']");
+    private static final By clearBtnSel = By.cssSelector("button[aria-label='Clear input']");
+    private static final By showPasswordBtnSel = By.cssSelector("button[aria-label='Show password']");
+    private static final By showPopupBtnSel = By.cssSelector("button[aria-label='Show popup']");
+    private static final By indicatorSel = By.cssSelector("[data-slot='indicator']");
+    private static final By pwdStrengthRequirementSel = By.cssSelector("#password-strength");
+    private static final By pwdRequirementList = By.cssSelector("ul li");
+    private static final By creditCardSel = By.cssSelector("input[placeholder*='4242']");
+    private static final By calendarSel = By.cssSelector("input[placeholder*='MM/YY']");
+    private static final By cvcSel = By.cssSelector("input[placeholder*='CVC']");
+    private static final By singleInputMonthSel = By.cssSelector("[data-segment='month']");
+    private static final By singleInputDaySel = By.cssSelector("[data-segment='day']");
+    private static final By singleInputYearSel = By.cssSelector("[data-segment='year']");
+    private static final By hourInputSel = By.cssSelector("[data-segment='hour']");
+    private static final By minuteInputSel = By.cssSelector("[data-segment='minute']");
+    private static final By dayPeriodInputSel = By.cssSelector("[data-segment='dayPeriod']");
+    private static final By addTagsInputSel = By.cssSelector("input[placeholder*='Add a tag']");
     private String rangeInputMonthSel = "[data-segment='month'][data-reka-date-range-field-segment-type='%s']";
     private String rangeInputDaySel = "[data-segment='day'][data-reka-date-range-field-segment-type='%s']";
     private String rangeInputYearSel = "[data-segment='year'][data-reka-date-range-field-segment-type='%s']";
-    private By tagsItem = By.cssSelector("[data-slot='tagsItem']");
+    private String rangeInputHourSel = "[data-segment='hour'][data-reka-time-range-field-segment-type='%s']";
+    private String rangeInputMinuteSel = "[data-segment='minute'][data-reka-time-range-field-segment-type='%s']";
+    private String rangeInputPeriodSel = "[data-segment='dayPeriod'][data-reka-time-range-field-segment-type='%s']";
+    private static final By tagsItem = By.cssSelector("div[aria-labelledby*='reka-tags-input-item-text']");
     private String tagItemDeleteIconXpath = ".//span[contains(.,'%s')]/following-sibling::button[@data-slot='tagsItemDelete']";
 
     public InputComp(WebDriver driver, String inputLabel) {
@@ -127,6 +134,30 @@ public class InputComp extends BaseComp {
 
     public WebElement rangeInputYear(RangeBound rangeBound) {
         return inputByLabel().findElement(By.cssSelector(String.format(rangeInputYearSel, rangeBound.value())));
+    }
+
+    public WebElement singleHourInput() {
+        return inputByLabel().findElement(hourInputSel);
+    }
+
+    public WebElement singleMinuteInput() {
+        return inputByLabel().findElement(minuteInputSel);
+    }
+
+    public WebElement singleDayPeriodInput() {
+        return inputByLabel().findElement(dayPeriodInputSel);
+    }
+
+    public WebElement rangeInputHour(RangeBound rangeBound) {
+        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputHourSel, rangeBound.value())));
+    }
+
+    public WebElement rangeInputMinute(RangeBound rangeBound) {
+        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputMinuteSel, rangeBound.value())));
+    }
+
+    public WebElement rangeInputPeriod(RangeBound rangeBound) {
+        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputPeriodSel, rangeBound.value())));
     }
 
     public List<WebElement> tagsItem() {

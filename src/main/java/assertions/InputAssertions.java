@@ -8,6 +8,7 @@ import model.CardMaskData;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,7 +34,14 @@ public class InputAssertions {
 
     public InputAssertions valueEquals(String expected) {
         String actual = actions.getTypeInput().getDomProperty("value");
-        assertEquals(expected, actual);
+        assertEquals(actual, expected);
+        return this;
+    }
+
+    public InputAssertions tagItems(String... expected) {
+        List<String> actual = actions.getTagItemsTxt();
+
+        assertEquals(actual, List.of(expected));
         return this;
     }
 
@@ -105,6 +113,12 @@ public class InputAssertions {
         return this;
     }
 
+    public InputAssertions timeRangeInput(RangeBound bound, String expectedTime, String expectedPeriod) {
+        assertEquals(expectedTime, actions.getRangeTimeInputTxt(bound));
+        assertEquals(expectedPeriod, actions.getRangePeriodInputTxt(bound));
+        return this;
+    }
+
     public InputAssertions selectedOptionsInOrder(DropdownOption... expected) {
         List<String> actual = actions.selectDropdownOptionsInOrder(expected);
 
@@ -153,6 +167,17 @@ public class InputAssertions {
         }
 
         assertEquals(expected, actual.toString());
+        return this;
+    }
+
+    public InputAssertions timeValue(String expected, String expectedPeriod) {
+        LocalTime time = LocalTime.parse(expected);
+        String hourExpected = String.valueOf(time.getHour());
+        String minuteExpected = String.valueOf(time.getMinute());
+
+        assertEquals(inputComp.singleHourInput().getText(), hourExpected);
+        assertEquals(inputComp.singleMinuteInput().getText(), minuteExpected);
+        assertEquals(inputComp.singleDayPeriodInput().getText(), expectedPeriod);
         return this;
     }
 

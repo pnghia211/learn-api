@@ -9,10 +9,10 @@ import java.util.NoSuchElementException;
 
 public class RowDropdownComp extends BaseComp {
     TableComp tableComp;
-    private By actionButtonSel = By.cssSelector("td button");
-    private By actionDropdownMenuSel = By.cssSelector("[id^='reka-dropdown-menu'][dir='ltr']");
-    private String menuItemCssXpath = "button[data-slot='item'][role='menuitem']";
-    private By copyNotificationPopupSel = By.cssSelector("[aria-label^='Notifications'] [data-slot=base]");
+    private static final By actionButtonSel = By.cssSelector("td button");
+    private static final By actionDropdownMenuSel = By.cssSelector("[id^='reka-dropdown-menu'][dir='ltr']");
+    private static final String menuItemCssXpath = "button[data-slot='item'][role='menuitem']";
+    private static final By copyNotificationPopupSel = By.cssSelector("[aria-label^='Notifications'] [data-slot=base]");
 
     public RowDropdownComp(TableComp tableComp) {
         super(tableComp.driver());

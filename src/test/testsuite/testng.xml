@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="LearningAPISuite" verbose="1">
-    <test name="CalendarTests" preserve-order="true">
+    <test name="CalendarTests">
         <classes>
             <class name="test.TestCalendar">
                 <methods>
@@ -35,6 +35,9 @@
                     <include name="countryPicker_selectsVietnam"/>
                     <include name="otpInput_acceptsAndVerifiesDigits"/>
                     <include name="separatorInput_acceptsAndVerifiesDigits"/>
+                    <include name="timeInput_fillSingleInputTime"/>
+                    <include name="timeInput_fillRangeInputTime"/>
+                    <include name="inputTags_addAndRemoveTags"/>
                 </methods>
             </class>
         </classes>

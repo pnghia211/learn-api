@@ -98,4 +98,23 @@ public class DateHelper {
         }
         return YearMonth.parse(text + " " + fallbackYear, DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH));
     }
+
+    public static String[] validateAndSplitDate(String date) {
+        String[] parts = date.split("-");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Expected mm-dd-yyyy, got: " + date);
+        }
+
+        int month = Integer.parseInt(parts[0]);
+        int day = Integer.parseInt(parts[1]);
+
+        if (month < 1 || month > 12) {
+            throw new IllegalArgumentException("Month out of range (1-12): " + month);
+        }
+        if (day < 1 || day > 31) {
+            throw new IllegalArgumentException("Day out of range (1-31): " + day);
+        }
+
+        return parts;
+    }
 }

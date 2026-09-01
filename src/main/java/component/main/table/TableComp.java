@@ -10,19 +10,19 @@ import java.util.List;
 
 public class TableComp extends BaseComp {
     private WebElement cachedRoot;
-    protected String tableLabel;
-    protected int tableIndex;
-    private By rowSel = By.cssSelector("tbody > tr");
-    private By rowSelectionSel = By.cssSelector("tr td [aria-label='Select row']");
-    private By checkedRowsSel = By.cssSelector("tr td [aria-label='Select row'][data-state='checked']");
-    private String cellsByColumnIndexXpath = "tbody tr td:nth-of-type(%s)";
-    private By cellSel = By.cssSelector("tbody > tr > td");
-    private By expandBtnRowSel = By.cssSelector("button[class]:not([class*='invisible']) span[class*='plus']");
-    private By expandableRow = By.cssSelector("tbody tr:has(button[class]:not([class*='invisible']))");
-    private By pinnedRows = By.cssSelector("tbody tr[data-pinned='top']");
-    private By unpinRowBtn = By.cssSelector("td button[aria-label='Unpin row']");
-    private By unpinRows = By.cssSelector("tbody tr:not([data-pinned='top'])");
-    private By pinRowBtn = By.cssSelector("td button[aria-label='Pin row to top']");
+    protected final String tableLabel;
+    protected final int tableIndex;
+    private static final By rowSel = By.cssSelector("tbody > tr");
+    private static final By rowSelectionSel = By.cssSelector("tr td [aria-label='Select row']");
+    private static final By checkedRowsSel = By.cssSelector("tr td [aria-label='Select row'][data-state='checked']");
+    private static final String cellsByColumnIndexXpath = "tbody tr td:nth-of-type(%s)";
+    private static final By cellSel = By.cssSelector("tbody > tr > td");
+    private static final By expandBtnRowSel = By.cssSelector("button[class]:not([class*='invisible']) span[class*='plus']");
+    private static final By expandableRow = By.cssSelector("tbody tr:has(button[class]:not([class*='invisible']))");
+    private static final By pinnedRows = By.cssSelector("tbody tr[data-pinned='top']");
+    private static final By unpinRowBtn = By.cssSelector("td button[aria-label='Unpin row']");
+    private static final By unpinRows = By.cssSelector("tbody tr:not([data-pinned='top'])");
+    private static final By pinRowBtn = By.cssSelector("td button[aria-label='Pin row to top']");
 
     public TableComp(WebDriver driver, String tableLabel, int tableIndex) {
         super(driver);
