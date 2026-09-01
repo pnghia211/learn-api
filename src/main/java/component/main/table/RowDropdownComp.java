@@ -1,11 +1,13 @@
 package component.main.table;
 
+import component.main.BaseComp;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.NoSuchElementException;
 
-public class RowDropdownComp{
+public class RowDropdownComp extends BaseComp {
     TableComp tableComp;
     private By actionButtonSel = By.cssSelector("td button");
     private By actionDropdownMenuSel = By.cssSelector("[id^='reka-dropdown-menu'][dir='ltr']");
@@ -13,6 +15,7 @@ public class RowDropdownComp{
     private By copyNotificationPopupSel = By.cssSelector("[aria-label^='Notifications'] [data-slot=base]");
 
     public RowDropdownComp(TableComp tableComp) {
+        super(tableComp.driver());
         this.tableComp = tableComp;
     }
 

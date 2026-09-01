@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="LearningAPISuite" verbose="1">
+    <test name="CalendarTests" preserve-order="true">
+        <classes>
+            <class name="test.TestCalendar">
+                <methods>
+                    <include name="usageCalendar_selectsDateAndUpdatesSelection"/>
+                    <include name="disabledDates_cannotBeSelected"/>
+                    <include name="usageCalendar_navigatesMonthAndYear"/>
+                    <include name="usageCalendar_switchesViewGrids"/>
+                    <include name="multipleDates_selectsAllDates"/>
+                    <include name="dateRange_selectsStartAndEnd"/>
+                    <include name="usageCalendar_selectDateWithNavigation"/>
+                    <include name="datePicker_selectDateWithNavigation"/>
+                    <include name="dateRangePicker_selectsRangeAndShowsPresets"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="InputTests">
+        <classes>
+            <class name="test.TestInput">
+                <methods>
+                    <include name="uploadFile_showsFileUploaded"/>
+                    <include name="clearButton_clearsTypedText"/>
+                    <include name="passwordToggle_showsAndHidesPassword"/>
+                    <include name="passwordStrengthIndicator_progressesThroughAllLevels"/>
+                    <include name="maskInput_fillsAndVerifiesCardFields"/>
+                    <include name="singleDateInput_acceptsAndDisplaysDate"/>
+                    <include name="dateRangeInput_acceptsAndDisplaysRange"/>
+                    <include name="defaultUsage_showsOptionsInOrder"/>
+                    <include name="multiSelect_selectAndRemoveOptions"/>
+                    <include name="countryPicker_selectsVietnam"/>
+                    <include name="otpInput_acceptsAndVerifiesDigits"/>
+                    <include name="separatorInput_acceptsAndVerifiesDigits"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="TableTests">
+        <classes>
+            <class name="test.TestTable">
+                <methods>
+                    <include name="infiniteScroll_scrollsUntilCellDisplayed"/>
+                    <include name="usageTable_toggleEmailColumnVisibility"/>
+                    <include name="columnVisibilityTable_toggleAmountColumn"/>
+                    <include name="rowActions_copyPaymentIdShowsNotification"/>
+                    <include name="usageTable_rowsMatchExpectedData"/>
+                    <include name="columnVisibilityTable_rowsMatchExpectedData"/>
+                    <include name="usageTable_specificRowMatchesExpectedCell"/>
+                    <include name="rowSelectionTable_checkboxesSelectAndFooterUpdates"/>
+                    <include name="usageTable_checkboxesSelectAndFooterUpdates"/>
+                    <include name="columnFooterTable_totalAmountDisplayed"/>
+                    <include name="columnSpanTable_groupsContiguousAndNamesMatch"/>
+                    <include name="columnSortingTable_sortsEachColumnCorrectly"/>
+                    <include name="paginationTable_defaultStateAndRowContentPerPage"/>
+                    <include name="rowPinningTable_pinAndUnpinRows"/>
+                    <include name="treeDataTable_expandsUntilCellDisplayed"/>
+                    <include name="groupedRowsTable_expandsUntilCellDisplayed"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

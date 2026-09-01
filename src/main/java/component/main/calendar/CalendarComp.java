@@ -1,11 +1,7 @@
 package component.main.calendar;
 
-import actions.CalendarActions;
 import component.constract.CalendarRootLocator;
-import component.constract.locator.DatePickerRootLocator;
-import component.constract.locator.StaticCalendarRootLocator;
 import component.main.BaseComp;
-import data.CalendarLabel;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -18,6 +14,7 @@ import java.time.Duration;
 import java.util.List;
 
 public class CalendarComp extends BaseComp {
+    private WebElement cachedRoot;
     private By calendarSel = By.cssSelector("[data-slot='root']");
     private By datePickerBtnSel = By.cssSelector("button:has(> [class*='calendar'])");
     private String dateValueCss = "[data-value='%s']";
@@ -38,12 +35,17 @@ public class CalendarComp extends BaseComp {
         return this.actions;
     }
 
+    public WebElement getCachedRoot(String tableLabel) {
+        cachedRoot = getOrRefreshCached(cachedRoot, () -> getRootComp(tableLabel));
+        return cachedRoot;
+    }
+
     public WebElement calendarByLabel(String calendarLabel) {
-        return getRootComp(calendarLabel).findElement(calendarSel);
+        return getCachedRoot(calendarLabel).findElement(calendarSel);
     }
 
     public WebElement datePickByLabel(String calendarLabel) {
-        return getRootComp(calendarLabel).findElement(datePickerBtnSel);
+        return getCachedRoot(calendarLabel).findElement(datePickerBtnSel);
     }
 
     public WebElement waitForOpenDatePickerCalendarReady() {
@@ -84,13 +86,5 @@ public class CalendarComp extends BaseComp {
 
     public List<WebElement> selectedDate(CalendarRootLocator rootLocator) {
         return rootLocator.locate().findElements(selectedDateSel);
-    }
-
-    public CalendarActions forCalendar(CalendarLabel calendarLabel) {
-        return new CalendarActions(this, new StaticCalendarRootLocator(this, calendarLabel.label()));
-    }
-
-    public CalendarActions forDatePicker(CalendarLabel calendarLabel) {
-        return new CalendarActions(this, new DatePickerRootLocator(this, calendarLabel.label()));
     }
 }
