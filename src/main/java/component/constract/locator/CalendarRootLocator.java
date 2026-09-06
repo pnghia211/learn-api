@@ -1,14 +1,14 @@
 package component.constract.locator;
 
-import component.constract.CalendarRootLocator;
+import component.constract.RootLocator;
 import component.main.calendar.CalendarComp;
 import org.openqa.selenium.WebElement;
 
-public class StaticCalendarRootLocator implements CalendarRootLocator {
+public class CalendarRootLocator implements RootLocator {
     private final CalendarComp comp;
     private final String calendarLabel;
 
-    public StaticCalendarRootLocator(CalendarComp comp, String calendarLabel) {
+    public CalendarRootLocator(CalendarComp comp, String calendarLabel) {
         this.comp = comp;
         this.calendarLabel = calendarLabel;
     }
@@ -19,7 +19,7 @@ public class StaticCalendarRootLocator implements CalendarRootLocator {
     }
 
     @Override
-    public String getCalendarLabel() {
+    public String getRootLabel() {
         return calendarLabel;
     }
 }

@@ -1,7 +1,7 @@
 package assertions;
 
 import actions.CalendarActions;
-import component.constract.CalendarRootLocator;
+import component.constract.RootLocator;
 import helpers.DateHelper;
 import org.openqa.selenium.WebElement;
 
@@ -11,10 +11,10 @@ import java.util.TreeSet;
 import static org.testng.Assert.*;
 
 public class CalendarAssertions {
-    private final CalendarRootLocator rootLocator;
+    private final RootLocator rootLocator;
     private final CalendarActions actions;
 
-    public CalendarAssertions(CalendarRootLocator rootLocator, CalendarActions actions) {
+    public CalendarAssertions(RootLocator rootLocator, CalendarActions actions) {
         this.rootLocator = rootLocator;
         this.actions = actions;
     }
@@ -54,7 +54,7 @@ public class CalendarAssertions {
 
     public CalendarAssertions datePickerHeading(String date) {
         String result = DateHelper.convertHeadingFormat(date);
-        String actual = actions.getDatePickerHeadingEle(rootLocator.getCalendarLabel()).getText();
+        String actual = actions.getDatePickerHeadingEle(rootLocator.getRootLabel()).getText();
         assertEquals(result, actual);
         return this;
     }

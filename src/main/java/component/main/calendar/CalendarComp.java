@@ -1,6 +1,6 @@
 package component.main.calendar;
 
-import component.constract.CalendarRootLocator;
+import component.constract.RootLocator;
 import component.main.BaseComp;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -55,36 +55,36 @@ public class CalendarComp extends BaseComp {
                 .until(new WaitForCalendarReady(datePickerCalenderSel));
     }
 
-    public List<WebElement> dateRangePresets(CalendarRootLocator rootLocator) {
+    public List<WebElement> dateRangePresets(RootLocator rootLocator) {
         return rootLocator.locate().findElements(dateRangePresets);
     }
 
-    public WebElement dateCell(CalendarRootLocator rootLocator, String dateValue) {
+    public WebElement dateCell(RootLocator rootLocator, String dateValue) {
         return rootLocator.locate()
                 .findElement(By.cssSelector(String.format(dateValueCss, dateValue)));
     }
 
-    public WebElement headingEle(CalendarRootLocator rootLocator) {
+    public WebElement headingEle(RootLocator rootLocator) {
         return rootLocator.locate().findElement(headingSel);
     }
 
-    public WebElement nextMonthBtn(CalendarRootLocator rootLocator) {
+    public WebElement nextMonthBtn(RootLocator rootLocator) {
         return rootLocator.locate().findElement(nextMonthSel);
     }
 
-    public WebElement prevMonthBtn(CalendarRootLocator rootLocator) {
+    public WebElement prevMonthBtn(RootLocator rootLocator) {
         return rootLocator.locate().findElement(previousMonthSel);
     }
 
-    public WebElement nextYearBtn(CalendarRootLocator rootLocator) {
+    public WebElement nextYearBtn(RootLocator rootLocator) {
         return rootLocator.locate().findElement(nextYearSel);
     }
 
-    public WebElement pervYearBtn(CalendarRootLocator rootLocator) {
+    public WebElement pervYearBtn(RootLocator rootLocator) {
         return rootLocator.locate().findElement(previousYearSel);
     }
 
-    public List<WebElement> selectedDate(CalendarRootLocator rootLocator) {
+    public List<WebElement> selectedDate(RootLocator rootLocator) {
         return rootLocator.locate().findElements(selectedDateSel);
     }
 }

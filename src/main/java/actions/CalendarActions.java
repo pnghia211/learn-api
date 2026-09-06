@@ -1,7 +1,7 @@
 package actions;
 
 import assertions.CalendarAssertions;
-import component.constract.CalendarRootLocator;
+import component.constract.RootLocator;
 import component.main.calendar.CalendarComp;
 import org.openqa.selenium.WebElement;
 
@@ -15,13 +15,13 @@ import static helpers.DateHelper.parseMonthYear;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class CalendarActions{
-    private final CalendarRootLocator rootLocator;
+    private final RootLocator rootLocator;
     private static final Pattern MONTH_PATTERN = Pattern.compile("^[A-Z][a-z]+ \\d{4}$"); // "February 2022"
     private static final Pattern YEAR_PATTERN = Pattern.compile("^\\d{4}$"); // "2022"
     private static final Pattern DECADE_PATTERN = Pattern.compile("^\\d{4}\\s-\\s\\d{4}$"); // "2020-2031"
     private CalendarComp parent;
 
-    public CalendarActions(CalendarComp parent, CalendarRootLocator rootLocator) {
+    public CalendarActions(CalendarComp parent, RootLocator rootLocator) {
         this.parent = parent;
         this.rootLocator = rootLocator;
     }
@@ -47,11 +47,11 @@ public class CalendarActions{
         return "true".equalsIgnoreCase(result);
     }
 
-    public List<WebElement> getSelectedDates(CalendarRootLocator rootLocator) {
+    public List<WebElement> getSelectedDates(RootLocator rootLocator) {
         return parent.selectedDate(rootLocator);
     }
 
-    public List<WebElement> getDateRangePreset(CalendarRootLocator rootLocator){
+    public List<WebElement> getDateRangePreset(RootLocator rootLocator){
         return parent.dateRangePresets(rootLocator);
     }
 

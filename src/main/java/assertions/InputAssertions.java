@@ -19,7 +19,8 @@ public class InputAssertions {
     private final InputComp inputComp;
     private final InputActions actions;
 
-    public InputAssertions(InputComp parent, InputActions actions) {
+    public
+    InputAssertions(InputComp parent, InputActions actions) {
         this.inputComp = parent;
         this.actions = actions;
     }
@@ -32,31 +33,43 @@ public class InputAssertions {
         return this;
     }
 
-    public InputAssertions valueEquals(String expected) {
-        String actual = actions.getTypeInput().getDomProperty("value");
+    public InputAssertions inputValueEquals(String expected) {
+        String actual = actions.getInputText().getDomProperty("value");
         assertEquals(actual, expected);
         return this;
     }
 
-    public InputAssertions tagItems(String... expected) {
+    public InputAssertions selectValueEquals(String expected) {
+        String actual = actions.getSelectText().getText();
+        assertEquals(actual, expected);
+        return this;
+    }
+
+    public InputAssertions textAreaEquals(String expected) {
+        String actual = actions.getTextArea();
+        assertEquals(actual, expected);
+        return this;
+    }
+
+    public InputAssertions tagItems(List<String> expected) {
         List<String> actual = actions.getTagItemsTxt();
 
-        assertEquals(actual, List.of(expected));
+        assertEquals(actual, expected);
         return this;
     }
 
     public InputAssertions inputIsEmpty() {
-        assertTrue(actions.getTypeInput().getDomProperty("value").isEmpty());
+        assertTrue(actions.getInputText().getDomProperty("value").isEmpty());
         return this;
     }
 
     public InputAssertions inputIsHidden() {
-        assertTrue(actions.getTypeInput().getAttribute("type").equalsIgnoreCase("password"));
+        assertTrue(actions.getInputText().getAttribute("type").equalsIgnoreCase("password"));
         return this;
     }
 
     public InputAssertions inputIsVisible() {
-        assertTrue(actions.getTypeInput().getAttribute("type").equalsIgnoreCase("text"));
+        assertTrue(actions.getInputText().getAttribute("type").equalsIgnoreCase("text"));
         return this;
     }
 
@@ -119,10 +132,10 @@ public class InputAssertions {
         return this;
     }
 
-    public InputAssertions selectedOptionsInOrder(DropdownOption... expected) {
+    public InputAssertions selectedOptionsInOrder(List<DropdownOption> expected) {
         List<String> actual = actions.selectDropdownOptionsInOrder(expected);
 
-        List<String> expectedLabels = Arrays.stream(expected)
+        List<String> expectedLabels = expected.stream()
                 .map(DropdownOption::label)
                 .toList();
 
@@ -132,7 +145,7 @@ public class InputAssertions {
     }
 
     public InputAssertions selectedCountryInput(String code, String country) {
-        String actualCountry = actions.getTypeInput().getAttribute("value");
+        String actualCountry = actions.getInputText().getAttribute("value");
         String actualCountryCode = actions.getCountryCodeInput().getText();
 
         assertEquals(countryCodeToEmoji(code), actualCountryCode);
@@ -148,8 +161,8 @@ public class InputAssertions {
         return new String(Character.toChars(firstChar)) + new String(Character.toChars(secondChar));
     }
 
-    public InputAssertions selectedOptions(DropdownOption... expected) {
-        List<String> actual = actions.getSelectedOptions();
+    public InputAssertions selectedTagsItem(DropdownOption... expected) {
+        List<String> actual = actions.getSelectedTagsItem();
 
         List<String> expectedLabels = Arrays.stream(expected)
                 .map(DropdownOption::label)
@@ -160,7 +173,7 @@ public class InputAssertions {
         return this;
     }
 
-    public InputAssertions inputForm(String expected) {
+    public InputAssertions pinInput(String expected) {
         StringBuilder actual = new StringBuilder();
         for (WebElement element : inputComp.pinInputs()) {
             actual.append(element.getAttribute("value"));
@@ -182,7 +195,7 @@ public class InputAssertions {
     }
 
     public InputAssertions countryPickerDefault() {
-        assertTrue("Select country".equalsIgnoreCase(inputComp.textInput().getAttribute("placeholder")));
+        assertTrue("Select country".equalsIgnoreCase(inputComp.inputEle().getAttribute("placeholder")));
         return this;
     }
 

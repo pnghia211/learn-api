@@ -2,11 +2,11 @@ package data;
 
 public enum FormFieldLabel {
     INPUT("Input"),
-    INPUT_NUMBER("InputNumber"),
+    NUMBER_INPUT("InputNumber"),
     PIN_INPUT("PinInput"),
     INPUT_DATE("InputDate"),
     INPUT_TIME("InputTime"),
-    INPUT_TAGS("InputTags"),
+    TAGS_INPUT("InputTags"),
     INPUT_MENU("InputMenu"),
     INPUT_MENU_MULTIPLE("InputMenu (Multiple)"),
     TEXTAREA("Textarea"),

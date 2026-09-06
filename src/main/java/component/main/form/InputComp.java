@@ -5,21 +5,24 @@ import data.DropdownOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.time.Duration;
 import java.util.List;
 
 public class InputComp extends BaseComp {
     private WebElement cachedRoot;
     private final String inputLabel;
-    private static final String dropdownOpt = ".//*[contains(@id,'reka-combobox-item')][.//span[contains(.,'%s')]]";
-    private static final By popupSel = By.cssSelector("[id*='reka-combobox-content']");
+    private static final String dropdownOpt = ".//*[@data-slot='item'][.//span[contains(.,'%s')]]";
+    private static final By popupSel = By.cssSelector("[id^='reka'][role='listbox']");
     private static final By uploadFileInputSel = By.cssSelector("input[type='file']");
-    private static final By textInputSel = By.cssSelector("input");
+    private static final By inputEleSel = By.cssSelector("input");
+    private static final By selectEleSel = By.cssSelector("[data-slot='value']");
     private static final By countryCodeSel = By.cssSelector("span[data-slot='leading'] span");
     private static final By pinInputSel = By.cssSelector("input[inputmode='text']");
     private static final By clearBtnSel = By.cssSelector("button[aria-label='Clear input']");
     private static final By showPasswordBtnSel = By.cssSelector("button[aria-label='Show password']");
-    private static final By showPopupBtnSel = By.cssSelector("button[aria-label='Show popup']");
+    private static final By showPopupBtnSel = By.cssSelector("span[data-slot='trailingIcon']");
     private static final By indicatorSel = By.cssSelector("[data-slot='indicator']");
     private static final By pwdStrengthRequirementSel = By.cssSelector("#password-strength");
     private static final By pwdRequirementList = By.cssSelector("ul li");
@@ -32,14 +35,16 @@ public class InputComp extends BaseComp {
     private static final By hourInputSel = By.cssSelector("[data-segment='hour']");
     private static final By minuteInputSel = By.cssSelector("[data-segment='minute']");
     private static final By dayPeriodInputSel = By.cssSelector("[data-segment='dayPeriod']");
-    private static final By addTagsInputSel = By.cssSelector("input[placeholder*='Add a tag']");
+    private static final By incrementBtnSel = By.cssSelector("[data-slot='increment'] button");
+    private static final By decrementBtnSel = By.cssSelector("[data-slot='decrement'] button");
+    private static final By textAreaSel = By.cssSelector("textarea");
+    private static final By tagsItemSel = By.cssSelector("div[aria-labelledby*='reka-tags-input-item-text']");
     private String rangeInputMonthSel = "[data-segment='month'][data-reka-date-range-field-segment-type='%s']";
     private String rangeInputDaySel = "[data-segment='day'][data-reka-date-range-field-segment-type='%s']";
     private String rangeInputYearSel = "[data-segment='year'][data-reka-date-range-field-segment-type='%s']";
     private String rangeInputHourSel = "[data-segment='hour'][data-reka-time-range-field-segment-type='%s']";
     private String rangeInputMinuteSel = "[data-segment='minute'][data-reka-time-range-field-segment-type='%s']";
     private String rangeInputPeriodSel = "[data-segment='dayPeriod'][data-reka-time-range-field-segment-type='%s']";
-    private static final By tagsItem = By.cssSelector("div[aria-labelledby*='reka-tags-input-item-text']");
     private String tagItemDeleteIconXpath = ".//span[contains(.,'%s')]/following-sibling::button[@data-slot='tagsItemDelete']";
 
     public InputComp(WebDriver driver, String inputLabel) {
@@ -48,16 +53,24 @@ public class InputComp extends BaseComp {
     }
 
     public WebElement inputByLabel() {
-        cachedRoot = getOrRefreshCached(cachedRoot, () -> getRootComp(inputLabel));
+        cachedRoot = getOrRefreshCached(cachedRoot, this::resolveRoot);
         return cachedRoot;
+    }
+
+    protected WebElement resolveRoot() {
+        return getRootComp(inputLabel);
     }
 
     public WebElement uploadFileInput() {
         return inputByLabel().findElement(uploadFileInputSel);
     }
 
-    public WebElement textInput() {
-        return inputByLabel().findElement(textInputSel);
+    public WebElement inputEle() {
+        return inputByLabel().findElement(inputEleSel);
+    }
+
+    public WebElement selectEle() {
+        return inputByLabel().findElement(selectEleSel);
     }
 
     public WebElement countryCodeInput() {
@@ -81,15 +94,12 @@ public class InputComp extends BaseComp {
     }
 
     public WebElement popupDropdown() {
-        return driver.findElement(popupSel);
+        return wait.pollingEvery(Duration.ofMillis(200))
+                .until(ExpectedConditions.visibilityOfElementLocated(popupSel));
     }
 
     public WebElement dropdownOption(DropdownOption option) {
         return popupDropdown().findElement(By.xpath(String.format(dropdownOpt, option.label())));
-    }
-
-    public WebElement dropdownOption(String option) {
-        return popupDropdown().findElement(By.xpath(String.format(dropdownOpt, option)));
     }
 
     public WebElement indicator() {
@@ -161,11 +171,23 @@ public class InputComp extends BaseComp {
     }
 
     public List<WebElement> tagsItem() {
-        return inputByLabel().findElements(tagsItem);
+        return inputByLabel().findElements(tagsItemSel);
     }
 
     public WebElement deleteIconByItem(String tagItem) {
         return inputByLabel().findElement(By.xpath(String.format(tagItemDeleteIconXpath, tagItem)));
+    }
+
+    public WebElement increaseBtn() {
+        return inputByLabel().findElement(incrementBtnSel);
+    }
+
+    public WebElement decreaseBtn() {
+        return inputByLabel().findElement(decrementBtnSel);
+    }
+
+    public WebElement textArea() {
+        return inputByLabel().findElement(textAreaSel);
     }
 
     public enum RangeBound {

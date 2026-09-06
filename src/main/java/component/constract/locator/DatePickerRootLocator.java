@@ -1,10 +1,10 @@
 package component.constract.locator;
 
-import component.constract.CalendarRootLocator;
+import component.constract.RootLocator;
 import component.main.calendar.CalendarComp;
 import org.openqa.selenium.WebElement;
 
-public class DatePickerRootLocator implements CalendarRootLocator {
+public class DatePickerRootLocator implements RootLocator {
     private final CalendarComp comp;
     public final String calendarLabel;
 
@@ -24,7 +24,7 @@ public class DatePickerRootLocator implements CalendarRootLocator {
     }
 
     @Override
-    public String getCalendarLabel() {
+    public String getRootLabel() {
         return calendarLabel;
     }
 }

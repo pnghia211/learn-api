@@ -2,7 +2,7 @@ package component.constract;
 
 import org.openqa.selenium.WebElement;
 
-public interface CalendarRootLocator {
+public interface RootLocator {
     WebElement locate();
-    String getCalendarLabel();
+    String getRootLabel();
 }

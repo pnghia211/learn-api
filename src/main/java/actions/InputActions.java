@@ -1,7 +1,6 @@
 package actions;
 
 import assertions.InputAssertions;
-import com.beust.ah.A;
 import component.main.form.InputComp;
 import component.main.form.InputComp.RangeBound;
 import data.DropdownOption;
@@ -13,7 +12,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.WaitUtils;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +23,12 @@ public class InputActions {
         this.inputComp = inputComp;
     }
 
-    public WebElement getTypeInput() {
-        return inputComp.textInput();
+    public WebElement getInputText() {
+        return inputComp.inputEle();
+    }
+
+    public WebElement getSelectText() {
+        return inputComp.selectEle();
     }
 
     public WebElement getCountryCodeInput() {
@@ -39,15 +41,24 @@ public class InputActions {
     }
 
     public InputActions type(String input) {
-        clearAndType(getTypeInput(), input);
+        clearAndType(getInputText(), input);
         return this;
     }
 
     public InputActions inputTags(String... inputs) {
         for (String input : inputs) {
-            typeAndEnter(getTypeInput(), input);
+            typeAndEnter(getInputText(), input);
         }
         return this;
+    }
+
+    public InputActions typeInTextArea(String value) {
+        clearAndType(inputComp.textArea(), value);
+        return this;
+    }
+
+    public String getTextArea() {
+        return inputComp.textArea().getDomProperty("value");
     }
 
     public List<String> getTagItemsTxt() {
@@ -94,6 +105,17 @@ public class InputActions {
     protected void typeAndEnter(WebElement element, String input) {
         element.sendKeys(input);
         inputComp.actions().sendKeys(Keys.ENTER).perform();
+    }
+
+    public void inputMenus(List<DropdownOption> options) {
+        for (DropdownOption option : options) {
+            typeAndEnter(inputComp.inputEle(), option.label());
+        }
+        inputComp.actions().sendKeys(Keys.ESCAPE).perform();
+    }
+
+    public void inputMenu(DropdownOption option) {
+        typeAndEnter(inputComp.inputEle(), option.label());
     }
 
     protected void typeInputSegment(WebElement element, String input) {
@@ -185,17 +207,7 @@ public class InputActions {
         return this;
     }
 
-    private void selectDropdownOpt(DropdownOption option) {
-        WebElement ele = inputComp.dropdownOption(option);
-        if ("unchecked".equalsIgnoreCase(ele.getAttribute("data-state"))) {
-            WebElement popupDropdown = inputComp.popupDropdown();
-            ele.click();
-
-            WaitUtils.waitForInvisibility(inputComp.driver(), popupDropdown);
-        }
-    }
-
-    public InputActions selectDropdownOpt(String option) {
+    public InputActions selectDropdownOpt(DropdownOption option) {
         clickPopupBtn();
         WebElement ele = inputComp.dropdownOption(option);
 
@@ -209,7 +221,7 @@ public class InputActions {
         return this;
     }
 
-    public InputActions selectMultiDropdownOpt(DropdownOption... options) {
+    public InputActions selectMultiDropdownOpt(List<DropdownOption> options) {
         clickPopupBtn();
 
         for (DropdownOption option : options) {
@@ -222,25 +234,24 @@ public class InputActions {
                                 inputComp.dropdownOption(option).getAttribute("data-state")));
             }
         }
-
+        inputComp.actions().sendKeys(Keys.ESCAPE).perform();
         return this;
     }
 
-    public List<String> selectDropdownOptionsInOrder(DropdownOption... options) {
+    public List<String> selectDropdownOptionsInOrder(List<DropdownOption> options) {
         List<String> actualValues = new ArrayList<>();
 
         for (DropdownOption option : options) {
-            String dropdownValue = inputComp.textInput().getAttribute("value");
+            String dropdownValue = inputComp.inputEle().getAttribute("value");
 
             if (option.label().equalsIgnoreCase(dropdownValue)) {
                 actualValues.add(dropdownValue);
                 continue;
             }
 
-            clickPopupBtn();
             selectDropdownOpt(option);
 
-            actualValues.add(inputComp.textInput().getAttribute("value"));
+            actualValues.add(inputComp.inputEle().getAttribute("value"));
         }
         return actualValues;
     }
@@ -253,7 +264,7 @@ public class InputActions {
         return this;
     }
 
-    public List<String> getSelectedOptions() {
+    public List<String> getSelectedTagsItem() {
         List<String> result = new ArrayList<>();
         for (WebElement element : inputComp.tagsItem()) {
             String value = element.getText();
@@ -276,7 +287,20 @@ public class InputActions {
         return this;
     }
 
-//    public InputActions
+    private InputActions stepInputTo(String value, WebElement stepBtn) {
+        while (!inputComp.inputEle().getAttribute("value").equalsIgnoreCase(value)) {
+            stepBtn.click();
+        }
+        return this;
+    }
+
+    public InputActions increaseInputTo(String value) {
+        return stepInputTo(value, inputComp.increaseBtn());
+    }
+
+    public InputActions decreaseInputTo(String value) {
+        return stepInputTo(value, inputComp.decreaseBtn());
+    }
 
     public InputAssertions verify() {
         return new InputAssertions(inputComp, this);

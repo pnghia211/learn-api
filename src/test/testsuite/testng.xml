@@ -23,21 +23,24 @@
         <classes>
             <class name="test.TestInput">
                 <methods>
-                    <include name="uploadFile_showsFileUploaded"/>
-                    <include name="clearButton_clearsTypedText"/>
-                    <include name="passwordToggle_showsAndHidesPassword"/>
-                    <include name="passwordStrengthIndicator_progressesThroughAllLevels"/>
-                    <include name="maskInput_fillsAndVerifiesCardFields"/>
-                    <include name="singleDateInput_acceptsAndDisplaysDate"/>
-                    <include name="dateRangeInput_acceptsAndDisplaysRange"/>
-                    <include name="defaultUsage_showsOptionsInOrder"/>
-                    <include name="multiSelect_selectAndRemoveOptions"/>
-                    <include name="countryPicker_selectsVietnam"/>
-                    <include name="otpInput_acceptsAndVerifiesDigits"/>
-                    <include name="separatorInput_acceptsAndVerifiesDigits"/>
-                    <include name="timeInput_fillSingleInputTime"/>
-                    <include name="timeInput_fillRangeInputTime"/>
+                    <include name="input_uploadFile_showsFileUploaded"/>
+                    <include name="input_clearButton_clearsTypedText"/>
+                    <include name="input_passwordToggle_showsAndHidesPassword"/>
+                    <include name="input_passwordStrengthIndicator_progressesThroughAllLevels"/>
+                    <include name="input_maskInput_fillsAndVerifiesCardFields"/>
+                    <include name="inputDate_singleDateInput_acceptsAndDisplaysDate"/>
+                    <include name="inputDate_dateRangeInput_acceptsAndDisplaysRange"/>
+                    <include name="inputMenu_usage_showsOptionsInOrder"/>
+                    <include name="inputMenu_multiple_selectAndRemoveOptions"/>
+                    <include name="inputMenu_countryPicker_selectsVietnam"/>
+                    <include name="pinInput_otpInput_acceptsAndVerifiesDigits"/>
+                    <include name="pinInput_separatorInput_acceptsAndVerifiesDigits"/>
+                    <include name="inputTime_timeInput_fillSingleInputTime"/>
+                    <include name="inputTime_fillRangeInputTime"/>
                     <include name="inputTags_addAndRemoveTags"/>
+                    <include name="inputNumber_increasesAndDecreasesValue"/>
+                    <include name="inputNumber_increasesAndDecreasesValueOrientation"/>
+                    <include name="textArea_UsageTypeInTextArea"/>
                 </methods>
             </class>
         </classes>

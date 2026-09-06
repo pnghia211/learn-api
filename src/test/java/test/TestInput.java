@@ -16,6 +16,8 @@ import static url.Url.mainPage;
 
 import component.main.form.InputComp.*;
 
+import java.util.List;
+
 public class TestInput {
     private WebDriver driver;
     private LeftNavigatorComp leftNavigatorComp;
@@ -41,7 +43,7 @@ public class TestInput {
     }
 
     @Test
-    public void uploadFile_showsFileUploaded() {
+    public void input_uploadFile_showsFileUploaded() {
         String filePath = "C:\\Users\\ADMIN\\Desktop\\dummy-png-image.png";
         inputComp.forInput("type")
                 .uploadFile(filePath)
@@ -49,27 +51,27 @@ public class TestInput {
     }
 
     @Test
-    public void clearButton_clearsTypedText() {
+    public void input_clearButton_clearsTypedText() {
         inputComp.forInput("with-clear-button")
-                .verify().valueEquals("Click to clear").and()
+                .verify().inputValueEquals("Click to clear").and()
                 .type("text clear button")
-                .verify().valueEquals("text clear button")
+                .verify().inputValueEquals("text clear button")
                 .and().clickClearBtn()
                 .verify().inputIsEmpty();
     }
 
     @Test
-    public void passwordToggle_showsAndHidesPassword() {
+    public void input_passwordToggle_showsAndHidesPassword() {
         inputComp.forInput("with-password-toggle")
                 .verify().inputIsEmpty()
                 .and().type("password test")
-                .verify().valueEquals("password test").inputIsHidden()
+                .verify().inputValueEquals("password test").inputIsHidden()
                 .and().clickShowPasswordBtn()
                 .verify().inputIsVisible();
     }
 
     @Test
-    public void passwordStrengthIndicator_progressesThroughAllLevels() {
+    public void input_passwordStrengthIndicator_progressesThroughAllLevels() {
         inputComp.forInput("with-password-strength-indicator")
                 .verify()
                 .inputIsEmpty()
@@ -121,7 +123,7 @@ public class TestInput {
     }
 
     @Test
-    public void maskInput_fillsAndVerifiesCardFields() {
+    public void input_maskInput_fillsAndVerifiesCardFields() {
         CardMaskData validCard = new CardMaskData("4242 4242 4242 4242", "12/25", "123");
         inputComp.forInput("with-mask")
                 .fillMaskInputFields(validCard)
@@ -129,20 +131,20 @@ public class TestInput {
     }
 
     @Test
-    public void singleDateInput_acceptsAndDisplaysDate() {
+    public void inputDate_singleDateInput_acceptsAndDisplaysDate() {
         leftNavigatorComp.clickDataTableComp("input-date");
         inputComp.forInput("usage").fillDate("01-21-1995")
                 .verify().dateSingleInput("01-21-1995");
     }
 
     @Test
-    public void dateRangeInput_acceptsAndDisplaysRange() {
+    public void inputDate_dateRangeInput_acceptsAndDisplaysRange() {
         inputComp.forInput("range").fillDateRangeInput("01-21-1995", "12-12-2026")
                 .verify().dateRangeInput("01-21-1995", "12-12-2026");
     }
 
     @Test
-    public void timeInput_fillSingleInputTime() {
+    public void inputTime_timeInput_fillSingleInputTime() {
         leftNavigatorComp.clickDataTableComp("input-time");
         inputComp.forInput("usage")
                 .fillTime("04:20", "PM")
@@ -150,8 +152,7 @@ public class TestInput {
     }
 
     @Test
-    public void timeInput_fillRangeInputTime() {
-        leftNavigatorComp.clickDataTableComp("input-time");
+    public void inputTime_fillRangeInputTime() {
         inputComp.forInput("range")
                 .fillTimeRangeInput(RangeBound.START, "08:30", "AM")
                 .fillTimeRangeInput(RangeBound.END, "04:20", "PM")
@@ -165,45 +166,72 @@ public class TestInput {
         leftNavigatorComp.clickDataTableComp("input-tags");
         inputComp.forInput("usage")
                 .inputTags("abc", "test")
-                .verify().tagItems("Vue", "abc", "test");
+                .verify().tagItems(List.of("Vue", "abc", "test"));
     }
 
     @Test
-    public void defaultUsage_showsOptionsInOrder() {
+    public void inputMenu_usage_showsOptionsInOrder() {
         leftNavigatorComp.clickDataTableComp("input-menu");
-        DropdownOption[] opts = {DropdownOption.BACKLOG, DropdownOption.TO_DO,
-                DropdownOption.IN_PROGRESS, DropdownOption.DONE};
+        List<DropdownOption> opts = List.of(DropdownOption.BACKLOG, DropdownOption.TO_DO,
+                DropdownOption.IN_PROGRESS, DropdownOption.DONE);
         inputComp.forInput("usage").verify().selectedOptionsInOrder(opts);
     }
 
     @Test
-    public void multiSelect_selectAndRemoveOptions() {
+    public void inputMenu_multiple_selectAndRemoveOptions() {
         leftNavigatorComp.clickDataTableComp("input-menu");
-        DropdownOption[] opts = {DropdownOption.BACKLOG, DropdownOption.TO_DO,
-                DropdownOption.IN_PROGRESS, DropdownOption.DONE};
+        List<DropdownOption> opts = List.of(DropdownOption.BACKLOG, DropdownOption.TO_DO,
+                DropdownOption.IN_PROGRESS, DropdownOption.DONE);
         inputComp.forInput("multiple").selectMultiDropdownOpt(opts)
                 .removeOption(DropdownOption.BACKLOG, DropdownOption.TO_DO, DropdownOption.DONE)
-                .verify().selectedOptions(DropdownOption.IN_PROGRESS);
+                .verify().selectedTagsItem(DropdownOption.IN_PROGRESS);
     }
 
     @Test
-    public void countryPicker_selectsVietnam() {
+    public void inputMenu_countryPicker_selectsVietnam() {
         inputComp.forInput("as-a-country-picker")
                 .verify().countryPickerDefault()
-                .and().selectDropdownOpt("Vietnam")
+                .and().selectDropdownOpt(DropdownOption.COUNTRY_VIETNAM)
                 .verify().selectedCountryInput("VN", "Vietnam");
     }
 
     @Test
-    public void otpInput_acceptsAndVerifiesDigits() {
-        leftNavigatorComp.clickDataTableComp("pin-input");
-        inputComp.forInput("otp").typeInputs("12345")
-                .verify().inputForm("12345");
+    public void inputNumber_increasesAndDecreasesValue() {
+        leftNavigatorComp.clickDataTableComp("input-number");
+        inputComp.forInput("usage")
+                .increaseInputTo("10")
+                .verify().inputValueEquals("10")
+                .and().decreaseInputTo("-10")
+                .verify().inputValueEquals("-10");
     }
 
     @Test
-    public void separatorInput_acceptsAndVerifiesDigits() {
+    public void inputNumber_increasesAndDecreasesValueOrientation() {
+        inputComp.forInput("orientation")
+                .increaseInputTo("50")
+                .verify().inputValueEquals("50")
+                .and().decreaseInputTo("-50")
+                .verify().inputValueEquals("-50");
+    }
+
+    @Test
+    public void textArea_UsageTypeInTextArea() {
+        leftNavigatorComp.clickDataTableComp("textarea");
+        inputComp.forInput("usage")
+                .typeInTextArea("typing in text area")
+                .verify().textAreaEquals("typing in text area");
+    }
+
+    @Test
+    public void pinInput_otpInput_acceptsAndVerifiesDigits() {
+        leftNavigatorComp.clickDataTableComp("pin-input");
+        inputComp.forInput("otp").typeInputs("12345")
+                .verify().pinInput("12345");
+    }
+
+    @Test
+    public void pinInput_separatorInput_acceptsAndVerifiesDigits() {
         inputComp.forInput("separator").typeInputs("123456")
-                .verify().inputForm("123456");
+                .verify().pinInput("123456");
     }
 }
