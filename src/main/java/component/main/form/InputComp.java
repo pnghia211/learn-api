@@ -13,7 +13,7 @@ import java.util.List;
 public class InputComp extends BaseComp {
     private WebElement cachedRoot;
     private final String inputLabel;
-    private static final String dropdownOpt = ".//*[@data-slot='item'][.//span[contains(.,'%s')]]";
+    private static final String dropdownOpt = ".//*[@role='option'][.//span[contains(.,'%s')]]";
     private static final By popupSel = By.cssSelector("[id^='reka'][role='listbox']");
     private static final By uploadFileInputSel = By.cssSelector("input[type='file']");
     private static final By inputEleSel = By.cssSelector("input");
@@ -39,13 +39,18 @@ public class InputComp extends BaseComp {
     private static final By decrementBtnSel = By.cssSelector("[data-slot='decrement'] button");
     private static final By textAreaSel = By.cssSelector("textarea");
     private static final By tagsItemSel = By.cssSelector("div[aria-labelledby*='reka-tags-input-item-text']");
-    private String rangeInputMonthSel = "[data-segment='month'][data-reka-date-range-field-segment-type='%s']";
-    private String rangeInputDaySel = "[data-segment='day'][data-reka-date-range-field-segment-type='%s']";
-    private String rangeInputYearSel = "[data-segment='year'][data-reka-date-range-field-segment-type='%s']";
-    private String rangeInputHourSel = "[data-segment='hour'][data-reka-time-range-field-segment-type='%s']";
-    private String rangeInputMinuteSel = "[data-segment='minute'][data-reka-time-range-field-segment-type='%s']";
-    private String rangeInputPeriodSel = "[data-segment='dayPeriod'][data-reka-time-range-field-segment-type='%s']";
-    private String tagItemDeleteIconXpath = ".//span[contains(.,'%s')]/following-sibling::button[@data-slot='tagsItemDelete']";
+    private static final By checkboxSel = By.cssSelector("button[role='checkbox']");
+    private static final By switchSel = By.cssSelector("button[role='switch']");
+    private static final By sliderSel = By.cssSelector("span[role='slider']");
+    private String inputRatingStr = "button[role='radio'][value='%d']";
+    private String groupBtnStr = ".//label[contains(., '%s')]/ancestor::*[@data-slot='item']//button";
+    private String rangeInputMonthStr = "[data-segment='month'][data-reka-date-range-field-segment-type='%s']";
+    private String rangeInputDayStr = "[data-segment='day'][data-reka-date-range-field-segment-type='%s']";
+    private String rangeInputYearStr = "[data-segment='year'][data-reka-date-range-field-segment-type='%s']";
+    private String rangeInputHourStr = "[data-segment='hour'][data-reka-time-range-field-segment-type='%s']";
+    private String rangeInputMinuteStr = "[data-segment='minute'][data-reka-time-range-field-segment-type='%s']";
+    private String rangeInputPeriodStr = "[data-segment='dayPeriod'][data-reka-time-range-field-segment-type='%s']";
+    private String tagItemDeleteIconXStr = ".//span[contains(.,'%s')]/following-sibling::button[@data-slot='tagsItemDelete']";
 
     public InputComp(WebDriver driver, String inputLabel) {
         super(driver);
@@ -98,8 +103,32 @@ public class InputComp extends BaseComp {
                 .until(ExpectedConditions.visibilityOfElementLocated(popupSel));
     }
 
-    public WebElement dropdownOption(DropdownOption option) {
+    public WebElement popoverOption(DropdownOption option) {
         return popupDropdown().findElement(By.xpath(String.format(dropdownOpt, option.label())));
+    }
+
+    public WebElement option(DropdownOption option) {
+        return inputByLabel().findElement(By.xpath(String.format(dropdownOpt, option.label())));
+    }
+
+    public WebElement checkbox() {
+        return inputByLabel().findElement(checkboxSel);
+    }
+
+    public WebElement ratingItem(int ratingValue) {
+        return inputByLabel().findElement(By.cssSelector(String.format(inputRatingStr, ratingValue)));
+    }
+
+    public WebElement switchToggle() {
+        return inputByLabel().findElement(switchSel);
+    }
+
+    public WebElement groupBtn(DropdownOption option) {
+        return inputByLabel().findElement(By.xpath(String.format(groupBtnStr, option.label())));
+    }
+
+    public WebElement slider() {
+        return inputByLabel().findElement(sliderSel);
     }
 
     public WebElement indicator() {
@@ -135,15 +164,15 @@ public class InputComp extends BaseComp {
     }
 
     public WebElement rangeInputMonth(RangeBound rangeBound) {
-        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputMonthSel, rangeBound.value())));
+        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputMonthStr, rangeBound.value())));
     }
 
     public WebElement rangeInputDay(RangeBound rangeBound) {
-        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputDaySel, rangeBound.value())));
+        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputDayStr, rangeBound.value())));
     }
 
     public WebElement rangeInputYear(RangeBound rangeBound) {
-        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputYearSel, rangeBound.value())));
+        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputYearStr, rangeBound.value())));
     }
 
     public WebElement singleHourInput() {
@@ -159,15 +188,15 @@ public class InputComp extends BaseComp {
     }
 
     public WebElement rangeInputHour(RangeBound rangeBound) {
-        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputHourSel, rangeBound.value())));
+        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputHourStr, rangeBound.value())));
     }
 
     public WebElement rangeInputMinute(RangeBound rangeBound) {
-        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputMinuteSel, rangeBound.value())));
+        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputMinuteStr, rangeBound.value())));
     }
 
     public WebElement rangeInputPeriod(RangeBound rangeBound) {
-        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputPeriodSel, rangeBound.value())));
+        return inputByLabel().findElement(By.cssSelector(String.format(rangeInputPeriodStr, rangeBound.value())));
     }
 
     public List<WebElement> tagsItem() {
@@ -175,7 +204,7 @@ public class InputComp extends BaseComp {
     }
 
     public WebElement deleteIconByItem(String tagItem) {
-        return inputByLabel().findElement(By.xpath(String.format(tagItemDeleteIconXpath, tagItem)));
+        return inputByLabel().findElement(By.xpath(String.format(tagItemDeleteIconXStr, tagItem)));
     }
 
     public WebElement increaseBtn() {

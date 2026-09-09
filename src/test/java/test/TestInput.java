@@ -165,7 +165,7 @@ public class TestInput {
     public void inputTags_addAndRemoveTags() {
         leftNavigatorComp.clickDataTableComp("input-tags");
         inputComp.forInput("usage")
-                .inputTags("abc", "test")
+                .inputTags(List.of("abc", "test"))
                 .verify().tagItems(List.of("Vue", "abc", "test"));
     }
 

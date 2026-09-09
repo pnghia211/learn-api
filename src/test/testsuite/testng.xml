@@ -70,4 +70,10 @@
             </class>
         </classes>
     </test>
+
+    <test name="FormTests">
+        <classes>
+            <class name="test.TestForm"/>
+        </classes>
+    </test>
 </suite>

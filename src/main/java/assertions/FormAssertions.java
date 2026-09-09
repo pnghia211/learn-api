@@ -1,9 +1,11 @@
 package assertions;
 
 import actions.FormActions;
+import com.beust.ah.A;
 import component.main.form.FormComp;
 import data.DropdownOption;
 import data.FormFieldLabel;
+import org.testng.Assert;
 
 import java.util.HashMap;
 import java.util.List;
@@ -99,6 +101,56 @@ public class FormAssertions {
                 .collect(Collectors.joining(", "));
 
         assertionsFor(FormFieldLabel.SELECT_MENU_MULTIPLE).selectValueEquals(expectedLabels);
+        return this;
+    }
+
+    public FormAssertions listBoxSelected(DropdownOption option) {
+        assertionsFor(FormFieldLabel.LISTBOX).listBoxSelected(option);
+        return this;
+    }
+
+    public FormAssertions listBoxesSelected(List<DropdownOption> options) {
+        assertionsFor(FormFieldLabel.LISTBOX_MULTIPLE).listBoxesSelected(options);
+        return this;
+    }
+
+    public FormAssertions fileUploaded() {
+        assertionsFor(FormFieldLabel.FILE_UPLOAD).hasFileUploaded();
+        return this;
+    }
+
+    public FormAssertions checkboxSelected() {
+        assertionsFor(FormFieldLabel.CHECKBOX).checkboxSelected();
+        return this;
+    }
+
+    public FormAssertions ratingSelected(int value) {
+        assertionsFor(FormFieldLabel.INPUT_RATING).ratingSelected(value);
+        return this;
+    }
+
+    public FormAssertions switchToogleSelected() {
+        assertionsFor(FormFieldLabel.SWITCH).switchToogleSelected();
+        return this;
+    }
+
+    public FormAssertions radioBtnSelected(DropdownOption option) {
+        assertionsFor(FormFieldLabel.RADIO_GROUP).groupBtnSelected(option);
+        return this;
+    }
+
+    public FormAssertions checkboxGroupBtnSelected(DropdownOption option) {
+        assertionsFor(FormFieldLabel.CHECKBOX_GROUP).groupBtnSelected(option);
+        return this;
+    }
+
+    public FormAssertions sliderValue(int target) {
+        assertionsFor(FormFieldLabel.SLIDER).sliderValue(target);
+        return this;
+    }
+
+    public FormAssertions sucessfullToast() {
+        Assert.assertTrue(formActions.getToastText().equalsIgnoreCase("success"));
         return this;
     }
 

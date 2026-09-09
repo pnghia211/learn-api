@@ -51,7 +51,7 @@ public class FormActions {
         return this;
     }
 
-    public FormActions inputTags(String... inputs) {
+    public FormActions inputTags(List<String> inputs) {
         actionsFor(FormFieldLabel.TAGS_INPUT).inputTags(inputs);
         return this;
     }
@@ -76,6 +76,51 @@ public class FormActions {
         return this;
     }
 
+    public FormActions selectListBoxOption(DropdownOption option) {
+        actionsFor(FormFieldLabel.LISTBOX).selectListBoxOption(option);
+        return this;
+    }
+
+    public FormActions selectListBoxOptions(List<DropdownOption> options) {
+        actionsFor(FormFieldLabel.LISTBOX_MULTIPLE).selectListBoxOptions(options);
+        return this;
+    }
+
+    public FormActions uploadFile(String path) {
+        actionsFor(FormFieldLabel.FILE_UPLOAD).uploadFile(path);
+        return this;
+    }
+
+    public FormActions selectCheckbox() {
+        actionsFor(FormFieldLabel.CHECKBOX).selectCheckbox();
+        return this;
+    }
+
+    public FormActions selectRating(int value) {
+        actionsFor(FormFieldLabel.INPUT_RATING).selectInputRating(value);
+        return this;
+    }
+
+    public FormActions clickSwitchToggle() {
+        actionsFor(FormFieldLabel.SWITCH).clickSwitchToogle();
+        return this;
+    }
+
+    public FormActions selectCheckboxGroup(DropdownOption option) {
+        actionsFor(FormFieldLabel.CHECKBOX_GROUP).clickCheckboxGroup(option);
+        return this;
+    }
+
+    public FormActions selectRadioGroup(DropdownOption option) {
+        actionsFor(FormFieldLabel.RADIO_GROUP).clickCheckboxGroup(option);
+        return this;
+    }
+
+    public FormActions setSliderTo(int target) {
+        actionsFor(FormFieldLabel.SLIDER).setSliderTo(target);
+        return this;
+    }
+
     public FormActions fillTextArea(String text) {
         actionsFor(FormFieldLabel.TEXTAREA).typeInTextArea(text);
         return this;
@@ -91,8 +136,13 @@ public class FormActions {
         return this;
     }
 
-    public WebElement getSelectMultipleEle() {
-        return formComp.selectMultipleEle();
+    public FormActions clickSubmitBtn() {
+        formComp.submit().click();
+        return this;
+    }
+
+    public String getToastText() {
+        return formComp.toastTitle().getText();
     }
 
     public FormAssertions verify() {

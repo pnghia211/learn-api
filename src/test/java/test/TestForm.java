@@ -5,7 +5,12 @@ import component.main.LeftNavigatorComp;
 import component.main.factory.FormFactory;
 import data.DropdownOption;
 import driver.DriverFactory;
+import helpers.TestDataLoader;
+import model.FormTestData;
 import org.openqa.selenium.WebDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 import page.HomePage;
 
 import java.util.List;
@@ -14,65 +19,95 @@ import static url.Url.mainPage;
 
 public class TestForm {
 
+    private WebDriver driver;
+    private FormFactory formFactory;
 
-    public static void main(String[] args) throws InterruptedException {
-        WebDriver driver = DriverFactory.getChromeDriver();
+    @BeforeClass
+    public void setUp() {
+        driver = DriverFactory.getChromeDriver();
         driver.get(mainPage);
-
-        LeftNavigatorComp leftNavigatorComp;
 
         HomePage homePage = new HomePage(driver);
         HeaderComp headerComp = homePage.componentsSection();
-        leftNavigatorComp = homePage.leftNavigatorComp();
+        LeftNavigatorComp leftNavigatorComp = homePage.leftNavigatorComp();
 
         headerComp.clickComponentsComp();
         leftNavigatorComp.clickDataTableComp("form");
 
-        FormFactory formFactory = homePage.formComp();
+        formFactory = homePage.formComp();
+    }
+
+    @AfterClass
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+    @Test
+    public void formInputEvents_fillsAndVerifiesAllFields() {
+        FormTestData data = TestDataLoader.load("testdata/form-data.json", FormTestData.class);
+        String filePath = TestDataLoader.resolveTestFile(data.uploadFilePath());
 
         formFactory.forForm("input-events")
-                .fillTextInput("automation test")
-                .verify().textInputEquals("automation test")
+                .fillTextInput(data.textInput())
+                .verify().textInputEquals(data.textInput())
 
-                .and().decreaseInputNumberTo("-10")
-                .verify().numberInputEquals("-10")
-                .and().increaseInputNumberTo("10")
-                .verify().numberInputEquals("10")
+                .and().decreaseInputNumberTo(data.numberMin())
+                .verify().numberInputEquals(data.numberMin())
+                .and().increaseInputNumberTo(data.numberMax())
+                .verify().numberInputEquals(data.numberMax())
 
-                .and().fillPinInput("12345")
-                .verify().pinInput("12345")
+                .and().fillPinInput(data.pin())
+                .verify().pinInput(data.pin())
 
-                .and().fillInputDate("12-02-2022")
-                .verify().dateInput("12-02-2022")
+                .and().fillInputDate(data.date())
+                .verify().dateInput(data.date())
 
-                .and().fillInputTime("09:30", "PM")
-                .verify().timeInput("09:30", "PM")
+                .and().fillInputTime(data.time(), data.period())
+                .verify().timeInput(data.time(), data.period())
 
-                .and().inputTags("vue", "test", "auto")
-                .verify().tagsInput(List.of("vue", "test", "auto"))
+                .and().inputTags(data.tags())
+                .verify().tagsInput(data.tags())
 
-                .and().inputMenu(DropdownOption.OPTION_2)
-                .verify().inputMenu(DropdownOption.OPTION_2)
-                .and().inputMenus(List.of(DropdownOption.OPTION_1, DropdownOption.OPTION_2))
-                .verify().inputMenus(List.of(DropdownOption.OPTION_1, DropdownOption.OPTION_2))
+                .and().inputMenu(data.menuOption())
+                .verify().inputMenu(data.menuOption())
+                .and().inputMenus(data.menuOptions())
+                .verify().inputMenus(data.menuOptions())
 
-                .and().fillTextArea("we gonna be alright")
-                .verify().textArea("we gonna be alright")
+                .and().fillTextArea(data.textArea())
+                .verify().textArea(data.textArea())
 
-                .and().selectDropdownOption(DropdownOption.OPTION_2)
-                .verify().selectValue(DropdownOption.OPTION_2)
-                .and().selectDropdownOptions(List.of(DropdownOption.OPTION_2, DropdownOption.OPTION_3))
-                .verify().selectMultipleValue(List.of(DropdownOption.OPTION_2, DropdownOption.OPTION_3))
+                .and().selectDropdownOption(data.selectOption())
+                .verify().selectValue(data.selectOption())
+                .and().selectDropdownOptions(data.selectOptions())
+                .verify().selectMultipleValue(data.selectOptions())
 
-                .and().selectMenuDropdownOption(DropdownOption.OPTION_2)
-                .verify().selectMenuValue(DropdownOption.OPTION_2)
-                .and().selectMenuDropdownOptions(List.of(DropdownOption.OPTION_1, DropdownOption.OPTION_2, DropdownOption.OPTION_3))
-                .verify().selectMenusValue(List.of(DropdownOption.OPTION_1, DropdownOption.OPTION_2, DropdownOption.OPTION_3))
+                .and().selectMenuDropdownOption(data.selectMenuOption())
+                .verify().selectMenuValue(data.selectMenuOption())
+                .and().selectMenuDropdownOptions(data.selectMenuOptions())
+                .verify().selectMenusValue(data.selectMenuOptions())
 
-        ;
+                .and().selectListBoxOption(data.listBoxOption())
+                .verify().listBoxSelected(data.listBoxOption())
+                .and().selectListBoxOptions(data.listBoxOptions())
+                .verify().listBoxesSelected(data.listBoxOptions())
 
+                .and().uploadFile(filePath)
+                .verify().fileUploaded()
 
-        Thread.sleep(5000);
-        driver.quit();
+                .and().selectCheckbox().verify().checkboxSelected()
+                .and().selectRating(data.ratingValue()).verify().ratingSelected(data.ratingValue())
+
+                .and().clickSwitchToggle().verify().switchToogleSelected()
+
+                .and().selectCheckboxGroup(data.checkboxGroupOption())
+                .verify().checkboxGroupBtnSelected(data.checkboxGroupOption())
+                .and().selectRadioGroup(data.radioGroupOption())
+                .verify().radioBtnSelected(data.radioGroupOption())
+
+                .and().setSliderTo(data.sliderValue()).verify().sliderValue(data.sliderValue())
+
+                .and().clickSubmitBtn().verify().sucessfullToast();
     }
 }

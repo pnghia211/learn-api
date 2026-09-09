@@ -45,7 +45,7 @@ public class InputActions {
         return this;
     }
 
-    public InputActions inputTags(String... inputs) {
+    public InputActions inputTags(List<String> inputs) {
         for (String input : inputs) {
             typeAndEnter(getInputText(), input);
         }
@@ -209,15 +209,44 @@ public class InputActions {
 
     public InputActions selectDropdownOpt(DropdownOption option) {
         clickPopupBtn();
-        WebElement ele = inputComp.dropdownOption(option);
 
-        if ("unchecked".equalsIgnoreCase(ele.getAttribute("data-state"))) {
-            WebElement popupDropdown = inputComp.popupDropdown();
-            ele.click();
+        WebElement popupDropdown = inputComp.popupDropdown();
+        inputComp.popoverOption(option).click();
+        WaitUtils.waitForInvisibility(inputComp.driver(), popupDropdown);
 
-            WaitUtils.waitForInvisibility(inputComp.driver(), popupDropdown);
+        return this;
+    }
+
+    public InputActions selectListBoxOption(DropdownOption option) {
+        inputComp.option(option).click();
+        return this;
+    }
+
+    public InputActions selectCheckbox() {
+        inputComp.checkbox().click();
+        return this;
+    }
+
+    public InputActions selectListBoxOptions(List<DropdownOption> options) {
+        for (DropdownOption option : options) {
+            selectListBoxOption(option);
         }
 
+        return this;
+    }
+
+    public InputActions selectInputRating(int ratingValue) {
+        inputComp.ratingItem(ratingValue).click();
+        return this;
+    }
+
+    public InputActions clickSwitchToogle() {
+        inputComp.switchToggle().click();
+        return this;
+    }
+
+    public InputActions clickCheckboxGroup(DropdownOption option) {
+        inputComp.groupBtn(option).click();
         return this;
     }
 
@@ -225,16 +254,29 @@ public class InputActions {
         clickPopupBtn();
 
         for (DropdownOption option : options) {
-            WebElement ele = inputComp.dropdownOption(option);
+            WebElement ele = inputComp.popoverOption(option);
             if ("unchecked".equalsIgnoreCase(ele.getAttribute("data-state"))) {
-                inputComp.dropdownOption(option).click();
+                ele.click();
 
                 new WebDriverWait(inputComp.driver(), Duration.ofSeconds(5))
                         .until(d -> "checked".equalsIgnoreCase(
-                                inputComp.dropdownOption(option).getAttribute("data-state")));
+                                inputComp.popoverOption(option).getAttribute("data-state")));
+
             }
         }
         inputComp.actions().sendKeys(Keys.ESCAPE).perform();
+        return this;
+    }
+
+    public InputActions setSliderTo(int target) {
+        WebElement thumb = inputComp.slider();
+        thumb.click();
+        thumb.sendKeys(Keys.HOME);
+        int current = 0;
+        while (current < target) {
+            thumb.sendKeys(Keys.ARROW_RIGHT);
+            current++;
+        }
         return this;
     }
 

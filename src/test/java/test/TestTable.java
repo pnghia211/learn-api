@@ -1,5 +1,6 @@
 package test;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import component.main.HeaderComp;
 import component.main.LeftNavigatorComp;
 import component.main.factory.TableFactory;
@@ -14,7 +15,7 @@ import page.HomePage;
 
 import java.util.List;
 
-import static helpers.TestDataLoader.loadExpectedTableData;
+import static helpers.TestDataLoader.loadList;
 import static url.Url.mainPage;
 
 public class TestTable {
@@ -53,7 +54,7 @@ public class TestTable {
 
     @Test
     public void usageTable_toggleEmailColumnVisibility() {
-        List<TableRecord> usageExpectedRows = loadExpectedTableData(USAGE_TABLE_PATH);
+        List<TableRecord> usageExpectedRows = loadList(USAGE_TABLE_PATH, TableRecord.class);
         List<String> expectedEmails = usageExpectedRows.stream().map(TableRecord::email).toList();
 
         tableFactory.forTable(TableLabel.USAGE)
@@ -83,19 +84,19 @@ public class TestTable {
 
     @Test
     public void usageTable_rowsMatchExpectedData() {
-        List<TableRecord> usageExpectedRows = loadExpectedTableData(USAGE_TABLE_PATH);
+        List<TableRecord> usageExpectedRows = loadList(USAGE_TABLE_PATH, TableRecord.class);
         tableFactory.forTable(TableLabel.USAGE).verify().rowsByTableDisplayed(usageExpectedRows);
     }
 
     @Test
     public void columnVisibilityTable_rowsMatchExpectedData() {
-        List<TableRecord> visibilityColumnExpectedRows = loadExpectedTableData(COLUMN_VISIBILITY_PATH);
+        List<TableRecord> visibilityColumnExpectedRows = loadList(COLUMN_VISIBILITY_PATH, TableRecord.class);
         tableFactory.forTable(TableLabel.WITH_COLUMN_VISIBILITY).verify().rowsByTableDisplayed(visibilityColumnExpectedRows);
     }
 
     @Test
     public void usageTable_specificRowMatchesExpectedCell() {
-        List<TableRecord> usageExpectedRows = loadExpectedTableData(USAGE_TABLE_PATH);
+        List<TableRecord> usageExpectedRows = loadList(USAGE_TABLE_PATH, TableRecord.class);
         TableRecord expectedRow = usageExpectedRows.stream()
                 .filter(r -> r.id().equalsIgnoreCase("4598")).toList().get(0);
         tableFactory.forTable(TableLabel.USAGE).verify().rowByCelDisplayed(expectedRow, "#4598");
@@ -142,7 +143,7 @@ public class TestTable {
 
     @Test
     public void paginationTable_defaultStateAndRowContentPerPage() {
-        List<TableRecord> paginationList = loadExpectedTableData(PAGINATION_PATH);
+        List<TableRecord> paginationList = loadList(PAGINATION_PATH, TableRecord.class);
         tableFactory.forTable(TableLabel.WITH_PAGINATION).verify().paginationDefaultState()
                 .rowsDisplayedEachPage(paginationList)
                 .rowContentEachPage(paginationList);

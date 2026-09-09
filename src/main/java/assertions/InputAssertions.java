@@ -199,6 +199,43 @@ public class InputAssertions {
         return this;
     }
 
+    public InputAssertions listBoxSelected(DropdownOption option) {
+        assertEquals(inputComp.option(option).getAttribute("aria-selected"), "true");
+        return this;
+    }
+
+    public InputAssertions listBoxesSelected(List<DropdownOption> options) {
+        for (DropdownOption option : options) {
+            assertEquals(inputComp.option(option).getAttribute("aria-selected"), "true");
+        }
+        return this;
+    }
+
+    public InputAssertions checkboxSelected() {
+        assertEquals(inputComp.checkbox().getAttribute("aria-checked"), "true");
+        return this;
+    }
+
+    public InputAssertions ratingSelected(int value) {
+        assertEquals(inputComp.ratingItem(value).getAttribute("aria-checked"), "true");
+        return this;
+    }
+
+    public InputAssertions switchToogleSelected() {
+        assertEquals(inputComp.switchToggle().getAttribute("aria-checked"), "true");
+        return this;
+    }
+
+    public InputAssertions groupBtnSelected(DropdownOption option) {
+        assertEquals(inputComp.groupBtn(option).getAttribute("aria-checked"), "true");
+        return this;
+    }
+
+    public InputAssertions sliderValue(int target) {
+        assertEquals(inputComp.slider().getAttribute("aria-valuenow"), String.valueOf(target));
+        return this;
+    }
+
     public InputActions and() {
         return actions;
     }

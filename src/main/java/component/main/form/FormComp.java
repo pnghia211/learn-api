@@ -9,8 +9,9 @@ import org.openqa.selenium.WebElement;
 public class FormComp extends BaseComp {
     private WebElement cachedRoot;
     private final String formLabel;
-    private String wrapper = "//label[.='%s']/ancestor::*[@data-slot='wrapper']/following-sibling::div";
-    private By selectSel = By.cssSelector("span[data-slot='value']");
+    private String wrapper = "//*[self::label or self::legend][.='%s']/ancestor::*[@data-slot='root'][./div[@data-slot='wrapper']]";
+    private By submit = By.cssSelector("button[type='submit']");
+    private By toastTitleSel = By.cssSelector("ol [data-slot='title']");
 
     public FormComp(WebDriver driver, String formLabel) {
         super(driver);
@@ -30,7 +31,11 @@ public class FormComp extends BaseComp {
         return new FormFieldInputComp(driver, this, fieldLabel);
     }
 
-    public WebElement selectMultipleEle() {
-        return baseComp(FormFieldLabel.SELECT_MULTIPLE).findElement(selectSel);
+    public WebElement submit() {
+        return formByLabel().findElement(submit);
+    }
+
+    public WebElement toastTitle() {
+        return driver.findElement(toastTitleSel);
     }
 }

@@ -8,7 +8,6 @@ import helpers.JsExecutorHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import utils.WaitForClassTransition;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -126,7 +125,7 @@ public class TableActions {
             tableComp.actions().scrollToElement(lastRow).perform();
 
             new WebDriverWait(tableComp.driver(), Duration.ofSeconds(5))
-                    .until(new WaitForClassTransition(tableEle));
+                    .until(d -> getRows().size() > currentRowCount);
 
             lastPosition = currentRowCount;
             attempts++;
