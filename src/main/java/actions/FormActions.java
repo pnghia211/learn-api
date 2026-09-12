@@ -4,7 +4,6 @@ import assertions.FormAssertions;
 import component.main.form.FormComp;
 import data.DropdownOption;
 import data.FormFieldLabel;
-import org.openqa.selenium.WebElement;
 
 import java.util.EnumMap;
 import java.util.List;

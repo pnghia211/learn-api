@@ -11,26 +11,19 @@ import driver.DriverFactory;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.*;
 import page.HomePage;
+import test.Base.BaseTest;
 
 import java.util.List;
 
 import static url.Url.mainPage;
 
-public class TestCalendar {
+public class TestCalendar extends BaseTest {
     private WebDriver driver;
     private CalendarFactory calendarComp;
 
     @BeforeClass
     public void setUp() {
-        driver = DriverFactory.getChromeDriver();
-        driver.get(mainPage);
-
-        HomePage homePage = new HomePage(driver);
-        HeaderComp headerComp = homePage.componentsSection();
-        LeftNavigatorComp leftNavigatorComp = homePage.leftNavigatorComp();
         calendarComp = homePage.calenderComp();
-
-        headerComp.clickComponentsComp();
         leftNavigatorComp.clickDataTableComp("calendar");
     }
 
@@ -42,8 +35,7 @@ public class TestCalendar {
     @Test
     public void usageCalendar_selectsDateAndUpdatesSelection() {
         calendarComp.forCalendar(CalendarLabel.USAGE)
-                .verify().dateIsSelected(CalendarTestData.DEFAULT_DATE)
-                .and().selectDate("2022-02-04")
+                .selectDateWithNavigation("2022-02-04")
                 .verify().dateIsSelected("2022-02-04")
                 .dateIsNotSelected(CalendarTestData.DEFAULT_DATE);
     }

@@ -8,7 +8,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.time.Duration;
 
 public class DriverFactory{
-    private WebDriver driver;
+    private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
 
     public static WebDriver getChromeDriver() {
         String currentProjectLocation = System.getProperty("user.dir");
@@ -33,6 +33,19 @@ public class DriverFactory{
 
         WebDriver driver = new ChromeDriver(chromeOptions);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+        DRIVER.set(driver);
         return driver;
+    }
+
+    public static WebDriver getDriver() {
+        return DRIVER.get();
+    }
+
+    public static void quitDriver() {
+        WebDriver driver = DRIVER.get();
+        if (driver != null) {
+            driver.quit();
+            DRIVER.remove();
+        }
     }
 }

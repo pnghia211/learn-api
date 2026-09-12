@@ -12,28 +12,20 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import page.HomePage;
+import test.Base.BaseTest;
 
 import java.util.List;
 
 import static url.Url.mainPage;
 
-public class TestForm {
+public class TestForm extends BaseTest {
 
     private WebDriver driver;
     private FormFactory formFactory;
 
     @BeforeClass
     public void setUp() {
-        driver = DriverFactory.getChromeDriver();
-        driver.get(mainPage);
-
-        HomePage homePage = new HomePage(driver);
-        HeaderComp headerComp = homePage.componentsSection();
-        LeftNavigatorComp leftNavigatorComp = homePage.leftNavigatorComp();
-
-        headerComp.clickComponentsComp();
         leftNavigatorComp.clickDataTableComp("form");
-
         formFactory = homePage.formComp();
     }
 

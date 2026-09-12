@@ -12,13 +12,14 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import page.HomePage;
+import test.Base.BaseTest;
 
 import java.util.List;
 
 import static helpers.TestDataLoader.loadList;
 import static url.Url.mainPage;
 
-public class TestTable {
+public class TestTable extends BaseTest {
     private WebDriver driver;
     private TableFactory tableFactory;
 
@@ -28,16 +29,8 @@ public class TestTable {
 
     @BeforeClass
     public void setUp() {
-        driver = DriverFactory.getChromeDriver();
-        driver.get(mainPage);
-
-        HomePage homePage = new HomePage(driver);
-        HeaderComp headerComp = homePage.componentsSection();
-        LeftNavigatorComp leftNavigatorComp = homePage.leftNavigatorComp();
-        tableFactory = homePage.tableComp();
-
-        headerComp.clickComponentsComp();
         leftNavigatorComp.clickDataTableComp("table");
+        tableFactory = homePage.tableComp();
     }
 
     @AfterClass

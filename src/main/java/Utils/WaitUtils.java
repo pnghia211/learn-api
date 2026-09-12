@@ -17,6 +17,7 @@ public final class WaitUtils {
 
     public static void waitForInvisibility(WebDriver driver, WebElement element) {
         new WebDriverWait(driver, DEFAULT_TIMEOUT)
+                .pollingEvery(Duration.ofMillis(250))
                 .until(ExpectedConditions.invisibilityOf(element));
     }
 }

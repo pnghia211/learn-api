@@ -1,9 +1,7 @@
 package helpers;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import model.TableRecord;
 
 import java.io.IOException;
 import java.io.InputStream;

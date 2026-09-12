@@ -225,7 +225,9 @@ public class TableActions {
     }
 
     public TableActions clickExpandBtn() {
-        tableComp.expandButton().click();
+        WebElement expandBtn = tableComp.expandButton();
+        tableComp.actions().moveToElement(expandBtn).perform();
+        expandBtn.click();
         return this;
     }
 
@@ -315,7 +317,7 @@ public class TableActions {
 
             if (isExpandable(sibling)) {
                 children.add(sibling);
-            };
+            }
         }
 
         return children;
