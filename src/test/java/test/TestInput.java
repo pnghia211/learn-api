@@ -1,13 +1,10 @@
 package test;
 
-import component.main.LeftNavigatorComp;
 import component.main.factory.InputFactory;
 import data.DropdownOption;
 import helpers.TestDataLoader;
 import model.CardMaskData;
 import model.FormTestData;
-import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -17,18 +14,12 @@ import test.Base.BaseTest;
 import java.util.List;
 
 public class TestInput extends BaseTest {
-    private WebDriver driver;
     private InputFactory inputFactory;
 
     @BeforeClass
     public void setUp() {
         leftNavigatorComp.clickDataTableComp("input");
         inputFactory = homePage.inputComp();
-    }
-
-    @AfterClass
-    public void tearDown() {
-        if (driver != null) driver.quit();
     }
 
     @Test

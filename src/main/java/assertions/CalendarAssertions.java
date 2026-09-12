@@ -19,18 +19,13 @@ public class CalendarAssertions {
         this.actions = actions;
     }
 
-    private boolean isDateSelected(String dateValue) {
-        String result = actions.getDateCell(dateValue).getAttribute("data-selected");
-        return "true".equalsIgnoreCase(result);
-    }
-
     public CalendarAssertions dateIsSelected(String dateValue) {
-        assertTrue(isDateSelected(dateValue));
+        assertTrue(actions.isDateSelected(dateValue));
         return this;
     }
 
     public CalendarAssertions dateIsNotSelected(String dateValue) {
-        assertFalse(isDateSelected(dateValue));
+        assertFalse(actions.isDateSelected(dateValue));
         return this;
     }
 

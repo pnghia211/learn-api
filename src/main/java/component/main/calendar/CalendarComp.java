@@ -18,7 +18,7 @@ public class CalendarComp extends BaseComp {
     private static final By calendarSel = By.cssSelector("[data-slot='root']");
     private static final By datePickerBtnSel = By.cssSelector("button:has(> [class*='calendar'])");
     private static final String dateValueCss = "[data-value='%s']";
-    private static final By datePickerCalenderSel = By.cssSelector("[id^='reka'][dir='ltr']");
+    private static final By datePickerCalendarSel = By.cssSelector("[id^='reka'][dir='ltr']");
     private static final By headingSel = By.cssSelector("[data-slot='header'] [data-slot='label']");
     private static final By nextMonthSel = By.cssSelector("[aria-label='Next month']");
     private static final By previousMonthSel = By.cssSelector("[aria-label='Previous month']");
@@ -52,7 +52,7 @@ public class CalendarComp extends BaseComp {
         return new WebDriverWait(driver, Duration.ofSeconds(5))
                 .pollingEvery(Duration.ofMillis(200))
                 .ignoring(StaleElementReferenceException.class)
-                .until(new WaitForCalendarReady(datePickerCalenderSel));
+                .until(new WaitForCalendarReady(datePickerCalendarSel));
     }
 
     public List<WebElement> dateRangePresets(RootLocator rootLocator) {

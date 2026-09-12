@@ -1,26 +1,17 @@
 package test;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import component.main.HeaderComp;
-import component.main.LeftNavigatorComp;
 import component.main.factory.TableFactory;
 import data.*;
-import driver.DriverFactory;
 import model.TableRecord;
-import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import page.HomePage;
 import test.Base.BaseTest;
 
 import java.util.List;
 
 import static helpers.TestDataLoader.loadList;
-import static url.Url.mainPage;
 
 public class TestTable extends BaseTest {
-    private WebDriver driver;
     private TableFactory tableFactory;
 
     private static final String USAGE_TABLE_PATH = "testdata/table-usage.json";
@@ -31,11 +22,6 @@ public class TestTable extends BaseTest {
     public void setUp() {
         leftNavigatorComp.clickDataTableComp("table");
         tableFactory = homePage.tableComp();
-    }
-
-    @AfterClass
-    public void tearDown() {
-        if (driver != null) driver.quit();
     }
 
     @Test

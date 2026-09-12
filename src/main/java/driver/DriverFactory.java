@@ -11,22 +11,6 @@ public class DriverFactory{
     private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
 
     public static WebDriver getChromeDriver() {
-        String currentProjectLocation = System.getProperty("user.dir");
-        String chromeDriverLocation = "";
-        if (OS.isFamilyMac()) {
-            chromeDriverLocation = currentProjectLocation + "/drivers/chromedriver";
-        }
-
-        if (OS.isFamilyWindows()) {
-            chromeDriverLocation = currentProjectLocation + "\\src\\main\\resources\\drivers\\chromedriver.exe";
-        }
-
-        if (chromeDriverLocation.isEmpty()) {
-            throw new IllegalArgumentException("Can't detect OS type");
-        }
-
-        System.setProperty("webdriver.chrome.driver", chromeDriverLocation);
-
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--incognito");
         chromeOptions.addArguments("--start-maximized");

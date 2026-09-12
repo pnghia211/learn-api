@@ -1,4 +1,4 @@
-<suite name="LearningAPISuite" verbose="1" parallel="tests" thread-count="4">
+<suite name="LearningAPISuite" verbose="3" parallel="tests" thread-count="4">
     <test name="CalendarTests">
         <classes>
             <class name="test.TestCalendar"/>

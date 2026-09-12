@@ -111,8 +111,11 @@ public class TableRecordNormalizer {
         for (Map.Entry<String, String> entry : actual.entrySet()) {
             String column = entry.getKey();
             String actualValue = entry.getValue();
-            String expectedValue = expected.get(column);
 
+            HeaderColumnOption option = HeaderColumnOption.fromHeaderValue(column);
+            String expectedKey = option.label();
+
+            String expectedValue = expected.get(expectedKey);
             if (expectedValue == null || !expectedValue.equals(actualValue)) {
                 return false;
             }

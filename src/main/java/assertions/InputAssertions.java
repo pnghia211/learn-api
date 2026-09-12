@@ -13,14 +13,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.Assert.assertTrue;
 
 public class InputAssertions {
     private final InputComp inputComp;
     private final InputActions actions;
 
-    public
-    InputAssertions(InputComp parent, InputActions actions) {
+    public InputAssertions(InputComp parent, InputActions actions) {
         this.inputComp = parent;
         this.actions = actions;
     }
@@ -221,7 +220,7 @@ public class InputAssertions {
         return this;
     }
 
-    public InputAssertions switchToogleSelected() {
+    public InputAssertions switchToggleSelected() {
         assertEquals(inputComp.switchToggle().getAttribute("aria-checked"), "true");
         return this;
     }

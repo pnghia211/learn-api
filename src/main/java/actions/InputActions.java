@@ -240,7 +240,7 @@ public class InputActions {
         return this;
     }
 
-    public InputActions clickSwitchToogle() {
+    public InputActions clickSwitchToggle() {
         inputComp.switchToggle().click();
         return this;
     }

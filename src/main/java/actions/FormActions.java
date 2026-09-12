@@ -101,7 +101,7 @@ public class FormActions {
     }
 
     public FormActions clickSwitchToggle() {
-        actionsFor(FormFieldLabel.SWITCH).clickSwitchToogle();
+        actionsFor(FormFieldLabel.SWITCH).clickSwitchToggle();
         return this;
     }
 

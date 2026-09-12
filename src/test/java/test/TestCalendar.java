@@ -1,35 +1,21 @@
 package test;
 
 import actions.CalendarActions.CalendarView;
-import component.main.HeaderComp;
-import component.main.LeftNavigatorComp;
-import component.main.calendar.CalendarComp;
 import component.main.factory.CalendarFactory;
 import data.CalendarLabel;
 import data.CalendarTestData;
-import driver.DriverFactory;
-import org.openqa.selenium.WebDriver;
 import org.testng.annotations.*;
-import page.HomePage;
 import test.Base.BaseTest;
 
 import java.util.List;
 
-import static url.Url.mainPage;
-
 public class TestCalendar extends BaseTest {
-    private WebDriver driver;
     private CalendarFactory calendarComp;
 
     @BeforeClass
     public void setUp() {
-        calendarComp = homePage.calenderComp();
+        calendarComp = homePage.calendarComp();
         leftNavigatorComp.clickDataTableComp("calendar");
-    }
-
-    @AfterClass
-    public void tearDown() {
-        if (driver != null) driver.quit();
     }
 
     @Test

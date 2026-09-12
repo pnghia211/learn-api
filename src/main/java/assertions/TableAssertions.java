@@ -7,6 +7,7 @@ import data.SortingOption;
 import helpers.TableRecordNormalizer;
 import model.TableRecord;
 import org.openqa.selenium.WebElement;
+import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 
 import java.util.*;
@@ -55,7 +56,7 @@ public class TableAssertions {
 
     public TableAssertions rowByCelDisplayed(TableRecord expected, String cell) {
         Map<String, String> actual = actions.getRowData(cell);
-        TableRecordNormalizer.matches(expected, actual);
+        assertTrue(TableRecordNormalizer.matches(expected, actual));
         return this;
     }
 

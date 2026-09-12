@@ -12,7 +12,6 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import static helpers.DateHelper.parseMonthYear;
-import static org.testng.AssertJUnit.assertTrue;
 
 public class CalendarActions{
     private final RootLocator rootLocator;
@@ -42,7 +41,7 @@ public class CalendarActions{
         return parent.datePickByLabel(datePickerHeader);
     }
 
-    private boolean isDateSelected(String dateValue) {
+    public boolean isDateSelected(String dateValue) {
         String result = getDateCell(dateValue).getAttribute("data-selected");
         return "true".equalsIgnoreCase(result);
     }
@@ -70,17 +69,15 @@ public class CalendarActions{
         headingEle.click();
 
         String headingText = parent.headingEle(rootLocator).getText();
+        Pattern expectedPattern = switch (view) {
+            case MONTH -> MONTH_PATTERN;
+            case YEAR -> YEAR_PATTERN;
+            case DECADE -> DECADE_PATTERN;
+        };
 
-        switch (view) {
-            case MONTH:
-                assertTrue(MONTH_PATTERN.matcher(headingText).matches());
-                break;
-            case YEAR:
-                assertTrue(YEAR_PATTERN.matcher(headingText).matches());
-                break;
-            case DECADE:
-                assertTrue(DECADE_PATTERN.matcher(headingText).matches());
-                break;
+        if (!expectedPattern.matcher(headingText).matches()) {
+            throw new IllegalStateException(
+                    "Expected heading to match " + view + " view but was: " + headingText);
         }
 
         return this;

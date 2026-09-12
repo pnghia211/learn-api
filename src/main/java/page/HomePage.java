@@ -32,7 +32,7 @@ public class HomePage extends BasePage {
         return new FormFactory(driver);
     }
 
-    public CalendarFactory calenderComp(){
+    public CalendarFactory calendarComp(){
         return new CalendarFactory(driver);
     }
 }

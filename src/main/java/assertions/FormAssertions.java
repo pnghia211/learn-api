@@ -4,12 +4,13 @@ import actions.FormActions;
 import component.main.form.FormComp;
 import data.DropdownOption;
 import data.FormFieldLabel;
-import org.testng.Assert;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class FormAssertions {
     private final FormComp formComp;
@@ -128,8 +129,8 @@ public class FormAssertions {
         return this;
     }
 
-    public FormAssertions switchToogleSelected() {
-        assertionsFor(FormFieldLabel.SWITCH).switchToogleSelected();
+    public FormAssertions switchToggleSelected() {
+        assertionsFor(FormFieldLabel.SWITCH).switchToggleSelected();
         return this;
     }
 
@@ -148,8 +149,8 @@ public class FormAssertions {
         return this;
     }
 
-    public FormAssertions sucessfullToast() {
-        Assert.assertTrue(formActions.getToastText().equalsIgnoreCase("success"));
+    public FormAssertions successfulToast() {
+        assertTrue(formActions.getToastText().equalsIgnoreCase("success"));
         return this;
     }
 

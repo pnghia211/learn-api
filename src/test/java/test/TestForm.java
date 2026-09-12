@@ -1,39 +1,20 @@
 package test;
 
-import component.main.HeaderComp;
-import component.main.LeftNavigatorComp;
 import component.main.factory.FormFactory;
-import data.DropdownOption;
-import driver.DriverFactory;
 import helpers.TestDataLoader;
 import model.FormTestData;
-import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import page.HomePage;
 import test.Base.BaseTest;
-
-import java.util.List;
-
-import static url.Url.mainPage;
 
 public class TestForm extends BaseTest {
 
-    private WebDriver driver;
     private FormFactory formFactory;
 
     @BeforeClass
     public void setUp() {
         leftNavigatorComp.clickDataTableComp("form");
         formFactory = homePage.formComp();
-    }
-
-    @AfterClass
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
     }
 
     @Test
@@ -91,7 +72,7 @@ public class TestForm extends BaseTest {
                 .and().selectCheckbox().verify().checkboxSelected()
                 .and().selectRating(data.ratingValue()).verify().ratingSelected(data.ratingValue())
 
-                .and().clickSwitchToggle().verify().switchToogleSelected()
+                .and().clickSwitchToggle().verify().switchToggleSelected()
 
                 .and().selectCheckboxGroup(data.checkboxGroupOption())
                 .verify().checkboxGroupBtnSelected(data.checkboxGroupOption())
@@ -100,6 +81,6 @@ public class TestForm extends BaseTest {
 
                 .and().setSliderTo(data.sliderValue()).verify().sliderValue(data.sliderValue())
 
-                .and().clickSubmitBtn().verify().sucessfullToast();
+                .and().clickSubmitBtn().verify().successfulToast();
     }
 }
