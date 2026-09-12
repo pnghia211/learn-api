@@ -34,8 +34,8 @@ public class TableComp extends BaseComp {
         return new FooterComp(this);
     }
 
-    public HeaderComp headerComp() {
-        return new HeaderComp(this);
+    public ToolbarComp toolbarComp() {
+        return new ToolbarComp(this);
     }
 
     public RowDropdownComp rowDropdownComp() {
@@ -62,15 +62,6 @@ public class TableComp extends BaseComp {
             }
         }
         return matchingRows;
-    }
-
-    public WebElement rowExpandedBtnByCell(String cell) {
-        List<WebElement> rows = rowsByCellText(cell);
-        if (rows.size() > 1) {
-            throw new IllegalStateException(
-                    "Expected exactly one row for cell '" + cell + "' but found " + rows.size());
-        }
-        return rows.get(0).findElement(expandBtnRowSel);
     }
 
     public WebElement expandButton() {

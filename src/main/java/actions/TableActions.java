@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 public class TableActions {
     private final TableComp tableComp;
-    private HeaderActions headerActions;
+    private ToolbarActions toolbarActions;
     private FooterActions footerActions;
     private PaginationActions paginationActions;
 
@@ -39,9 +39,9 @@ public class TableActions {
         return footerActions;
     }
 
-    public HeaderActions headerActions() {
-        if (headerActions == null) headerActions = new HeaderActions(tableComp.headerComp(), this);
-        return headerActions;
+    public ToolbarActions headerActions() {
+        if (toolbarActions == null) toolbarActions = new ToolbarActions(tableComp.toolbarComp(), this);
+        return toolbarActions;
     }
 
     public PaginationActions paginationActions() {

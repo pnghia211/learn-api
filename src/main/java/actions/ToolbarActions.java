@@ -1,6 +1,6 @@
 package actions;
 
-import component.main.table.HeaderComp;
+import component.main.table.ToolbarComp;
 import data.DropdownOption;
 import data.HeaderColumnOption;
 import data.SortingOption;
@@ -14,24 +14,24 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HeaderActions {
-    private final HeaderComp headerComp;
+public class ToolbarActions {
+    private final ToolbarComp toolbarComp;
     private final TableActions tableActions;
 
-    public HeaderActions(HeaderComp headerComp, TableActions tableActions) {
-        this.headerComp = headerComp;
+    public ToolbarActions(ToolbarComp toolbarComp, TableActions tableActions) {
+        this.toolbarComp = toolbarComp;
         this.tableActions = tableActions;
     }
 
     public WebElement getHeaderCheckbox() {
-        return headerComp.headerCheckbox();
+        return toolbarComp.headerCheckbox();
     }
 
     public WebElement getDropdownBtn() {
-        return headerComp.headerDropdownButton();
+        return toolbarComp.headerDropdownButton();
     }
 
-    private HeaderActions selectDropdownButton() {
+    private ToolbarActions selectDropdownButton() {
         WebElement button = getDropdownBtn();
         if (!"open".equalsIgnoreCase(button.getAttribute("data-state"))) {
             button.click();
@@ -39,10 +39,10 @@ public class HeaderActions {
         return this;
     }
 
-    private HeaderActions unselectDropdownButton() {
+    private ToolbarActions unselectDropdownButton() {
         WebElement button = getDropdownBtn();
         if ("open".equalsIgnoreCase(button.getAttribute("data-state"))) {
-            headerComp.actions().sendKeys(Keys.ESCAPE).perform();
+            toolbarComp.actions().sendKeys(Keys.ESCAPE).perform();
         }
         return this;
     }
@@ -51,28 +51,28 @@ public class HeaderActions {
         SELECTED, UNSELECTED
     }
 
-    public HeaderActions selectDropdownOption(DropdownOption option) {
+    public ToolbarActions selectDropdownOption(DropdownOption option) {
         setBtnDropdownOption(option, DropdownOptionState.SELECTED);
         return this;
     }
 
-    public HeaderActions unselectDropdownOption(DropdownOption option) {
+    public ToolbarActions unselectDropdownOption(DropdownOption option) {
         setBtnDropdownOption(option, DropdownOptionState.UNSELECTED);
         return this;
     }
 
-    private HeaderActions setBtnDropdownOption(DropdownOption option, DropdownOptionState desiredState) {
+    private ToolbarActions setBtnDropdownOption(DropdownOption option, DropdownOptionState desiredState) {
         selectDropdownButton();
 
-        WebElement optionEle = headerComp.btnDropdownOptions(option);
+        WebElement optionEle = toolbarComp.btnDropdownOptions(option);
         boolean isChecked = "checked".equalsIgnoreCase(optionEle.getAttribute("data-state"));
         boolean shouldBeChecked = desiredState == DropdownOptionState.SELECTED;
 
         if (isChecked != shouldBeChecked) {
             optionEle.click();
-            new WebDriverWait(headerComp.driver(), Duration.ofSeconds(5))
+            new WebDriverWait(toolbarComp.driver(), Duration.ofSeconds(5))
                     .until(d -> shouldBeChecked == "checked".equalsIgnoreCase(
-                            headerComp.btnDropdownOptions(option).getAttribute("data-state")));
+                            toolbarComp.btnDropdownOptions(option).getAttribute("data-state")));
         }
 
         unselectDropdownButton();
@@ -80,7 +80,7 @@ public class HeaderActions {
     }
 
     public Map<String, Integer> getHeadersMap() {
-        List<WebElement> headers = headerComp.headerColumns();
+        List<WebElement> headers = toolbarComp.headerColumns();
         Map<String, Integer> headersMap = new LinkedHashMap<>();
 
         for (int i = 0; i < headers.size(); i++) {
@@ -92,9 +92,9 @@ public class HeaderActions {
         return headersMap;
     }
 
-    public HeaderActions setAllSelectionHeaderToDefaultState() {
-        WebElement ele = headerComp.headerCheckbox();
-        new WebDriverWait(headerComp.driver(), Duration.ofSeconds(5))
+    public ToolbarActions setAllSelectionHeaderToDefaultState() {
+        WebElement ele = toolbarComp.headerCheckbox();
+        new WebDriverWait(toolbarComp.driver(), Duration.ofSeconds(5))
                 .until(d -> {
                     ele.click();
                     return "unchecked".equalsIgnoreCase(ele.getAttribute("data-state"));
@@ -102,31 +102,31 @@ public class HeaderActions {
         return this;
     }
 
-    public HeaderActions selectSortingHeader(HeaderColumnOption option) {
-        WebElement ele = headerComp.sortingHeader(option);
+    public ToolbarActions selectSortingHeader(HeaderColumnOption option) {
+        WebElement ele = toolbarComp.sortingHeader(option);
         if (!"open".equalsIgnoreCase(ele.getAttribute("data-state"))) {
             ele.click();
         }
         return this;
     }
 
-    public HeaderActions unselectSortingHeader(HeaderColumnOption option) {
-        WebElement ele = headerComp.sortingHeader(option);
+    public ToolbarActions unselectSortingHeader(HeaderColumnOption option) {
+        WebElement ele = toolbarComp.sortingHeader(option);
         if ("open".equalsIgnoreCase(ele.getAttribute("data-state"))) {
-            headerComp.actions().sendKeys(Keys.ESCAPE).perform();
+            toolbarComp.actions().sendKeys(Keys.ESCAPE).perform();
         }
         return this;
     }
 
-    public HeaderActions setHeaderDropdownOption(HeaderColumnOption option, SortingOption sortingOption) {
+    public ToolbarActions setHeaderDropdownOption(HeaderColumnOption option, SortingOption sortingOption) {
         selectSortingHeader(option);
 
-        WebElement optionEle = headerComp.headerDropdownOptions(sortingOption);
+        WebElement optionEle = toolbarComp.headerDropdownOptions(sortingOption);
         boolean isChecked = "checked".equalsIgnoreCase(optionEle.getAttribute("data-state"));
 
         if (!isChecked) {
             optionEle.click();
-            new WebDriverWait(headerComp.driver(), Duration.ofSeconds(5))
+            new WebDriverWait(toolbarComp.driver(), Duration.ofSeconds(5))
                     .until(ExpectedConditions.invisibilityOf(optionEle));
         } else {
             unselectSortingHeader(option);

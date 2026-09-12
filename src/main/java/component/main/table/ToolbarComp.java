@@ -10,7 +10,7 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class HeaderComp extends BaseComp {
+public class ToolbarComp extends BaseComp {
     TableComp tableComp;
     private static final By headerCellsSel = By.cssSelector("thead tr th");
     private static final By allSelectionSel = By.cssSelector("tr th [aria-label='Select all']");
@@ -18,7 +18,7 @@ public class HeaderComp extends BaseComp {
     private static final String dropdownOptionsXpath = "//*[contains(@id,'reka-dropdown') and @dir='ltr']//*[@data-slot='item' and normalize-space(.)='%s']";
     private static final String sortingHeaderSel = ".//thead/tr/th/button[normalize-space()='%s']";
 
-    public HeaderComp(TableComp tableComp) {
+    public ToolbarComp(TableComp tableComp) {
         super(tableComp.driver());
         this.tableComp = tableComp;
     }
