@@ -12,6 +12,7 @@ public enum TableLabel {
     WITH_TREE_DATA("with-tree-data"),
     WITH_PAGINATION("with-pagination"),
     WITH_ROW_PINNING("with-row-pinning"),
+    WITH_GLOBAL_FILTER("with-global-filter"),
     WITH_GROUPED_ROWS("with-grouped-rows");
 
     private final String label;

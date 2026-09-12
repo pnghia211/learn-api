@@ -38,19 +38,19 @@ public class TestTable extends BaseTest {
 
         tableFactory.forTable(TableLabel.USAGE)
                 .verify().cellDisplayed("mia.white@example.com")
-                .and().headerActions().unselectDropdownOption(DropdownOption.EMAIL)
+                .and().toolbarActions().unselectDropdownOption(DropdownOption.EMAIL)
                 .and().verify().cellsByColumnNotDisplayed(HeaderColumnOption.EMAIL)
-                .and().headerActions().selectDropdownOption(DropdownOption.EMAIL).and()
+                .and().toolbarActions().selectDropdownOption(DropdownOption.EMAIL).and()
                 .verify().cellsByColumnDisplayed(HeaderColumnOption.EMAIL, expectedEmails);
     }
 
     @Test
     public void columnVisibilityTable_toggleAmountColumn() {
         tableFactory.forTable(TableLabel.WITH_COLUMN_VISIBILITY)
-                .headerActions().unselectDropdownOption(DropdownOption.AMOUNT)
+                .toolbarActions().unselectDropdownOption(DropdownOption.AMOUNT)
                 .and().verify().headerColumnNotDisplayed(HeaderColumnOption.AMOUNT)
                 .cellsByColumnNotDisplayed(HeaderColumnOption.AMOUNT)
-                .and().headerActions().selectDropdownOption(DropdownOption.AMOUNT);
+                .and().toolbarActions().selectDropdownOption(DropdownOption.AMOUNT);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class TestTable extends BaseTest {
     @Test
     public void rowSelectionTable_checkboxesSelectAndFooterUpdates() {
         List<String> checkedRowsSelection = List.of("paid", "william.brown@example.com");
-        tableFactory.forTable(TableLabel.WITH_ROW_SELECTION).headerActions()
+        tableFactory.forTable(TableLabel.WITH_ROW_SELECTION).toolbarActions()
                 .setAllSelectionHeaderToDefaultState()
                 .and().selectCheckboxesByCells(checkedRowsSelection)
                 .verify().checkboxesAreSelected(checkedRowsSelection)
@@ -112,7 +112,7 @@ public class TestTable extends BaseTest {
     @Test
     public void columnSortingTable_sortsEachColumnCorrectly() {
         tableFactory.forTable(TableLabel.WITH_COLUMN_SORTING, ComponentIndexOption.SECONDARY)
-                .headerActions().and()
+                .toolbarActions().and()
                 .verify().cellsByColumnIsSorted(HeaderColumnOption.ID, SortingOption.ASC).and()
                 .verify().cellsByColumnIsSorted(HeaderColumnOption.ID, SortingOption.DESC).and()
                 .verify().cellsByColumnIsSorted(HeaderColumnOption.EMAIL, SortingOption.DESC).and()
@@ -150,5 +150,11 @@ public class TestTable extends BaseTest {
         tableFactory.forTable(TableLabel.WITH_GROUPED_ROWS)
                 .expandUntilCellDisplayed("emma.davis@example.com")
                 .verify().cellDisplayed("emma.davis@example.com");
+    }
+
+    @Test
+    public void filterTable_expandsUntilCellDisplayed() {
+        tableFactory.forTable(TableLabel.WITH_GLOBAL_FILTER)
+                .filterWithValue("11").verify().expectedFilterRows("11");
     }
 }

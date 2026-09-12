@@ -7,7 +7,6 @@ import data.SortingOption;
 import helpers.TableRecordNormalizer;
 import model.TableRecord;
 import org.openqa.selenium.WebElement;
-import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 
 import java.util.*;
@@ -26,7 +25,7 @@ public class TableAssertions {
     }
 
     public TableAssertions headerColumnNotDisplayed(HeaderColumnOption option) {
-        List<String> actual = new ArrayList<>(actions.headerActions().getHeadersMap().keySet());
+        List<String> actual = new ArrayList<>(actions.toolbarActions().getHeadersMap().keySet());
         assertFalse(actual.contains(option.label()));
         return this;
     }
@@ -44,18 +43,18 @@ public class TableAssertions {
     }
 
     public TableAssertions footerTotalAmount() {
-        assertEquals(actions.footerActions().getFooterTotalAmount(), actions.getCellsTotalAmount());
+        assertEquals(actions.getFooterTotalAmount(), actions.getCellsTotalAmount());
         return this;
     }
 
     public TableAssertions rowsByTableDisplayed(List<TableRecord> expected) {
-        List<Map<String, String>> actual = actions.getAllRowsData();
+        List<Map<String, String>> actual = actions.getAllRowsMap();
         TableRecordNormalizer.verify(expected, actual);
         return this;
     }
 
     public TableAssertions rowByCelDisplayed(TableRecord expected, String cell) {
-        Map<String, String> actual = actions.getRowData(cell);
+        Map<String, String> actual = actions.getRowMap(cell);
         assertTrue(TableRecordNormalizer.matches(expected, actual));
         return this;
     }
@@ -103,13 +102,13 @@ public class TableAssertions {
         for (String cell : cells) {
             checkboxesAreSelected(cell);
         }
-        assertNotEquals("unchecked", actions.headerActions().getHeaderCheckbox().getAttribute("data-state").toLowerCase());
+        assertNotEquals("unchecked", actions.toolbarActions().getHeaderCheckbox().getAttribute("data-state").toLowerCase());
 
         return this;
     }
 
     public TableAssertions groupsAreContiguous(HeaderColumnOption groupColumn) {
-        List<Map<String, String>> rows = actions.getAllRowsData();
+        List<Map<String, String>> rows = actions.getAllRowsMap();
         String columnKey = groupColumn.label();
 
         Set<String> seenGroups = new HashSet<>();
@@ -135,7 +134,7 @@ public class TableAssertions {
     }
 
     public TableAssertions cellsByColumnIsSorted(HeaderColumnOption option, SortingOption sortingOption) {
-        actions.headerActions().setHeaderDropdownOption(option, sortingOption);
+        actions.toolbarActions().setHeaderDropdownOption(option, sortingOption);
         List<String> actual = actions.getCellsByColumn(option);
 
         Comparator<String> comparator = sortingOption == SortingOption.ASC
@@ -191,7 +190,7 @@ public class TableAssertions {
         for (int page = 0; page < numberOfPages; page++) {
             List<TableRecord> expectedSlice = paginationActions().sliceForPage(expectedData, page, numberOfPages);
             paginationActions().getListPageBtn().get(page).click();
-            List<Map<String, String>> actual = actions.getAllRowsData();
+            List<Map<String, String>> actual = actions.getAllRowsMap();
 
             TableRecordNormalizer.verify(expectedSlice, actual);
         }
@@ -209,6 +208,11 @@ public class TableAssertions {
             assertEquals(expected.get(i), actualValue);
         }
 
+        return this;
+    }
+
+    public TableAssertions expectedFilterRows(String value) {
+        assertEquals(actions.getAllRowsMap(), actions.getRowsMapByCell(value));
         return this;
     }
 

@@ -8,28 +8,16 @@ import java.math.RoundingMode;
 
 public class FooterActions {
     private final FooterComp footerComp;
-    private final TableActions tableActions;
 
-    public FooterActions(FooterComp footerComp, TableActions tableActions) {
+    public FooterActions(FooterComp footerComp) {
         this.footerComp = footerComp;
-        this.tableActions = tableActions;
     }
 
     public String getFooterSummaryTxt() {
         return footerComp.getFooterSummary().getText();
     }
 
-    public String getFooterTotalAmountTxt() {
-        int index = tableActions.headerActions().getHeadersMap().get(HeaderColumnOption.AMOUNT.label());
-        return footerComp.getFooterCellByIndex(index + 1).getText();
-    }
-
-    public Integer getFooterTotalAmount() {
-        String result = getFooterTotalAmountTxt().replace("Total: €", "").replace(",", "");
-        return new BigDecimal(result).setScale(0, RoundingMode.HALF_UP).intValue();
-    }
-
-    public TableActions and() {
-        return tableActions;
+    public String getFooterCellByIndex(int index) {
+        return footerComp.getFooterCellByIndex(index).getText();
     }
 }

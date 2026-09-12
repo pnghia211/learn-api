@@ -21,6 +21,7 @@ public class TableActions {
     private ToolbarActions toolbarActions;
     private FooterActions footerActions;
     private PaginationActions paginationActions;
+    private InputActions inputActions;
 
     public TableActions(TableComp tableComp) {
         this.tableComp = tableComp;
@@ -35,11 +36,16 @@ public class TableActions {
     }
 
     public FooterActions footerActions() {
-        if (footerActions == null) footerActions = new FooterActions(tableComp.footerComp(), this);
+        if (footerActions == null) footerActions = new FooterActions(tableComp.footerComp());
         return footerActions;
     }
 
-    public ToolbarActions headerActions() {
+    public InputActions inputActions() {
+        if (inputActions == null) inputActions = new InputActions(tableComp.inputComp());
+        return inputActions;
+    }
+
+    public ToolbarActions toolbarActions() {
         if (toolbarActions == null) toolbarActions = new ToolbarActions(tableComp.toolbarComp(), this);
         return toolbarActions;
     }
@@ -58,7 +64,7 @@ public class TableActions {
     }
 
     public List<String> getCellsByColumn(HeaderColumnOption option) {
-        Map<String, Integer> headersMap = headerActions().getHeadersMap();
+        Map<String, Integer> headersMap = toolbarActions().getHeadersMap();
 
         Integer index = headersMap.entrySet().stream()
                 .filter(entry -> option.matchesHeader(entry.getKey()))
@@ -79,7 +85,7 @@ public class TableActions {
     }
 
     public Integer getCellsTotalAmount() {
-        Integer index = headerActions().getHeadersMap().get(HeaderColumnOption.AMOUNT.label());
+        Integer index = toolbarActions().getHeadersMap().get(HeaderColumnOption.AMOUNT.label());
 
         List<WebElement> cellsEle = tableComp.cellsByColumnIndex(index + 1);
 
@@ -176,6 +182,14 @@ public class TableActions {
         return new int[]{numbers.get(0), numbers.get(1)};
     }
 
+    public Integer getFooterTotalAmount() {
+        int index = toolbarActions().getHeadersMap().get(HeaderColumnOption.AMOUNT.label());
+        String rawText = footerActions().getFooterCellByIndex(index + 1);
+
+        String result = rawText.replace("Total: €", "").replace(",", "");
+        return new BigDecimal(result).setScale(0, RoundingMode.HALF_UP).intValue();
+    }
+
     public Map<String, String> rowToMap(WebElement row, Map<String, Integer> headersMap) {
         List<WebElement> cells = row.findElements(By.cssSelector("td"));
         Map<String, String> rowMap = new LinkedHashMap<>();
@@ -189,17 +203,31 @@ public class TableActions {
         return rowMap;
     }
 
-    private List<Map<String, String>> toRowsData(List<WebElement> rows) {
-        Map<String, Integer> headersMap = headerActions().getHeadersMap();
+    private List<Map<String, String>> toRowsMap(List<WebElement> rows) {
+        Map<String, Integer> headersMap = toolbarActions().getHeadersMap();
         return rows.stream().map(r -> rowToMap(r, headersMap)).toList();
     }
 
-    public List<Map<String, String>> getAllRowsData() {
-        return toRowsData(getRows());
+    public List<Map<String, String>> getAllRowsMap() {
+        return toRowsMap(getRows());
     }
 
-    public Map<String, String> getRowData(String cell) {
-        List<Map<String, String>> rows = toRowsData(getRowsByCellValue(cell));
+    public List<Map<String, String>> getRowsMapByCell(String value) {
+        List<Map<String, String>> rawMap = toRowsMap(getRows());
+        List<Map<String, String>> result = new ArrayList<>();
+
+        for (Map<String, String> row : rawMap) {
+            boolean found = row.values().stream()
+                    .anyMatch(cellValue -> cellValue.toLowerCase().contains(value.toLowerCase()));
+
+            if (found) result.add(row);
+        }
+
+        return result;
+    }
+
+    public Map<String, String> getRowMap(String cell) {
+        List<Map<String, String>> rows = toRowsMap(getRowsByCellValue(cell));
         if (rows.isEmpty()) {
             throw new IllegalStateException("No row found matching cell value: " + cell);
         }
@@ -240,11 +268,11 @@ public class TableActions {
     }
 
     public List<Map<String, String>> getPinnedRowsData() {
-        return toRowsData(tableComp.pinnedRows());
+        return toRowsMap(tableComp.pinnedRows());
     }
 
     public List<Map<String, String>> getUnpinnedRowsData() {
-        return toRowsData(tableComp.unpinnedRows());
+        return toRowsMap(tableComp.unpinnedRows());
     }
 
     public TableActions unpinAllRows() {
@@ -334,6 +362,11 @@ public class TableActions {
 
     private boolean isExpandable(WebElement row) {
         return row.findElement(By.cssSelector("button[class]:not([class*='invisible'])")).isEnabled();
+    }
+
+    public TableActions filterWithValue(String value) {
+        inputActions().type(value);
+        return this;
     }
 
     public TableAssertions verify() {

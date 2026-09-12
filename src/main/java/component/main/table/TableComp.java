@@ -1,6 +1,7 @@
 package component.main.table;
 
 import component.main.BaseComp;
+import component.main.form.InputComp;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -44,6 +45,10 @@ public class TableComp extends BaseComp {
 
     public PaginationComp paginationComp() {
         return new PaginationComp(driver, tableLabel);
+    }
+
+    public InputComp inputComp() {
+        return new InputComp(driver, tableLabel);
     }
 
     public WebElement tableByLabel() {
