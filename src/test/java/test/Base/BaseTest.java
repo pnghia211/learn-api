@@ -11,21 +11,29 @@ import page.HomePage;
 import static url.Url.mainPage;
 
 public class BaseTest {
-    protected WebDriver driver;
-    protected HomePage homePage;
-    protected HeaderComp headerComp;
-    protected LeftNavigatorComp leftNavigatorComp;
+
+    protected WebDriver driver() {
+        return DriverFactory.getDriver();
+    }
+
+    protected HomePage homePage() {
+        return new HomePage(driver());
+    }
+
+    protected HeaderComp headerComp() {
+        return homePage().componentsSection();
+    }
+
+    protected LeftNavigatorComp leftNavigatorComp() {
+        return homePage().leftNavigatorComp();
+    }
 
     @BeforeClass
     public void baseSetUp() {
-        driver = DriverFactory.getChromeDriver();
+        WebDriver driver = DriverFactory.getChromeDriver();
         driver.get(mainPage);
 
-        homePage = new HomePage(driver);
-        headerComp = homePage.componentsSection();
-        leftNavigatorComp = homePage.leftNavigatorComp();
-
-        headerComp.clickComponentsComp();
+        headerComp().clickComponentsComp();
     }
 
     @AfterClass

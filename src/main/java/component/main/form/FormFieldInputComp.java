@@ -16,6 +16,6 @@ public class FormFieldInputComp extends InputComp {
 
     @Override
     protected WebElement resolveRoot() {
-        return formComp.baseComp(fieldLabel);
+        return formComp.fieldWrapper(fieldLabel);
     }
 }

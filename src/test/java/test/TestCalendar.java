@@ -4,23 +4,25 @@ import actions.CalendarActions.CalendarView;
 import component.main.factory.CalendarFactory;
 import data.CalendarLabel;
 import data.CalendarTestData;
-import org.testng.annotations.*;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 import test.Base.BaseTest;
 
 import java.util.List;
 
 public class TestCalendar extends BaseTest {
-    private CalendarFactory calendarComp;
+    private CalendarFactory calendarComp() {
+        return homePage().calendarComp();
+    };
 
     @BeforeClass
     public void setUp() {
-        calendarComp = homePage.calendarComp();
-        leftNavigatorComp.clickDataTableComp("calendar");
+        leftNavigatorComp().clickDataTableComp("calendar");
     }
 
     @Test
     public void usageCalendar_selectsDateAndUpdatesSelection() {
-        calendarComp.forCalendar(CalendarLabel.USAGE)
+        calendarComp().forCalendar(CalendarLabel.USAGE)
                 .selectDateWithNavigation("2022-02-04")
                 .verify().dateIsSelected("2022-02-04")
                 .dateIsNotSelected(CalendarTestData.DEFAULT_DATE);
@@ -28,14 +30,14 @@ public class TestCalendar extends BaseTest {
 
     @Test
     public void disabledDates_cannotBeSelected() {
-        calendarComp.forCalendar(CalendarLabel.DISABLED_DATES)
+        calendarComp().forCalendar(CalendarLabel.DISABLED_DATES)
                 .selectDate(CalendarTestData.DISABLED_DATE)
                 .verify().dateIsDisabled(CalendarTestData.DISABLED_DATE);
     }
 
     @Test
     public void usageCalendar_navigatesMonthAndYear() {
-        calendarComp.forCalendar(CalendarLabel.USAGE)
+        calendarComp().forCalendar(CalendarLabel.USAGE)
                 .selectNextMonth()
                 .verify().heading("2022-03")
                 .and().selectNextYear()
@@ -44,7 +46,7 @@ public class TestCalendar extends BaseTest {
 
     @Test
     public void usageCalendar_switchesViewGrids() {
-        calendarComp.forCalendar(CalendarLabel.USAGE)
+        calendarComp().forCalendar(CalendarLabel.USAGE)
                 .selectViewGrid(CalendarView.YEAR)
                 .selectViewGrid(CalendarView.DECADE)
                 .selectViewGrid(CalendarView.MONTH);
@@ -53,7 +55,7 @@ public class TestCalendar extends BaseTest {
     @Test
     public void multipleDates_selectsAllDates() {
         List<String> dates = List.of("2022-02-04", "2022-02-16", "2022-02-23");
-        calendarComp.forCalendar(CalendarLabel.MULTIPLES)
+        calendarComp().forCalendar(CalendarLabel.MULTIPLES)
                 .selectMultipleDates(dates)
                 .verify().datesAreSelected(dates);
     }
@@ -62,21 +64,21 @@ public class TestCalendar extends BaseTest {
     public void dateRange_selectsStartAndEnd() {
         String startDate = "2022-02-10";
         String endDate = "2022-02-02";
-        calendarComp.forCalendar(CalendarLabel.RANGE)
+        calendarComp().forCalendar(CalendarLabel.RANGE)
                 .selectDateRange(startDate, endDate)
                 .verify().dateRangeSelected(startDate, endDate);
     }
 
     @Test
     public void usageCalendar_selectDateWithNavigation() {
-        calendarComp.forCalendar(CalendarLabel.USAGE)
+        calendarComp().forCalendar(CalendarLabel.USAGE)
                 .selectDateWithNavigation("2016-01-01")
                 .verify().heading("2016-01").dateIsSelected("2016-01-01");
     }
 
     @Test
     public void datePicker_selectDateWithNavigation() {
-        calendarComp.forDatePicker(CalendarLabel.DATE_PICKER)
+        calendarComp().forDatePicker(CalendarLabel.DATE_PICKER)
                 .selectDateWithNavigation("2024-05-04")
                 .verify().heading("2024-05")
                 .and().verify().dateIsSelected("2024-05-04")
@@ -95,7 +97,7 @@ public class TestCalendar extends BaseTest {
                 "Last 6 months",
                 "Last year");
 
-        calendarComp.forDatePicker(CalendarLabel.DATE_RANGE_PICKER)
+        calendarComp().forDatePicker(CalendarLabel.DATE_RANGE_PICKER)
                 .selectDateWithNavigation(firstDateSelected)
                 .selectDateWithNavigation(secondDateSelected)
                 .verify().datePickerHeading(firstDateSelected + " - " + secondDateSelected)

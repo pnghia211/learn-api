@@ -23,7 +23,7 @@ public class FormComp extends BaseComp {
         return cachedRoot;
     }
 
-    public WebElement baseComp(FormFieldLabel formField) {
+    public WebElement fieldWrapper(FormFieldLabel formField) {
         return formByLabel().findElement(By.xpath(String.format(wrapper, formField.label())));
     }
 

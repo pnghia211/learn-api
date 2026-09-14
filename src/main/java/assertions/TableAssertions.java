@@ -70,16 +70,13 @@ public class TableAssertions {
     }
 
     public TableAssertions checkboxesAreSelected(String cell) {
-        List<String> states = actions.getRowCheckboxesByCell(cell)
+        boolean allSelected = actions.getRowCheckboxesByCell(cell)
                 .stream()
-                .map(e -> e.getAttribute("data-state")).toList();
-
-        boolean allSelected = states.stream()
-                .noneMatch("unchecked"::equals);
+                .map(e -> e.getAttribute("data-state")).noneMatch("unchecked"::equals);
 
         if (!allSelected) {
             throw new AssertionError(
-                    "Expected all checkboxes to be checked/indeterminate for cell: " + cell + ", but got states: " + states);
+                    "Expected all checkboxes to be checked/indeterminate for cell: " + cell);
         }
 
         return this;

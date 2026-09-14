@@ -9,12 +9,13 @@ import test.Base.BaseTest;
 
 public class TestForm extends BaseTest {
 
-    private FormFactory formFactory;
+    private FormFactory formFactory() {
+        return homePage().formComp();
+    }
 
     @BeforeClass
     public void setUp() {
-        leftNavigatorComp.clickDataTableComp("form");
-        formFactory = homePage.formComp();
+        leftNavigatorComp().clickDataTableComp("form");
     }
 
     @Test
@@ -22,7 +23,7 @@ public class TestForm extends BaseTest {
         FormTestData data = TestDataLoader.load("testdata/form-data.json", FormTestData.class);
         String filePath = TestDataLoader.resolveTestFile(data.uploadFilePath());
 
-        formFactory.forForm("input-events")
+        formFactory().forForm("input-events")
                 .fillTextInput(data.textInput())
                 .verify().textInputEquals(data.textInput())
 

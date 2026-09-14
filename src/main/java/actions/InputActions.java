@@ -62,14 +62,7 @@ public class InputActions {
     }
 
     public List<String> getTagItemsTxt() {
-        List<String> result = new ArrayList<>();
-        for (WebElement element : inputComp.tagsItem()) {
-            String txt = element.getText();
-
-            result.add(txt);
-        }
-
-        return result;
+        return inputComp.tagsItem().stream().map(WebElement::getText).toList();
     }
 
     public InputActions clickClearBtn() {
@@ -307,13 +300,7 @@ public class InputActions {
     }
 
     public List<String> getSelectedTagsItem() {
-        List<String> result = new ArrayList<>();
-        for (WebElement element : inputComp.tagsItem()) {
-            String value = element.getText();
-            result.add(value);
-        }
-
-        return result;
+        return new ArrayList<>(inputComp.tagsItem().stream().map(WebElement::getText).toList());
     }
 
     public InputActions typeInputs(String input) {

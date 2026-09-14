@@ -1,10 +1,6 @@
 package actions;
 
 import component.main.table.FooterComp;
-import data.HeaderColumnOption;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class FooterActions {
     private final FooterComp footerComp;
