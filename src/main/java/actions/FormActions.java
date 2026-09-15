@@ -9,16 +9,15 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-public class FormActions {
-    FormComp formComp;
+public class FormActions extends BaseActions<FormComp> {
     private final Map<FormFieldLabel, InputActions> actionsCache = new EnumMap<>(FormFieldLabel.class);
 
     public FormActions(FormComp formComp) {
-        this.formComp = formComp;
+        super(formComp);
     }
 
     public InputActions actionsFor(FormFieldLabel field) {
-        return actionsCache.computeIfAbsent(field, f -> new InputActions(formComp.fieldInputComp(f)));
+        return actionsCache.computeIfAbsent(field, f -> new InputActions(getComp().fieldInputComp(f)));
     }
 
     public FormActions fillTextInput(String text) {
@@ -136,15 +135,15 @@ public class FormActions {
     }
 
     public FormActions clickSubmitBtn() {
-        formComp.submit().click();
+        getComp().submit().click();
         return this;
     }
 
     public String getToastText() {
-        return formComp.toastTitle().getText();
+        return getComp().toastTitle().getText();
     }
 
     public FormAssertions verify() {
-        return new FormAssertions(formComp, this);
+        return new FormAssertions(getComp(), this);
     }
 }

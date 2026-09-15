@@ -6,37 +6,33 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-public class PaginationActions {
-    PaginationComp paginationComp;
-    TableActions tableActions;
-
-    public PaginationActions(PaginationComp paginationComp, TableActions tableActions) {
-        this.paginationComp = paginationComp;
-        this.tableActions = tableActions;
+public class PaginationActions extends BaseActions<PaginationComp> {
+    public PaginationActions(PaginationComp paginationComp) {
+        super(paginationComp);
     }
 
     public WebElement getFirstPageBtn() {
-        return paginationComp.firstPageBtn();
+        return getComp().firstPageBtn();
     }
 
     public WebElement getPreviousPageBtn() {
-        return paginationComp.previousPageBtn();
+        return getComp().previousPageBtn();
     }
 
     public WebElement getNextPageBtn() {
-        return paginationComp.nextPageBtn();
+        return getComp().nextPageBtn();
     }
 
     public WebElement getLastPageBtn() {
-        return paginationComp.lastPageBtn();
+        return getComp().lastPageBtn();
     }
 
     public WebElement getCurrentPageBtn() {
-        return paginationComp.currentPageBtn();
+        return getComp().currentPageBtn();
     }
 
     public List<WebElement> getListPageBtn() {
-        return paginationComp.listPageBtn();
+        return getComp().listPageBtn();
     }
 
     public void backToFirstPage() {

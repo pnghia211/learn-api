@@ -16,27 +16,25 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputActions {
-    private final InputComp inputComp;
-
+public class InputActions extends BaseActions<InputComp> {
     public InputActions(InputComp inputComp) {
-        this.inputComp = inputComp;
+        super(inputComp);
     }
 
     public WebElement getInputText() {
-        return inputComp.inputEle();
+        return getComp().inputEle();
     }
 
     public WebElement getSelectText() {
-        return inputComp.selectEle();
+        return getComp().selectEle();
     }
 
     public WebElement getCountryCodeInput() {
-        return inputComp.countryCodeInput();
+        return getComp().countryCodeInput();
     }
 
     public InputActions uploadFile(String filePath) {
-        inputComp.uploadFileInput().sendKeys(filePath);
+        getComp().uploadFileInput().sendKeys(filePath);
         return this;
     }
 
@@ -53,40 +51,40 @@ public class InputActions {
     }
 
     public InputActions typeInTextArea(String value) {
-        clearAndType(inputComp.textArea(), value);
+        clearAndType(getComp().textArea(), value);
         return this;
     }
 
     public String getTextArea() {
-        return inputComp.textArea().getDomProperty("value");
+        return getComp().textArea().getDomProperty("value");
     }
 
     public List<String> getTagItemsTxt() {
-        return inputComp.tagsItem().stream().map(WebElement::getText).toList();
+        return getComp().tagsItem().stream().map(WebElement::getText).toList();
     }
 
     public InputActions clickClearBtn() {
-        inputComp.clearBtn().click();
+        getComp().clearBtn().click();
         return this;
     }
 
     public InputActions clickShowPasswordBtn() {
-        inputComp.showPasswordBtn().click();
+        getComp().showPasswordBtn().click();
         return this;
     }
 
     public String getIndicatorValue() {
-        return inputComp.indicator().getAttribute("data-value");
+        return getComp().indicator().getAttribute("data-value");
     }
 
     public String getPwdStrengthRequirementTxt() {
-        return inputComp.pwdRequirement().getText();
+        return getComp().pwdRequirement().getText();
     }
 
     public InputActions fillMaskInputFields(CardMaskData data) {
-        clearAndType(inputComp.creditCardInput(), data.cardNumber());
-        clearAndType(inputComp.calendarInput(), data.expiry());
-        clearAndType(inputComp.cvcInput(), data.cvc());
+        clearAndType(getComp().creditCardInput(), data.cardNumber());
+        clearAndType(getComp().calendarInput(), data.expiry());
+        clearAndType(getComp().cvcInput(), data.cvc());
         return this;
     }
 
@@ -97,18 +95,18 @@ public class InputActions {
 
     protected void typeAndEnter(WebElement element, String input) {
         element.sendKeys(input);
-        inputComp.actions().sendKeys(Keys.ENTER).perform();
+        getComp().actions().sendKeys(Keys.ENTER).perform();
     }
 
     public void inputMenus(List<DropdownOption> options) {
         for (DropdownOption option : options) {
-            typeAndEnter(inputComp.inputEle(), option.label());
+            typeAndEnter(getComp().inputEle(), option.label());
         }
-        inputComp.actions().sendKeys(Keys.ESCAPE).perform();
+        getComp().actions().sendKeys(Keys.ESCAPE).perform();
     }
 
     public void inputMenu(DropdownOption option) {
-        typeAndEnter(inputComp.inputEle(), option.label());
+        typeAndEnter(getComp().inputEle(), option.label());
     }
 
     protected void typeInputSegment(WebElement element, String input) {
@@ -120,9 +118,9 @@ public class InputActions {
     public InputActions fillDate(String date) {
         String[] parts = DateHelper.validateAndSplitDate(date);
 
-        typeInputSegment(inputComp.singleInputMonth(), parts[0]);
-        typeInputSegment(inputComp.singleInputDay(), parts[1]);
-        typeInputSegment(inputComp.singleInputYear(), parts[2]);
+        typeInputSegment(getComp().singleInputMonth(), parts[0]);
+        typeInputSegment(getComp().singleInputDay(), parts[1]);
+        typeInputSegment(getComp().singleInputYear(), parts[2]);
 
         return this;
     }
@@ -132,27 +130,27 @@ public class InputActions {
         String hour = String.valueOf(time.getHour());
         String minute = String.valueOf(time.getMinute());
 
-        inputComp.singleHourInput().sendKeys(hour);
-        inputComp.singleMinuteInput().sendKeys(minute);
-        inputComp.singleDayPeriodInput().sendKeys(period);
+        getComp().singleHourInput().sendKeys(hour);
+        getComp().singleMinuteInput().sendKeys(minute);
+        getComp().singleDayPeriodInput().sendKeys(period);
 
         return this;
     }
 
     public InputActions fillTimeRangeInput(RangeBound bound, String time, String period) {
         LocalTime t = LocalTime.parse(time);
-        inputComp.rangeInputHour(bound).sendKeys(String.valueOf(t.getHour()));
-        inputComp.rangeInputMinute(bound).sendKeys(String.valueOf(t.getMinute()));
-        inputComp.rangeInputPeriod(bound).sendKeys(period);
+        getComp().rangeInputHour(bound).sendKeys(String.valueOf(t.getHour()));
+        getComp().rangeInputMinute(bound).sendKeys(String.valueOf(t.getMinute()));
+        getComp().rangeInputPeriod(bound).sendKeys(period);
         return this;
     }
 
     private void fillDateWithBound(String date, RangeBound bound) {
         String[] parts = DateHelper.validateAndSplitDate(date);
 
-        typeInputSegment(inputComp.rangeInputMonth(bound), parts[0]);
-        typeInputSegment(inputComp.rangeInputDay(bound), parts[1]);
-        typeInputSegment(inputComp.rangeInputYear(bound), parts[2]);
+        typeInputSegment(getComp().rangeInputMonth(bound), parts[0]);
+        typeInputSegment(getComp().rangeInputDay(bound), parts[1]);
+        typeInputSegment(getComp().rangeInputYear(bound), parts[2]);
     }
 
     public InputActions fillDateRangeInput(String startDate, String endDate) {
@@ -162,9 +160,9 @@ public class InputActions {
     }
 
     public String getSingleDateInputTxt() {
-        String month = inputComp.singleInputMonth().getText();
-        String day = inputComp.singleInputDay().getText();
-        String year = inputComp.singleInputYear().getText();
+        String month = getComp().singleInputMonth().getText();
+        String day = getComp().singleInputDay().getText();
+        String year = getComp().singleInputYear().getText();
 
         return String.format("%02d-%02d-%s",
                 Integer.parseInt(month),
@@ -173,9 +171,9 @@ public class InputActions {
     }
 
     public String getRangeDateInputTxt(RangeBound bound) {
-        String month = inputComp.rangeInputMonth(bound).getText();
-        String day = inputComp.rangeInputDay(bound).getText();
-        String year = inputComp.rangeInputYear(bound).getText();
+        String month = getComp().rangeInputMonth(bound).getText();
+        String day = getComp().rangeInputDay(bound).getText();
+        String year = getComp().rangeInputYear(bound).getText();
 
         return String.format("%02d-%02d-%s",
                 Integer.parseInt(month),
@@ -184,39 +182,39 @@ public class InputActions {
     }
 
     public String getRangeTimeInputTxt(RangeBound bound) {
-        int hour = Integer.parseInt(inputComp.rangeInputHour(bound).getText());
-        int minute = Integer.parseInt(inputComp.rangeInputMinute(bound).getText());
+        int hour = Integer.parseInt(getComp().rangeInputHour(bound).getText());
+        int minute = Integer.parseInt(getComp().rangeInputMinute(bound).getText());
 
         return String.format("%02d:%02d", hour, minute);
     }
 
     public String getRangePeriodInputTxt(RangeBound bound) {
-        return inputComp.rangeInputPeriod(bound).getText();
+        return getComp().rangeInputPeriod(bound).getText();
     }
 
     public InputActions clickPopupBtn() {
-        inputComp.popupBtn().click();
-        WaitUtils.waitForVisibility(inputComp.driver(), inputComp.popupDropdown());
+        getComp().popupBtn().click();
+        WaitUtils.waitForVisibility(getComp().driver(), getComp().popupDropdown());
         return this;
     }
 
     public InputActions selectDropdownOpt(DropdownOption option) {
         clickPopupBtn();
 
-        WebElement popupDropdown = inputComp.popupDropdown();
-        inputComp.popoverOption(option).click();
-        WaitUtils.waitForInvisibility(inputComp.driver(), popupDropdown);
+        WebElement popupDropdown = getComp().popupDropdown();
+        getComp().popoverOption(option).click();
+        WaitUtils.waitForInvisibility(getComp().driver(), popupDropdown);
 
         return this;
     }
 
     public InputActions selectListBoxOption(DropdownOption option) {
-        inputComp.option(option).click();
+        getComp().option(option).click();
         return this;
     }
 
     public InputActions selectCheckbox() {
-        inputComp.checkbox().click();
+        getComp().checkbox().click();
         return this;
     }
 
@@ -229,17 +227,17 @@ public class InputActions {
     }
 
     public InputActions selectInputRating(int ratingValue) {
-        inputComp.ratingItem(ratingValue).click();
+        getComp().ratingItem(ratingValue).click();
         return this;
     }
 
     public InputActions clickSwitchToggle() {
-        inputComp.switchToggle().click();
+        getComp().switchToggle().click();
         return this;
     }
 
     public InputActions clickCheckboxGroup(DropdownOption option) {
-        inputComp.groupBtn(option).click();
+        getComp().groupBtn(option).click();
         return this;
     }
 
@@ -247,22 +245,22 @@ public class InputActions {
         clickPopupBtn();
 
         for (DropdownOption option : options) {
-            WebElement ele = inputComp.popoverOption(option);
+            WebElement ele = getComp().popoverOption(option);
             if ("unchecked".equalsIgnoreCase(ele.getAttribute("data-state"))) {
                 ele.click();
 
-                new WebDriverWait(inputComp.driver(), Duration.ofSeconds(5))
+                new WebDriverWait(getComp().driver(), Duration.ofSeconds(5))
                         .until(d -> "checked".equalsIgnoreCase(
-                                inputComp.popoverOption(option).getAttribute("data-state")));
+                                getComp().popoverOption(option).getAttribute("data-state")));
 
             }
         }
-        inputComp.actions().sendKeys(Keys.ESCAPE).perform();
+        getComp().actions().sendKeys(Keys.ESCAPE).perform();
         return this;
     }
 
     public InputActions setSliderTo(int target) {
-        WebElement thumb = inputComp.slider();
+        WebElement thumb = getComp().slider();
         thumb.click();
         thumb.sendKeys(Keys.HOME);
         int current = 0;
@@ -277,7 +275,7 @@ public class InputActions {
         List<String> actualValues = new ArrayList<>();
 
         for (DropdownOption option : options) {
-            String dropdownValue = inputComp.inputEle().getAttribute("value");
+            String dropdownValue = getComp().inputEle().getAttribute("value");
 
             if (option.label().equalsIgnoreCase(dropdownValue)) {
                 actualValues.add(dropdownValue);
@@ -286,25 +284,25 @@ public class InputActions {
 
             selectDropdownOpt(option);
 
-            actualValues.add(inputComp.inputEle().getAttribute("value"));
+            actualValues.add(getComp().inputEle().getAttribute("value"));
         }
         return actualValues;
     }
 
     public InputActions removeOption(DropdownOption... options) {
-        inputComp.actions().sendKeys(Keys.ESCAPE).perform();
+        getComp().actions().sendKeys(Keys.ESCAPE).perform();
         for (DropdownOption option : options) {
-            inputComp.deleteIconByItem(option.label()).click();
+            getComp().deleteIconByItem(option.label()).click();
         }
         return this;
     }
 
     public List<String> getSelectedTagsItem() {
-        return new ArrayList<>(inputComp.tagsItem().stream().map(WebElement::getText).toList());
+        return new ArrayList<>(getComp().tagsItem().stream().map(WebElement::getText).toList());
     }
 
     public InputActions typeInputs(String input) {
-        List<WebElement> elements = inputComp.pinInputs();
+        List<WebElement> elements = getComp().pinInputs();
         if (input.length() != elements.size()) {
             throw new IllegalArgumentException(
                     "Expected " + elements.size() + " characters but got " + input.length());
@@ -317,21 +315,21 @@ public class InputActions {
     }
 
     private InputActions stepInputTo(String value, WebElement stepBtn) {
-        while (!inputComp.inputEle().getAttribute("value").equalsIgnoreCase(value)) {
+        while (!getComp().inputEle().getAttribute("value").equalsIgnoreCase(value)) {
             stepBtn.click();
         }
         return this;
     }
 
     public InputActions increaseInputTo(String value) {
-        return stepInputTo(value, inputComp.increaseBtn());
+        return stepInputTo(value, getComp().increaseBtn());
     }
 
     public InputActions decreaseInputTo(String value) {
-        return stepInputTo(value, inputComp.decreaseBtn());
+        return stepInputTo(value, getComp().decreaseBtn());
     }
 
     public InputAssertions verify() {
-        return new InputAssertions(inputComp, this);
+        return new InputAssertions(getComp(), this);
     }
 }

@@ -13,15 +13,14 @@ import java.util.regex.Pattern;
 
 import static helpers.DateHelper.parseMonthYear;
 
-public class CalendarActions{
+public class CalendarActions extends BaseActions<CalendarComp>{
     private final RootLocator rootLocator;
     private static final Pattern MONTH_PATTERN = Pattern.compile("^[A-Z][a-z]+ \\d{4}$"); // "February 2022"
     private static final Pattern YEAR_PATTERN = Pattern.compile("^\\d{4}$"); // "2022"
     private static final Pattern DECADE_PATTERN = Pattern.compile("^\\d{4}\\s-\\s\\d{4}$"); // "2020-2031"
-    private CalendarComp parent;
 
-    public CalendarActions(CalendarComp parent, RootLocator rootLocator) {
-        this.parent = parent;
+    public CalendarActions(CalendarComp calendarComp, RootLocator rootLocator) {
+        super(calendarComp);
         this.rootLocator = rootLocator;
     }
 
@@ -30,15 +29,15 @@ public class CalendarActions{
     }
 
     public WebElement getDateCell(String dateValue) {
-        return parent.dateCell(rootLocator, dateValue);
+        return getComp().dateCell(rootLocator, dateValue);
     }
 
     public WebElement getHeadingEle() {
-        return parent.headingEle(rootLocator);
+        return getComp().headingEle(rootLocator);
     }
 
     public WebElement getDatePickerHeadingEle(String datePickerHeader) {
-        return parent.datePickByLabel(datePickerHeader);
+        return getComp().datePickByLabel(datePickerHeader);
     }
 
     public boolean isDateSelected(String dateValue) {
@@ -47,28 +46,28 @@ public class CalendarActions{
     }
 
     public List<WebElement> getSelectedDates(RootLocator rootLocator) {
-        return parent.selectedDate(rootLocator);
+        return getComp().selectedDate(rootLocator);
     }
 
     public List<WebElement> getDateRangePreset(RootLocator rootLocator){
-        return parent.dateRangePresets(rootLocator);
+        return getComp().dateRangePresets(rootLocator);
     }
 
     public CalendarActions selectNextMonth() {
-        parent.nextMonthBtn(rootLocator).click();
+        getComp().nextMonthBtn(rootLocator).click();
         return this;
     }
 
     public CalendarActions selectNextYear() {
-        parent.nextYearBtn(rootLocator).click();
+        getComp().nextYearBtn(rootLocator).click();
         return this;
     }
 
     public CalendarActions selectViewGrid(CalendarView view) {
-        WebElement headingEle = parent.headingEle(rootLocator);
+        WebElement headingEle = getComp().headingEle(rootLocator);
         headingEle.click();
 
-        String headingText = parent.headingEle(rootLocator).getText();
+        String headingText = getComp().headingEle(rootLocator).getText();
         Pattern expectedPattern = switch (view) {
             case MONTH -> MONTH_PATTERN;
             case YEAR -> YEAR_PATTERN;
@@ -122,7 +121,7 @@ public class CalendarActions{
         if (current.stream().anyMatch(ym -> ym.getYear() == targetYear)) return;
 
         boolean forward = targetYear > current.get(current.size() - 1).getYear();
-        WebElement navBtnEle = forward ? parent.nextYearBtn(rootLocator) : parent.pervYearBtn(rootLocator);
+        WebElement navBtnEle = forward ? getComp().nextYearBtn(rootLocator) : getComp().pervYearBtn(rootLocator);
 
         clickUntil(
                 navBtnEle,
@@ -137,7 +136,7 @@ public class CalendarActions{
         if (current.contains(targetYearMonth)) return;
 
         boolean forward = targetYearMonth.isAfter(current.get(current.size() - 1));
-        WebElement navBtnEle = forward ? parent.nextMonthBtn(rootLocator) : parent.prevMonthBtn(rootLocator);
+        WebElement navBtnEle = forward ? getComp().nextMonthBtn(rootLocator) : getComp().prevMonthBtn(rootLocator);
 
         clickUntil(
                 navBtnEle,

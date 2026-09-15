@@ -2,18 +2,16 @@ package actions;
 
 import component.main.table.FooterComp;
 
-public class FooterActions {
-    private final FooterComp footerComp;
-
+public class FooterActions extends BaseActions<FooterComp> {
     public FooterActions(FooterComp footerComp) {
-        this.footerComp = footerComp;
+        super(footerComp);
     }
 
     public String getFooterSummaryTxt() {
-        return footerComp.getFooterSummary().getText();
+        return getComp().getFooterSummary().getText();
     }
 
     public String getFooterCellByIndex(int index) {
-        return footerComp.getFooterCellByIndex(index).getText();
+        return getComp().getFooterCellByIndex(index).getText();
     }
 }

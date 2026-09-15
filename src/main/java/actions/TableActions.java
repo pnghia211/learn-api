@@ -51,7 +51,7 @@ public class TableActions {
     }
 
     public PaginationActions paginationActions() {
-        if (paginationActions == null) paginationActions = new PaginationActions(tableComp.paginationComp(), this);
+        if (paginationActions == null) paginationActions = new PaginationActions(tableComp.paginationComp());
         return paginationActions;
     }
 
